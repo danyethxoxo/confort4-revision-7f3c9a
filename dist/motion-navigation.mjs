@@ -10,7 +10,7 @@ let overlay = null;
 function configureSmoothScroll() {
   smoothScroll?.destroy();
   smoothScroll = null;
-  if (reducedMotion.matches || !window.ResizeObserver || document.body.dataset.page === 'property') return;
+  if (reducedMotion.matches || !window.ResizeObserver || ['property','catalog'].includes(document.body.dataset.page)) return;
   smoothScroll = new Lenis({
     duration: 1.1,
     autoRaf: true,
