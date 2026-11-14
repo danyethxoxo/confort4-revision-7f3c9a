@@ -12,6 +12,10 @@ let carouselCleanup = null;
 let generation = 0;
 let heroPlayed = false;
 let resizePending = false;
+const revealedCatalogPhotos = new Set();
+function catalogPhotoKey(element) {
+  return JSON.stringify([element.closest('[data-property]')?.dataset.property || element.getAttribute('href'), element.querySelector('img')?.getAttribute('src')]);
+}
 
 function animateSceneCounts(scene) {
   if (scene.dataset.countsStarted) return;
@@ -145,11 +149,13 @@ function prepareEntranceObserver(root) {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
         const element = entry.target;
+        if (element.dataset.motionSeen) continue;
         if (element.dataset.motionKind === 'entrance') {
           const block = lineBlocks.find(item => item.element === element);
           if (block) revealLines(block, Number(element.dataset.motionDelay || 0));
         } else if (element.dataset.motionKind === 'image') {
           element.dataset.motionSeen = 'true';
+          if (element.dataset.catalogReveal) revealedCatalogPhotos.add(catalogPhotoKey(element));
           const revealImage = () => {
             if (!element.isConnected) return;
             element.style.clipPath = '';
@@ -198,7 +204,10 @@ function prepareEntranceObserver(root) {
       element.append(settle);
     }
     element.dataset.motionKind = 'image';
-    if (element.matches('.property-card .property-photo>a')) element.dataset.catalogReveal = 'true';
+    if (element.matches('.property-card .property-photo>a')) {
+      element.dataset.catalogReveal = 'true';
+      if (revealedCatalogPhotos.has(catalogPhotoKey(element))) element.dataset.motionSeen = 'true';
+    }
     if (canObserve && !element.dataset.motionSeen) {
       if (element.dataset.catalogReveal) element.querySelector('.motion-image-settle').style.clipPath = 'inset(100% 0% 0%)';
       entranceObserver.observe(element);
