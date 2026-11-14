@@ -79,4 +79,13 @@ assert(observed.includes(frame));assert.equal(frame.style.clipPath,'');assert.eq
 revealObserver.callback([{isIntersecting:true,target:frame}]);await Promise.resolve();await Promise.resolve();
 assert.equal(photo.loading,'eager','Visible masked images must load even before native lazy visibility');assert.equal(settle.style.clipPath,'');
 const wipe=reveals.find(a=>a.element===frame);assert.equal(wipe.frames[0].clipPath,'inset(100% 0% 0%)');assert.equal(wipe.frames[1].clipPath,'inset(0%)');
-catalogDom.window.close();console.log('PASS: catalog photos reveal bottom-up after decoding without masking the observed frame.');
+revealObserver.callback([{isIntersecting:true,target:frame}]);await Promise.resolve();await Promise.resolve();
+assert.equal(reveals.filter(a=>a.element===frame).length,1,'Repeated observer entries cannot replay a reveal');
+document.querySelector('main').innerHTML='<article class="property-card"><div class="property-photo"><a href="propiedad.html"><img src="photo.jpg" loading="lazy"></a></div></article>';
+observed.length=0;
+await import('../dist/reference-motion.mjs?catalog-image-regression').then(m=>m.initializeReferenceMotion(document.querySelector('main')));await Promise.resolve();await Promise.resolve();
+const refreshedFrame=document.querySelector('.property-photo>a');
+assert.equal(refreshedFrame.dataset.motionSeen,'true','Feed replacement retains the photo reveal state');
+assert(!observed.includes(refreshedFrame),'Refreshed photos do not replay their reveal');
+assert.equal(refreshedFrame.querySelector('.motion-image-settle').style.clipPath,'');
+catalogDom.window.close();console.log('PASS: catalog photos reveal once, including duplicate entries and feed replacement.');
