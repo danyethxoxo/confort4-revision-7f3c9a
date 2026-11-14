@@ -1,5 +1,11 @@
 # Confort4 — Nivara reference lock
 
+## November 14: compact footer and property autoplay
+
+The footer removes the oversized wordmark and groups navigation into two columns, with smaller spacing and an explicit KW Premier affiliation block. Premier information and Facebook, Instagram and TikTok destinations come from the kwpremierweb repository. Preserve Confort4 contacts and privacy access.
+
+Property landings reuse Home's six-second progress strip and 900ms horizontal photo transition, with previous/next and explicit pause controls. Pointer hover does not suspend playback. Autoplay stops offscreen, in a hidden tab, while the fullscreen viewer is open, and for reduced motion. These pages use native scroll instead of Lenis interpolation. Construction and land are distinct: show construction when provided and land only for houses with that measurement; never substitute land for missing construction.
+
 The owner explicitly selected https://nivara-architecture-template.vercel.app/ and asked to reproduce its visual identity and scroll animations. This supersedes the previous Coinbase/Cuure and provisional colorful-gradient directions.
 
 ## Composition

@@ -31,3 +31,13 @@ assert.equal((await handler(req({action:'upload',args:{mime:'image/svg+xml',data
 assert.equal((await handler(req({action:'upload',args:{mime:'image/png',data:btoa('not a png')}}))).status,400);
 mode='conflict';assert.equal((await handler(req({action:'publish',args:{revision:1}}))).status,409);
 console.log('PASS: CMS structure, escaped content, public feed, account validation, membership, MFA, actor binding, revision conflicts and upload validation.');
+
+// Construction and land are independent measurements, never substitutes.
+const surfaceProperty={...properties[0],tipo:'Casa en condominio',m2_construccion:180,m2_terreno:240};
+const surfacePage=p=>renderPage({content,properties:[p],reviews:[]},'property',{id:p.id});
+assert.match(surfacePage(surfaceProperty),/m\u00b2 construidos/);
+assert.match(surfacePage(surfaceProperty),/m\u00b2 terreno/);
+assert(!surfacePage({...surfaceProperty,tipo:'Departamento'}).includes('m\u00b2 terreno'));
+assert(!surfacePage({...surfaceProperty,tipo:'Departamento',m2_construccion:null}).includes('m\u00b2 construidos'));
+assert(!surfacePage(surfaceProperty).includes('m\u00b2 publicados'));
+console.log('PASS: independent construction and house land facts, missing measurements omitted.');

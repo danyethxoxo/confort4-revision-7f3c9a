@@ -368,6 +368,7 @@ body[data-page=vender] .service-page-intro > img { height:auto; max-height:none;
 body[data-page=contact] .contact-form-intro h1 { font-size:clamp(42px,5.1vw,80px); line-height:1; max-width:12ch; }
 body[data-page=contact] .contact-single h2 { font-size:27px; font-weight:400; line-height:1.4; margin-bottom:25px; }
 .footer { padding-top:48px; }
+.footer-premier { min-width:0; }
 .footer-main { display:grid; grid-template-columns:minmax(150px,.8fr) minmax(160px,1fr) minmax(350px,1.8fr); gap:50px; padding-bottom:32px; }
 .footer-brand { display:flex; flex-direction:column; align-items:flex-start; gap:28px; }
 .footer-brand .original-logo { width:80px; height:80px; }
@@ -547,3 +548,33 @@ body:is([data-page=vender],[data-page=rentar],[data-page=comprar]) :is(.service-
 @media(prefers-reduced-motion:reduce) { body:is([data-page=vender],[data-page=rentar],[data-page=comprar]) :is(.service-reading,.faq-module) summary svg { transition:none; } }
 .google-reviews .review-grid figure { grid-template-rows:20px minmax(0,1fr) 28px 64px; }
 .google-reviews .review-grid figcaption time { display:block; color:#fff; font-size:12px; line-height:1.4; }
+
+/* Compact footer shared by every public route. */
+.footer { padding-top:28px; }
+.footer .footer-main { grid-template-columns:minmax(120px,.7fr) minmax(150px,.9fr) minmax(250px,1.5fr) minmax(180px,1fr);gap:28px;padding-bottom:24px; }
+.footer .footer-brand { gap:12px; }
+.footer .footer-brand .original-logo { width:64px;height:64px; }
+.footer .footer-brand p,.footer-premier p { margin:0;font-size:12px;line-height:1.5;color:var(--muted); }
+.footer .footer-navigation { display:grid;grid-template-columns:1fr 1fr;align-content:start;gap:8px 16px;font-size:13px; }
+.footer .footer-navigation h2 { grid-column:1/-1; }
+.footer .footer-navigation h2,.footer .footer-contact-group h2 { margin:0 0 10px;font-size:14px; }
+.footer .footer-contact-group .team-contact-links.compact { gap:12px 18px;font-size:12px; }
+.footer .contact-direct { font-size:13px; }
+.footer .team-office address { font-size:12px;line-height:1.5; }
+.footer .footer-social { margin-top:12px;gap:14px;font-size:12px; }
+.footer-premier { display:flex;flex-direction:column;align-items:flex-start;gap:10px; }
+.footer-premier > span { font-size:11px;color:var(--muted); }
+.footer-premier img { width:115px;height:auto; }
+.footer-premier nav { display:flex;flex-wrap:wrap;gap:10px 14px;font-size:12px; }
+.footer-premier a:hover { color:var(--red); }
+.footer .footer-bottom { padding-block:14px;gap:10px 20px;font-size:11px; }
+@media(max-width:1000px) { .footer .footer-main { grid-template-columns:1fr 1fr;gap:24px; }.footer .footer-contact-group { grid-column:auto; } }
+@media(max-width:600px) { .footer .footer-main { gap:20px 16px; }.footer .footer-brand { flex-direction:row;align-items:center;gap:10px;grid-column:1/-1; }.footer .footer-brand p { max-width:none; }.footer .footer-navigation { grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 8px;font-size:12px; }.footer .footer-navigation h2 { display:none; }.footer .footer-contact-group,.footer-premier { grid-column:1/-1; }.footer-premier { display:grid;grid-template-columns:105px 1fr;align-items:center;gap:8px 14px; }.footer-premier > span { grid-column:1/-1; }.footer-premier img { width:105px; }.footer-premier nav { grid-column:1/-1; }.footer .footer-bottom > span { width:auto; } }
+/* Property photos use the same six-second progress strip as Home. */
+.property-photo-stage .property-photo-progress { top:auto;bottom:12px;height:2px; }
+.property-slideshow-controls { position:absolute;z-index:5;right:var(--gutter);bottom:30px;display:flex;align-items:center;gap:14px;color:#fff; }
+.property-slideshow-controls button { min-width:40px;min-height:40px;border:1px solid #ffffff70;background:#0005;color:#fff;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer; }
+.property-slideshow-controls [data-photo-count] { font-size:13px;font-variant-numeric:tabular-nums; }
+.property-photo-stage .property-gallery-cover > span { right:auto;left:var(--gutter);backdrop-filter:none;background:#0005; }
+.property-gallery-cover > .property-photo-outgoing { position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none; }
+@media(max-width:600px) { .property-slideshow-controls { gap:6px;bottom:24px; }.property-slideshow-controls [data-photo-count] { display:none; }.property-photo-stage .property-gallery-cover > span { padding:10px;font-size:12px;gap:6px; } }
