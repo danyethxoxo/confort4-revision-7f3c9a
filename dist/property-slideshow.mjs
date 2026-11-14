@@ -3,18 +3,20 @@ import {motionTiming} from './motion-rules.mjs';
 export function initializePropertySlideshow(root, choose, options={}) {
  const stage=root.querySelector('.property-photo-stage'),image=root.querySelector('#gallery-main'),thumbs=[...root.querySelectorAll('[data-gallery]')];
  if(!stage||!image||thumbs.length<2)return null;
- const reduced=window.matchMedia('(prefers-reduced-motion: reduce)'),duration=options.duration||motionTiming.slideInterval;
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)'),duration=options.duration||10000;
+ const zoomFrame=document.createElement('div');zoomFrame.className='property-photo-zoom';image.replaceWith(zoomFrame);zoomFrame.append(image);
  const controls=document.createElement('div');controls.className='property-slideshow-controls';
  controls.innerHTML='<span data-photo-count></span><button type="button" data-photo-prev aria-label="Foto anterior">&#8592;</button><button type="button" data-photo-next aria-label="Foto siguiente">&#8594;</button><button type="button" data-photo-pause aria-label="Pausar fotos">Pausar</button>';
  const progress=document.createElement('div');progress.className='featured-progress property-photo-progress';progress.setAttribute('aria-hidden','true');progress.innerHTML='<span></span>';stage.append(controls,progress);
- let timer,animation,inView=!window.IntersectionObserver,paused=false,viewerOpen=false,destroyed=false,revision=0;
+ let timer,animation,zoom,inView=!window.IntersectionObserver,paused=false,viewerOpen=false,destroyed=false,revision=0;
  const failed=new Set();let nextImage=null;
  const current=()=>Math.max(0,thumbs.findIndex(t=>t.getAttribute('aria-pressed')==='true'));
- function stop(){clearTimeout(timer);animation?.cancel();animation=null;}
+ function stop(){clearTimeout(timer);animation?.cancel();if(zoom){image.style.transform=getComputedStyle(image).transform;zoom.cancel();}animation=null;zoom=null;}
  function reset(){
   stop();controls.querySelector('[data-photo-count]').textContent=(current()+1)+' / '+thumbs.length;
   if(destroyed||paused||viewerOpen||!inView||reduced.matches||document.hidden)return;
   animation=progress.firstElementChild.animate?.([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration,easing:'linear',fill:'both'});
+  zoom=image.animate?.([{transform:'scale(1)'},{transform:'scale(1.04)'}],{duration,easing:'linear',fill:'both'});
   nextImage=new Image();nextImage.decoding='async';nextImage.src=thumbs[(current()+1)%thumbs.length].dataset.gallery;
   timer=setTimeout(()=>advance(1),duration);
  }
@@ -27,12 +29,12 @@ export function initializePropertySlideshow(root, choose, options={}) {
    try{
     await new Promise((resolve,reject)=>{const img=new Image(),timeout=setTimeout(()=>done(false),12000);function done(ok){clearTimeout(timeout);img.onload=img.onerror=null;ok?resolve():reject(new Error('Foto no disponible'));}img.decoding='async';img.onload=()=>img.decode?img.decode().catch(()=>{}).then(()=>done(true)):done(true);img.onerror=()=>done(false);img.src=url;});
     if(destroyed||request!==revision)return;
-    const old=image.cloneNode();old.removeAttribute('id');old.alt='';old.className='property-photo-outgoing';old.setAttribute('aria-hidden','true');
+    const old=zoomFrame.cloneNode(true);old.querySelector('img').removeAttribute('id');old.querySelector('img').alt='';old.className='property-photo-outgoing';old.setAttribute('aria-hidden','true');
     choose(index);
     if(!reduced.matches&&image.animate){
-     image.after(old);
+     zoomFrame.after(old);
      const outgoing=old.animate([{transform:'translateX(0)'},{transform:'translateX('+(-step*100)+'%)'}],{duration:motionTiming.slide,easing:'cubic-bezier(.45,0,.15,1)'});
-     image.animate([{transform:'translateX('+(step*100)+'%)'},{transform:'translateX(0)'}],{duration:motionTiming.slide,easing:'cubic-bezier(.45,0,.15,1)'});
+     zoomFrame.animate([{transform:'translateX('+(step*100)+'%)'},{transform:'translateX(0)'}],{duration:motionTiming.slide,easing:'cubic-bezier(.45,0,.15,1)'});
      outgoing.finished.catch(()=>{}).finally(()=>old.remove());
     }
     return;
@@ -45,5 +47,5 @@ export function initializePropertySlideshow(root, choose, options={}) {
  });
  const visibility=()=>reset(),preference=()=>reset();document.addEventListener('visibilitychange',visibility);reduced.addEventListener('change',preference);
  const observer=window.IntersectionObserver?new IntersectionObserver(entries=>{inView=entries[0].isIntersecting;reset();}):null;observer?.observe(stage);reset();
- return {reset,setViewer(open){viewerOpen=open;reset();},destroy(){destroyed=true;++revision;stop();observer?.disconnect();document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener?.('change',preference);nextImage=null;controls.remove();progress.remove();}};
+ return {reset,setViewer(open){viewerOpen=open;reset();},destroy(){destroyed=true;++revision;stop();observer?.disconnect();document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener?.('change',preference);nextImage=null;controls.remove();progress.remove();image.style.transform='';zoomFrame.replaceWith(image);}};
 }
