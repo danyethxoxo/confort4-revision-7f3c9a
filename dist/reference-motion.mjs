@@ -150,9 +150,18 @@ function prepareEntranceObserver(root) {
           if (block) revealLines(block, Number(element.dataset.motionDelay || 0));
         } else if (element.dataset.motionKind === 'image') {
           element.dataset.motionSeen = 'true';
-          play(element, [{clipPath: 'inset(100% 0% 0%)'}, {clipPath: 'inset(0%)'}], timing.imageWipe, 0, timing.inOut);
-          const settle = element.querySelector('.motion-image-settle');
-          if (settle) play(settle, [{transform: element.dataset.motionFraming==='faces'?'scale(1.03)':'scale(1.15)'}, {transform: 'scale(1)'}], timing.imageSettle);
+          const revealImage = () => {
+            if (!element.isConnected) return;
+            element.style.clipPath = '';
+            play(element, [{clipPath: 'inset(100% 0% 0%)'}, {clipPath: 'inset(0%)'}], timing.imageWipe, 0, timing.inOut);
+            const settle = element.querySelector('.motion-image-settle');
+            if (settle) settle.style.clipPath = '';
+            if (settle) play(settle, [{transform: element.dataset.motionFraming==='faces'?'scale(1.03)':'scale(1.15)'}, {transform: 'scale(1)'}], timing.imageSettle);
+          };
+          const photo = element.querySelector('img');
+          if (element.dataset.catalogReveal && photo) photo.loading = 'eager';
+          if (element.dataset.catalogReveal && photo?.decode) photo.decode().catch(() => {}).then(revealImage);
+          else revealImage();
         } else if (element.dataset.motionKind === 'rule') {
           play(element, [{transform:'scaleX(0)'}, {transform:'scaleX(1)'}], 900);
         } else {
@@ -177,7 +186,7 @@ function prepareEntranceObserver(root) {
 
   gradientBlocks = [...root.querySelectorAll('.process-guide .scroll-copy')].map(element => measureLines(element, 'gradient'));
 
-  root.querySelectorAll('.narrative-process figure,.journal-card>a,[data-motion-image]').forEach(element => {
+  root.querySelectorAll('.narrative-process figure,.journal-card>a,[data-motion-image],.property-card .property-photo>a').forEach(element => {
     if (!element.querySelector('.motion-image-settle')) {
       const image = element.querySelector('img');
       const settle = document.createElement('div');
@@ -189,7 +198,11 @@ function prepareEntranceObserver(root) {
       element.append(settle);
     }
     element.dataset.motionKind = 'image';
-    if (canObserve && !element.dataset.motionSeen) entranceObserver.observe(element);
+    if (element.matches('.property-card .property-photo>a')) element.dataset.catalogReveal = 'true';
+    if (canObserve && !element.dataset.motionSeen) {
+      if (element.dataset.catalogReveal) element.querySelector('.motion-image-settle').style.clipPath = 'inset(100% 0% 0%)';
+      entranceObserver.observe(element);
+    } else { element.style.clipPath = ''; element.querySelector('.motion-image-settle').style.clipPath = ''; }
   });
 
   root.querySelectorAll('[data-team-rule]').forEach(element => {
