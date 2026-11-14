@@ -4,6 +4,8 @@
 
 The footer fits the animated Confort4 wordmark into the spare space below the left brand/navigation columns. It groups navigation into two columns, with smaller spacing and an explicit KW Premier affiliation block. Premier information and Facebook, Instagram and TikTok destinations come from the kwpremierweb repository. Preserve Confort4 contacts and privacy access.
 
+The footer's latest distribution uses a centered 1120px interior and three desktop columns: brand/animated wordmark, navigation/KW Premier, and contacts. The full-width background is neutral gray #d6d6d6 with near-black text and darker separators, clearly distinct from the white page. All destinations, contact information, logos and animation remain. Tablet and mobile reflow without clipping the wordmark.
+
 Property landings reuse Home's progress strip and 900ms horizontal photo transition, with a ten-second photo interval and a subtle 1.00 to 1.04 zoom. Horizontal transitions use an independent frame so zoom stays smooth. Previous/next and explicit pause controls remain. Pointer hover does not suspend playback. Autoplay stops offscreen, in a hidden tab, while the fullscreen viewer is open, and for reduced motion. These pages use native scroll instead of Lenis interpolation. Mobile overlays use a smaller title/location and a single-line price/currency to preserve more visible photography. Construction and land are distinct: show construction when provided and land only for houses with that measurement; never substitute land for missing construction.
 
 The owner explicitly selected https://nivara-architecture-template.vercel.app/ and asked to reproduce its visual identity and scroll animations. This supersedes the previous Coinbase/Cuure and provisional colorful-gradient directions.
