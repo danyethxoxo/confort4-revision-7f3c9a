@@ -1,5 +1,5 @@
 import {motionTiming as timing, clampProgress, intervalProgress, expansionState, lineGradientPosition} from './motion-rules.mjs';
-import {initializeMotionNavigation} from './motion-navigation.mjs?v=20261114native';
+import {initializeMotionNavigation} from './motion-navigation.mjs?v=20261114catalog';
 
 const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
 let scrollFrame = null;

@@ -2,6 +2,8 @@
 
 ## November 14: compact footer and property autoplay
 
+The Mis propiedades catalog also uses native browser scrolling, with no Lenis wheel interpolation. Catalog card photos retain lazy loading and use asynchronous decoding. Keep entrance, header, footer and page-transition animations; do not add a second wheel/scroll driver.
+
 The footer fits the animated Confort4 wordmark into the spare space below the left brand/navigation columns. It groups navigation into two columns, with smaller spacing and an explicit KW Premier affiliation block. Premier information and Facebook, Instagram and TikTok destinations come from the kwpremierweb repository. Preserve Confort4 contacts and privacy access.
 
 The owner clarified that the footer should use the full page width and reduce height, rather than become narrower. Its desktop layout is a shallow four-column band: brand/animated wordmark, navigation, contacts and KW Premier. Tighter contact controls, address lines and vertical gaps reduce measured desktop height from about 394px to 266px. The full-width background is neutral gray #d6d6d6 with near-black text and darker separators, clearly distinct from the white page. All destinations, contact information, logos and animation remain. Tablet and mobile reflow without clipping the wordmark.
