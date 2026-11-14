@@ -578,3 +578,27 @@ body:is([data-page=vender],[data-page=rentar],[data-page=comprar]) :is(.service-
 .property-photo-stage .property-gallery-cover > span { right:auto;left:var(--gutter);backdrop-filter:none;background:#0005; }
 .property-gallery-cover > .property-photo-outgoing { position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none; }
 @media(max-width:600px) { .property-slideshow-controls { gap:6px;bottom:24px; }.property-slideshow-controls [data-photo-count] { display:none; }.property-photo-stage .property-gallery-cover > span { padding:10px;font-size:12px;gap:6px; } }
+
+/* Wordmark fills the spare space below brand/navigation, without enlarging the main row. */
+.footer .footer-main { row-gap:10px; }
+.footer .footer-brand,.footer .footer-navigation { grid-row:1; }
+.footer .footer-contact-group,.footer .footer-premier { grid-row:1 / span 2; }
+.footer .footer-main .footer-wordmark { grid-column:1 / 3;grid-row:2;width:100%;min-width:0;max-width:100%;font-size:clamp(48px,8.2vw,118px);line-height:1;margin:0;letter-spacing:-.045em;align-self:end; }
+.property-photo-zoom { width:100%;height:100%;overflow:hidden; }
+.property-gallery-cover > .property-photo-outgoing img { width:100%;height:100%;object-fit:cover; }
+@media(max-width:1000px) { .footer .footer-contact-group,.footer .footer-premier { grid-row:auto; }.footer .footer-main .footer-wordmark { grid-row:2;grid-column:1 / -1;font-size:clamp(64px,14vw,112px); } }
+@media(max-width:700px) {
+ .property-editorial .property-photo-stage .property-detail-heading { bottom:88px;gap:10px; }
+ .property-photo-stage .property-detail-heading h1 { font-size:clamp(20px,5.6vw,25px);line-height:1.12;max-width:32ch;margin:0; }
+ .property-editorial .property-photo-stage .property-eyebrow { font-size:11px;line-height:1.3;margin:0 0 6px; }
+ .property-photo-stage .property-location-line { margin-top:7px;font-size:11px;line-height:1.35; }
+ .property-photo-stage .property-price-block { display:flex;align-items:baseline;flex-wrap:wrap;gap:7px; }
+ .property-photo-stage .property-price { font-size:25px;line-height:1.2;margin:0; }
+ .property-photo-stage .property-price-block > span { font-size:12px;margin:0; }
+ .property-photo-stage .property-gallery-cover::after { background:linear-gradient(180deg,transparent 40%,#0008 77%,#000b); }
+}
+@media(max-width:600px) {
+ .footer .footer-brand { grid-row:1; }
+ .footer .footer-navigation { grid-row:2; }
+ .footer .footer-main .footer-wordmark { grid-row:3; }
+}
