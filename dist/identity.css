@@ -467,7 +467,7 @@ html:has(.property-viewer[open]) { overflow:hidden; }
 .review-controls button:hover { background:var(--ink); color:var(--paper); }
 .review-controls [data-review-direction='-1'] svg { transform:rotate(180deg); }
 /* The property hero uses the same photographic composition as the homepage inventory. */
-.property-photo-stage { position:relative; height:85svh; min-height:560px; margin-inline:calc(-1 * var(--gutter)); overflow:hidden; background:#000; color:#fff; }
+.property-photo-stage { position:relative; height:calc(100svh - 212px); min-height:380px; margin-inline:calc(-1 * var(--gutter)); overflow:hidden; background:#000; color:#fff; }
 .property-photo-stage .property-gallery-cover { height:100%; background:#000; }
 .property-photo-stage .property-gallery-cover::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 25%,#0009 65%,#000b); pointer-events:none; }
 .property-photo-stage .property-gallery-cover #gallery-main { height:100%; width:100%; object-fit:cover; }
@@ -621,4 +621,12 @@ body:is([data-page=vender],[data-page=rentar],[data-page=comprar]) :is(.service-
  .footer .footer-contact-group { grid-column:3;grid-row:1 / span 2; }
  .footer .footer-premier { grid-column:4;grid-row:1 / span 2;gap:7px; }
  .footer .footer-main .footer-wordmark { grid-column:1;grid-row:2;font-size:clamp(44px,4.8vw,64px);align-self:end; }
+}
+/* Fit the complete gallery and contact composition to the available viewport. */
+body[data-page=contact] .contact-form-section { min-height:calc(100svh - 48px);padding-block:32px; }
+@media(min-width:701px) and (max-height:800px) {
+ body[data-page=contact] .contact-single { padding:24px; }
+ body[data-page=contact] .contact-single h2 { margin-bottom:16px; }
+ body[data-page=contact] .contact-single .form-grid { gap:12px 18px; }
+ body[data-page=contact] .contact-single textarea { min-height:70px; }
 }
