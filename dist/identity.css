@@ -602,15 +602,23 @@ body:is([data-page=vender],[data-page=rentar],[data-page=comprar]) :is(.service-
  .footer .footer-navigation { grid-row:2; }
  .footer .footer-main .footer-wordmark { grid-row:3; }
 }
-/* A narrower, centered footer groups related content on a distinct gray surface. */
-.footer { background:#d6d6d6;--muted:#444;--line:#b4b4b4;padding-top:32px;padding-bottom:16px; }
-.footer-inner { max-width:1120px;margin-inline:auto; }
+/* Use the page width to keep every footer group in a shallow horizontal band. */
+.footer { background:#d6d6d6;--muted:#444;--line:#b4b4b4;padding-top:22px;padding-bottom:10px; }
+.footer-inner { max-width:none;margin:0; }
+.footer .footer-main { padding-bottom:16px; }
+.footer .footer-contact-group .team-contact-links.compact { gap:8px 16px; }
+.footer .team-contact-links .contact-direct { min-height:32px;padding:5px 10px;font-size:12px; }
+.footer .team-contact-links > div > span { margin-bottom:3px; }
+.footer .team-office { display:block; }
+.footer .team-office > span { display:inline;margin-right:7px;margin-bottom:0;font-size:12px; }
+.footer .team-office address { display:inline;font-size:12px;line-height:1.45; }
+.footer .footer-social { margin-top:10px;gap:12px; }
+.footer .footer-bottom { padding-block:12px;gap:8px 20px; }
 @media(min-width:1001px) {
- .footer .footer-main { grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.25fr);column-gap:44px;row-gap:22px;padding-bottom:26px; }
- .footer .footer-brand { grid-column:1;grid-row:1;flex-direction:row;align-items:center;gap:14px; }
- .footer .footer-navigation { grid-column:2;grid-row:1; }
+ .footer .footer-main { grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.65fr) minmax(0,1.2fr);column-gap:32px;row-gap:8px; }
+ .footer .footer-brand { grid-column:1;grid-row:1;flex-direction:row;align-items:center;gap:12px; }
+ .footer .footer-navigation { grid-column:2;grid-row:1 / span 2;row-gap:6px; }
  .footer .footer-contact-group { grid-column:3;grid-row:1 / span 2; }
- .footer .footer-premier { grid-column:2;grid-row:2;gap:8px; }
- .footer .footer-main .footer-wordmark { grid-column:1;grid-row:2;font-size:clamp(56px,6.3vw,86px);align-self:end; }
- .footer .footer-bottom { gap:12px 20px; }
+ .footer .footer-premier { grid-column:4;grid-row:1 / span 2;gap:7px; }
+ .footer .footer-main .footer-wordmark { grid-column:1;grid-row:2;font-size:clamp(44px,4.8vw,64px);align-self:end; }
 }
