@@ -35,3 +35,9 @@ Una propiedad propia que estaba publicada y pasa a inactiva o se elimina se arch
 Las cancelaciones se excluyen mediante Propiedades > Historial de operaciones > Marcar cancelada y ocultar. La acción requiere administrador, es reversible y queda auditada. Una reactivación oculta la propiedad del historial; una nueva baja activa inicia una nueva clasificación. Las selecciones externas de KW no se atribuyen al historial del equipo.
 
 El historial automático vive en una tabla privada con RLS y se combina con contenido manual al leer el feed. No sobrescribe borradores. El HTML de respaldo espera la respuesta actual del feed antes de mostrar operaciones, para no exhibir una operación cancelada guardada en una exportación anterior. La captura automática guarda la URL de la foto; para el PH se conserva también una copia WebP local. El panel no altera los anuncios originales de KW.
+
+## Presentación del historial y precio publicado
+
+En Mis propiedades el orden es catálogo activo, vendidas/rentadas y formulario. El historial utiliza el mismo movimiento continuo de clientes, también con una sola propiedad: las copias inertes rellenan la franja según el ancho de pantalla. Las imágenes usan saturación 0.7; las de clientes y las propiedades activas conservan sus colores.
+
+Cada cierre archiva el precio y la moneda del último registro activo, antes del cambio de estado. Los cambios posteriores en el anuncio inactivo no modifican ese importe. La ficha lo identifica como Precio de publicación; no se afirma que sea el precio de cierre. El PH de Polanco recupera 1,450,000 USD de la exportación activa anterior. Sin precio o moneda válidos se omite el importe.

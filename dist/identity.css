@@ -671,3 +671,8 @@ body[data-page=contact] .contact-form-section { min-height:calc(100svh - 48px);p
 .story-controls .story-toggle[hidden] { display:none; }
 
 [data-story-autoplay] .story-track { scroll-snap-type:none; }
+.transaction-story .story-photo img { filter:saturate(.7); }
+.story-copy .history-price { margin-top:16px;color:var(--ink); }
+.history-price > span { display:block;font-size:12px;color:var(--muted);margin-bottom:5px; }
+.history-price strong { font-size:23px;font-weight:400;letter-spacing:-.03em; }
+.history-price small { font-size:13px;letter-spacing:0; }

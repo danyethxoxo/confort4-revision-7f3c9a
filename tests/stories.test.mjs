@@ -12,6 +12,13 @@ const reviewPage=new JSDOM(fs.readFileSync(new URL('../dist/resena.html',import.
 assert.equal((clientsModule(content).match(/class="story-card/g)||[]).length,4);
 assert.equal(transactionsModule({...content,transactions:{items:[]}}),'','Empty public history stays hidden');
 assert(transactionsModule(content).includes('VENDIDA'),'Owner-confirmed PH is in sold history');
+const catalogOrder=renderPage({content,properties,reviews:[]},'catalog');
+assert(catalogOrder.indexOf('id="propiedades"')<catalogOrder.indexOf('id="operaciones-cerradas"'));
+assert(catalogOrder.indexOf('id="operaciones-cerradas"')<catalogOrder.indexOf('class="contact-form-section'));
+assert(transactionsModule(content).includes('1,450,000'));
+assert(transactionsModule(content).includes('USD'));
+assert(transactionsModule(content).includes('Precio de publicación'));
+assert(transactionsModule(content).includes('data-story-autoplay'));
 const sample={...content,transactions:{items:[{title:'Casa de prueba',photo:'assets/home-detail.jpg',status:'vendida',date:'2025-11-01',published:true},{title:'Departamento de prueba',photo:'assets/home-detail.jpg',status:'rentada',published:true},{title:'Borrador',photo:'assets/home-detail.jpg',status:'vendida',published:false}]}};
 assert.equal(validateContent(sample),sample);
 const history=transactionsModule(sample);assert(history.includes('VENDIDA'));assert(history.includes('RENTADA'));assert(!history.includes('Borrador'));
