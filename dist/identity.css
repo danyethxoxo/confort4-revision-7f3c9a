@@ -671,8 +671,11 @@ body[data-page=contact] .contact-form-section { min-height:calc(100svh - 48px);p
 .story-controls .story-toggle[hidden] { display:none; }
 
 [data-story-autoplay] .story-track { scroll-snap-type:none; }
-.transaction-story .story-photo img { filter:saturate(.7); }
-.story-copy .history-price { margin-top:16px;color:var(--ink); }
-.history-price > span { display:block;font-size:12px;color:var(--muted);margin-bottom:5px; }
+.transaction-story .story-photo img { filter:saturate(.1); }
+.transaction-story .story-photo::after { content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,#0003,transparent 35%,#000b);pointer-events:none; }
+.transaction-story .transaction-status { top:16px;bottom:auto;z-index:3; }
+.transaction-overlay { position:absolute;z-index:2;inset:auto 16px 16px;color:#fff;pointer-events:none; }
+.transaction-overlay p { font-size:13px;line-height:1.35;margin:6px 0 0;color:#fff; }
+.transaction-overlay .history-price { margin:0;color:#fff; }
 .history-price strong { font-size:23px;font-weight:400;letter-spacing:-.03em; }
 .history-price small { font-size:13px;letter-spacing:0; }

@@ -17,7 +17,12 @@ assert(catalogOrder.indexOf('id="propiedades"')<catalogOrder.indexOf('id="operac
 assert(catalogOrder.indexOf('id="operaciones-cerradas"')<catalogOrder.indexOf('class="contact-form-section'));
 assert(transactionsModule(content).includes('1,450,000'));
 assert(transactionsModule(content).includes('USD'));
-assert(transactionsModule(content).includes('Precio de publicación'));
+assert(!transactionsModule(content).includes('Precio de publicación'));
+const historyCard=new JSDOM(transactionsModule(content)).window.document;
+assert(historyCard.querySelector('.story-photo .history-price'));
+assert(historyCard.querySelector('.story-photo .transaction-overlay').textContent.includes('Polanco'));
+assert.equal(historyCard.querySelector('.story-copy').children.length,1);
+assert.equal(historyCard.querySelector('.story-copy').firstElementChild.tagName,'H3');
 assert(transactionsModule(content).includes('data-story-autoplay'));
 const sample={...content,transactions:{items:[{title:'Casa de prueba',photo:'assets/home-detail.jpg',status:'vendida',date:'2025-11-01',published:true},{title:'Departamento de prueba',photo:'assets/home-detail.jpg',status:'rentada',published:true},{title:'Borrador',photo:'assets/home-detail.jpg',status:'vendida',published:false}]}};
 assert.equal(validateContent(sample),sample);
