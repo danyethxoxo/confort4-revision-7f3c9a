@@ -1,12 +1,14 @@
-export const moduleTypes=['intents','properties','process','journal','faq','contact','reviews'];
+export const moduleTypes=['statement','properties','reviews','clients','process','metrics','living','faq','transactions','journal'];
 export function validateContent(data){
  if(!data||typeof data!=='object'||!data.team||!Array.isArray(data.services)||!data.home||!Array.isArray(data.posts)||!Array.isArray(data.faq))throw Error('Faltan secciones de contenido.');
  if(JSON.stringify(data).length>440000)throw Error('El contenido es demasiado grande.');
  function walk(value,depth=0,key=''){
   if(depth>12)throw Error('Estructura demasiado profunda.');
+  if(key.endsWith('Href')&&typeof value!=='string')throw Error('El destino de un botón debe ser texto.');
   if(typeof value==='string'){
    if(value.length>18000)throw Error('Un texto supera el límite.');
    if(['photo','image','cover','contact','url'].includes(key)&&value&&!/^(https:\/\/|assets\/)[^\s<>"']+$/i.test(value))throw Error('Usa una URL HTTPS válida o un recurso de assets/.');
+   if(key.endsWith('Href')&&value&&!/^(?:https:\/\/[^\s<>"'\\]+|[a-z0-9-]+\.html(?:[?#][^\s<>"'\\]*)?|#[a-z][\w-]*)$/i.test(value))throw Error('El destino del botón debe ser HTTPS o una página interna.');
   }else if(Array.isArray(value)){if(value.length>100)throw Error('Demasiados elementos.');value.forEach(v=>walk(v,depth+1,key));}
   else if(value&&typeof value==='object')for(const [k,v]of Object.entries(value)){if(['__proto__','prototype','constructor'].includes(k))throw Error('Campo no permitido.');walk(v,depth+1,k);}
  }
@@ -23,6 +25,13 @@ export function validateContent(data){
  for(const service of data.services){if(!['vender','comprar','rentar'].includes(service.id))throw Error('Servicio desconocido.');for(const k of ['title','shortTitle','intro','image','cta','closing'])string(service[k],'el campo '+k+' de '+service.id);list(service.sections,'las secciones del servicio');for(const section of service.sections){string(section.title,'el título de sección');string(section.text,'el contenido de sección');}if(service.id==='rentar'){list(service.audiences,'los públicos de renta');for(const audience of service.audiences){string(audience.id,'el identificador del público');string(audience.title,'el título del público');list(audience.items,'los puntos de renta');}}}
  if(data.services.length!==3||!['vender','comprar','rentar'].every(id=>data.services.some(s=>s.id===id)))throw Error('Conserva los tres servicios.');
  if(!Array.isArray(data.home.modules)||!data.home.modules.every(m=>(m==='tool'||moduleTypes.includes(m)))||new Set(data.home.modules).size!==data.home.modules.length)throw Error('Revisa los módulos de inicio.');
+ if(data.home.hiddenModules&&(!Array.isArray(data.home.hiddenModules)||!data.home.hiddenModules.every(id=>moduleTypes.includes(id))))throw Error('Revisa la visibilidad de los módulos.');
+ if((data.team.gallery||[]).length>8)throw Error('CAPPERS admite un máximo de 8 fotografías.');
+ if((data.team.nationalAward?.photos||[]).length>2)throw Error('Novatos admite un máximo de 2 fotografías.');
+ if(data.team.hiddenSections&&(!Array.isArray(data.team.hiddenSections)||!data.team.hiddenSections.every(id=>['cover','approach','photos','cappers','national'].includes(id))))throw Error('Revisa los módulos del equipo.');
+ for(const photo of [...(data.team.gallery||[]),...(data.team.nationalAward?.photos||[])]){string(photo.photo,'la fotografía del equipo');string(photo.caption,'la descripción de la fotografía');}
+ if(data.metrics){list(data.metrics.items,'las cifras');if(data.metrics.items.length>8)throw Error('Conserva hasta 8 cifras.');for(const item of data.metrics.items){string(item.label,'el nombre de la cifra');if(!['manual','properties','team','services','locations'].includes(item.source)||!Number.isFinite(item.value)||item.value<0||item.value>1000000)throw Error('Revisa el número y origen de las cifras.');}}
+ if(data.living){list(data.living.photos,'las imágenes de Un espacio para vivir');if(data.living.photos.length!==7)throw Error('Conserva las siete imágenes de la composición.');for(const photo of data.living.photos)string(photo.photo,'la fotografía de la composición');}
  const slugs=new Set();for(const post of data.posts){if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(post.slug)||slugs.has(post.slug))throw Error('Slug de artículo inválido o repetido.');slugs.add(post.slug);if(!post.title||!Array.isArray(post.sections)||!Array.isArray(post.summary))throw Error('Revisa el artículo.');if(post.checklist&&!['venta','visita','renta'].includes(post.checklist))throw Error('Checklist de artículo inválido.');if(post.published){for(const key of ['title','excerpt','cover','author','updated'])string(post[key],'el campo '+key+' del artículo');if(!post.sections.length||!post.summary.length)throw Error('Completa el artículo antes de hacerlo visible.');for(const section of post.sections){string(section.title,'el título de la sección');string(section.text,'el contenido del artículo');}}}
  if(data.clients){
   list(data.clients.items,'las fotografías de clientes');

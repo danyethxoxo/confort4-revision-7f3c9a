@@ -1,7 +1,7 @@
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261116historyoverlay';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261116historyoverlay';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261116editor';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261116editor';
 import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261114zoom10';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261116historyoverlay';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261116editor';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -179,13 +179,13 @@ function heroSignature(hero) {
  return JSON.stringify([
   heading?.dataset.motionText || heading?.textContent.trim(),
   hero.querySelector('.hero-image')?.getAttribute('src'),
-  hero.querySelector('.hero-aside p')?.textContent.trim()
+  hero.querySelector('.hero-aside p')?.textContent.trim(),hero.querySelector('.hero-aside a')?.textContent.trim(),hero.querySelector('.hero-aside a')?.getAttribute('href'),hero.querySelector('.hero-image')?.getAttribute('alt')
  ]);
 }
-let reviewSignature=JSON.stringify([bundle.content.googleReviews,bundle.reviews||[]]),lastReviewRefresh=0,reviewRefreshPending=false;
+let reviewSignature=JSON.stringify([bundle.content.googleReviews,bundle.content.widgets?.reviews,bundle.reviews||[]]),lastReviewRefresh=0,reviewRefreshPending=false;
 function syncReviews(next){
  if(page==='review')syncClientGallery(next.content);
- const signature=JSON.stringify([next.content.googleReviews,next.reviews||[]]);if(signature===reviewSignature)return;
+ const signature=JSON.stringify([next.content.googleReviews,next.content.widgets?.reviews,next.reviews||[]]);if(signature===reviewSignature)return;
  const current=$('.google-reviews');if(!current||$('.review-full-dialog[open]',current)||$('.review-carousel',current)?.dataset.animating==='true')return;
  const template=document.createElement('template');template.innerHTML=googleReviewModule(next.content,next.reviews||[]);current.replaceWith(template.content);reviewSignature=signature;initReviews();
 }
