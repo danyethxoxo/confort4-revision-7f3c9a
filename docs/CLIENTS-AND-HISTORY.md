@@ -41,3 +41,5 @@ El historial automático vive en una tabla privada con RLS y se combina con cont
 En Mis propiedades el orden es catálogo activo, vendidas/rentadas y formulario. El historial utiliza el mismo movimiento continuo de clientes, también con una sola propiedad: las copias inertes rellenan la franja según el ancho de pantalla. Las imágenes usan saturación 0.7; las de clientes y las propiedades activas conservan sus colores.
 
 Cada cierre archiva el precio y la moneda del último registro activo, antes del cambio de estado. Los cambios posteriores en el anuncio inactivo no modifican ese importe. La ficha lo identifica como Precio de publicación; no se afirma que sea el precio de cierre. El PH de Polanco recupera 1,450,000 USD de la exportación activa anterior. Sin precio o moneda válidos se omite el importe.
+
+El historial usa ahora fotografías casi monocromáticas (saturación 0.1). Precio y ubicación se superponen en blanco sobre un degradado dentro de la foto, sin el rótulo Precio de publicación. Solo el título queda debajo; el importe sigue siendo el precio anunciado archivado.
