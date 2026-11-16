@@ -22,8 +22,16 @@ Mis propiedades incluye los dos enlaces completos de KW suministrados por el pro
 
 ## Movimiento y validación
 
-Carruseles de desplazamiento horizontal nativo, scroll snap, flechas y teclado. El scroll vertical permanece libre; Nuestros Clientes avanza cada seis segundos en bucle, con pausa manual y pausa al interactuar, salir de pantalla o cambiar de pestaña; el historial mantiene controles manuales. Las fotos se cargan bajo demanda, se decodifican antes de la aparición de abajo hacia arriba y conservan su estado entre actualizaciones del feed. Con movimiento reducido no se animan. Las galerías sin cambios conservan su nodo y su posición; la inicialización no duplica eventos.
+Carruseles de desplazamiento horizontal nativo, scroll snap, flechas y teclado. El scroll vertical permanece libre; Nuestros Clientes se desplaza de forma continua a 35 px/s en bucle, con pausa manual y pausa al interactuar, salir de pantalla o cambiar de pestaña; el historial mantiene controles manuales. Las fotos se cargan bajo demanda, se decodifican antes de la aparición de abajo hacia arriba y conservan su estado entre actualizaciones del feed. Con movimiento reducido no se animan. Las galerías sin cambios conservan su nodo y su posición; la inicialización no duplica eventos.
 
 Pruebas automatizadas de contenido, estados de operaciones, catálogo de 65 propiedades, controles y movimiento reducido. SQL aislado con rollback comprueba más de 40 propias, Renata, diez externas, rechazo de la undécima, repetición e inactivas. Navegador: escritorio y móvil, fotos reales, controles, scroll vertical, movimiento reducido y ausencia de desbordamiento horizontal. Las operaciones de prueba solo viven en fixtures y nunca se publican.
 
 El mismo carrusel de clientes aparece bajo las reseñas de Dejame una reseña. Su actualización no reemplaza el formulario ni borra lo que la persona haya escrito. Las copias del bucle son inertes y se ocultan a lectores de pantalla.
+
+## Regla de cierre confirmada por el propietario
+
+Una propiedad propia que estaba publicada y pasa a inactiva o se elimina se archiva como vendida o rentada según su operación. Es la regla comercial indicada por el propietario, no una confirmación independiente de cierre de KW. El registro conserva título, zona y foto; no inventa fecha de cierre. El PH Dúplex de Polanco fue confirmado expresamente para iniciar el historial como VENDIDA.
+
+Las cancelaciones se excluyen mediante Propiedades > Historial de operaciones > Marcar cancelada y ocultar. La acción requiere administrador, es reversible y queda auditada. Una reactivación oculta la propiedad del historial; una nueva baja activa inicia una nueva clasificación. Las selecciones externas de KW no se atribuyen al historial del equipo.
+
+El historial automático vive en una tabla privada con RLS y se combina con contenido manual al leer el feed. No sobrescribe borradores. El HTML de respaldo espera la respuesta actual del feed antes de mostrar operaciones, para no exhibir una operación cancelada guardada en una exportación anterior. La captura automática guarda la URL de la foto; para el PH se conserva también una copia WebP local. El panel no altera los anuncios originales de KW.
