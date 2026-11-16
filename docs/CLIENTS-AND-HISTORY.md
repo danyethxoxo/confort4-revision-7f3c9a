@@ -22,7 +22,7 @@ Mis propiedades incluye los dos enlaces completos de KW suministrados por el pro
 
 ## Movimiento y validación
 
-Carruseles de desplazamiento horizontal nativo, scroll snap, flechas y teclado. El scroll vertical permanece libre; no hay autoplay ni temporizadores nuevos. Las fotos se cargan bajo demanda, se decodifican antes de la aparición de abajo hacia arriba y conservan su estado entre actualizaciones del feed. Con movimiento reducido no se animan. Las galerías sin cambios conservan su nodo y su posición; la inicialización no duplica eventos.
+Carruseles de desplazamiento horizontal nativo, scroll snap, flechas y teclado. El scroll vertical permanece libre; Nuestros Clientes avanza cada seis segundos en bucle, con pausa manual y pausa al interactuar, salir de pantalla o cambiar de pestaña; el historial mantiene controles manuales. Las fotos se cargan bajo demanda, se decodifican antes de la aparición de abajo hacia arriba y conservan su estado entre actualizaciones del feed. Con movimiento reducido no se animan. Las galerías sin cambios conservan su nodo y su posición; la inicialización no duplica eventos.
 
 Pruebas automatizadas de contenido, estados de operaciones, catálogo de 65 propiedades, controles y movimiento reducido. SQL aislado con rollback comprueba más de 40 propias, Renata, diez externas, rechazo de la undécima, repetición e inactivas. Navegador: escritorio y móvil, fotos reales, controles, scroll vertical, movimiento reducido y ausencia de desbordamiento horizontal. Las operaciones de prueba solo viven en fixtures y nunca se publican.
 
