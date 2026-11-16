@@ -45,7 +45,9 @@
         "photo": "assets/historial-polanco.webp",
         "location": "Polanco IV Sección · Miguel Hidalgo",
         "status": "vendida",
-        "published": true
+        "published": true,
+        "price": 1450000,
+        "currency": "USD"
       }
     ]
   },

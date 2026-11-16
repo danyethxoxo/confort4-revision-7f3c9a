@@ -11,21 +11,27 @@ export function initializeStoryCarousels(root) {
     const toggle = section.querySelector('[data-story-toggle]');
     const count = section.querySelector('[data-story-count]');
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const loop = section.hasAttribute('data-story-autoplay') && cards.length > 1;
+    const loop = section.hasAttribute('data-story-autoplay') && cards.length > 0;
     const events = new window.AbortController();
     let frame = null, motionFrame = null, lastTime = null, position = null, paused = false, dragging = false;
     let cardStep = 0;
     let inView = !window.IntersectionObserver, visibilityObserver, sizeObserver;
-    if (loop) cards.forEach(card => {
+    function addCopies(){cards.forEach(card => {
       const clone = card.cloneNode(true);
       clone.dataset.storyClone = 'true';clone.setAttribute('aria-hidden','true');clone.inert = true;
       clone.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
       clone.querySelectorAll('[data-motion-image]').forEach(element => element.removeAttribute('data-motion-image'));
+      clone.querySelectorAll('.motion-image-settle,.motion-image-parallax').forEach(element => {element.style.clipPath='';element.style.transform='';});
       clone.querySelectorAll('img').forEach(image => { image.alt = ''; });
       track.append(clone);
-    });
+    });}
+    if(loop)addCopies();
     function step() { return cardStep; }
-    function measure() { cardStep=cards[1]?cards[1].offsetLeft-cards[0].offsetLeft:track.clientWidth;position=null;update(); }
+    function measure() {
+      cardStep=track.children[1]?track.children[1].offsetLeft-track.children[0].offsetLeft:track.clientWidth;
+      if(loop&&cardStep>0&&track.clientWidth>0){for(let i=0;i<8&&track.scrollWidth<track.clientWidth+cardStep*cards.length+2;i++)addCopies();}
+      position=null;update();
+    }
     function stop() { if(motionFrame!==null)window.cancelAnimationFrame(motionFrame);motionFrame=null;lastTime=null;position=null; }
     function destroy() { stop();events.abort();visibilityObserver?.disconnect();sizeObserver?.disconnect();if(frame!==null)window.cancelAnimationFrame(frame); }
     function arm() {
