@@ -1,5 +1,19 @@
 import {reviewForm} from './review-form.mjs?v=34';
 import {livingScene} from './living-scene.mjs?v=32';
+function storyCarousel(id,title,intro,items,cards) {
+ if (!items.length) return '';
+ return `<section class="story-module wrap" id="${id}" data-story-carousel data-story-signature="${e(JSON.stringify([title,intro,items]))}" aria-labelledby="${id}-title"><div class="module-heading"><div><h2 id="${id}-title">${e(title)}</h2><p>${e(intro)}</p></div></div><div class="story-track" data-story-track tabindex="0" role="region" aria-label="${e(title)}">${cards}</div><div class="story-controls"><span data-story-count aria-live="polite">1 / ${items.length}</span><button type="button" data-story-direction="-1" aria-label="Anterior">${icon('arrow')}</button><button type="button" data-story-direction="1" aria-label="Siguiente">${icon('arrow')}</button></div></section>`;
+}
+export function clientsModule(data) {
+ const module=data.clients;
+ const items=(module?.items||[]).filter(item=>item.published!==false&&item.photo);
+ return storyCarousel('nuestros-clientes',module?.title||'Nuestros Clientes',module?.intro||'Personas e historias que nos inspiran a seguir acompañando.',items,items.map(item=>`<figure class="story-card client-story"><div class="story-photo" data-motion-image data-motion-framing="faces"><img src="${safeURL(item.photo)}" alt="${e(item.alt||'Alberto y Renata con sus clientes')}" width="900" height="1100" loading="lazy" decoding="async"></div><figcaption>${item.quote&&item.quoteVerified===true?`<blockquote>“${e(item.quote)}”</blockquote>${item.name?`<span>${e(item.name)}</span>`:''}`:`<p>${e(item.caption||'Gracias por permitirnos acompañar su proyecto.')}</p>`}</figcaption></figure>`).join(''));
+}
+export function transactionsModule(data) {
+ const module=data.transactions;
+ const items=(module?.items||[]).filter(item=>item.published===true&&item.photo&&item.title&&['vendida','rentada'].includes(item.status));
+ return storyCarousel('operaciones-cerradas',module?.title||'Historias que ya encontraron su lugar.',module?.intro||'Propiedades vendidas y rentadas con el acompañamiento de Confort4.',items,items.map(item=>`<article class="story-card transaction-story"><div class="story-photo" data-motion-image><img src="${safeURL(item.photo)}" alt="${e(item.title)}" width="1000" height="700" loading="lazy" decoding="async"><span class="transaction-status">${item.status==='vendida'?'VENDIDA':'RENTADA'}</span></div><div class="story-copy"><h3>${e(item.title)}</h3>${item.location?`<p>${e(item.location)}</p>`:''}${item.date?`<time datetime="${e(item.date)}">${e(new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(item.date)))}</time>`:''}${item.description?`<p>${e(item.description)}</p>`:''}</div></article>`).join(''));
+}
 export function featuredProperties(bundle) {
  const properties=bundle.properties||[];
  if(!properties.length)return `<section class="featured-section wrap"><h2>Propiedades</h2><p>El catálogo se está actualizando. Cuéntanos qué buscas.</p>${link('contacto.html','Contactar al equipo')}</section>`;
@@ -127,7 +141,7 @@ export function renderPage(bundle,page,params={}){
   const modules={intents:()=>intents(d),properties:()=>propertyModule(bundle),process:()=>processModule(d)+livingScene(bundle),journal:()=>journal(d),faq:()=>faqModule(d),contact:()=>contactForm(d),reviews:()=>`<section class="review-form-layout wrap home-review" id="resena"><div><h2>Cuéntanos tu experiencia.</h2><p>Leemos cada reseña. Solo la publicamos con tu autorización y después de revisarla.</p></div>${reviewForm}</section>`};
   return `<section class="hero wrap"><div class="hero-visual"><img class="hero-image" src="${safeURL(d.home.photo)}" alt="Fachada arquitectónica de ambientación" width="1920" height="1280" fetchpriority="high"></div><div class="hero-content"><h1>${e(d.home.title)}</h1><div class="hero-aside"><p>${e(d.home.intro)}</p>${link('contacto.html','Hablemos de tu proyecto','button')}</div></div></section>
   <section class="brand-statement wrap"><p class="scroll-copy">${e(d.team.intro)}</p>${link('quienes-somos.html','Conoce a Alberto y Renata')}${kwAssociation()}</section>
-  ${d.home.modules.map(module=>(modules[module]?.()||'')+(module==='properties'?googleReviewModule(d,bundle.reviews):'')).join('')}`;
+  ${d.home.modules.map(module=>(modules[module]?.()||'')+(module==='properties'?googleReviewModule(d,bundle.reviews)+clientsModule(d):'')).join('')}${transactionsModule(d)}`;
 
  }
  if(['vender','comprar','rentar'].includes(page)){
@@ -136,7 +150,7 @@ export function renderPage(bundle,page,params={}){
  }
  if(page==='team')return teamPage(bundle);
  if(page==='contact')return contactForm(d,true);
- if(page==='catalog')return `<section class="page-intro wrap"><h1>Tu próximo espacio,<br>más cerca.</h1><p>Conoce las propiedades seleccionadas por Confort4. Guarda tus favoritas y consulta su disponibilidad con el equipo.</p></section>${propertyModule(bundle,true)}${contactForm(d)}`;
+ if(page==='catalog')return `<section class="page-intro wrap"><h1>Tu próximo espacio,<br>más cerca.</h1><p>Conoce las propiedades seleccionadas por Confort4. Guarda tus favoritas y consulta su disponibilidad con el equipo.</p><div class="full-catalog"><h2>Ve todo mi catálogo</h2><div><a class="button" href="https://confort4.kw.com/search/sale?viewport=19.524809717284178%2C-99.03496248046875%2C19.272544505959477%2C-99.30412751953125" target="_blank" rel="noopener">En venta ${icon('up')}</a><a class="button" href="https://confort4.kw.com/search/rent?viewport=19.524809717284178%2C-99.03496248046875%2C19.272544505959477%2C-99.30412751953125" target="_blank" rel="noopener">En renta ${icon('up')}</a></div></div></section>${propertyModule(bundle,true)}${contactForm(d)}${transactionsModule(d)}`;
  if(page==='property'){
   const p=properties.find(p=>p.id===params.id);if(!p)return `<section class="page-intro wrap"><h1>Esta propiedad ya no está en el catálogo.</h1><p>Podemos ayudarte a encontrar otras opciones.</p>${link('propiedades.html','Explorar propiedades','button')}</section>`;
   return propertyDetail(bundle,p);

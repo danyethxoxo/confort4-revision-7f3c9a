@@ -204,7 +204,7 @@ function prepareEntranceObserver(root) {
       element.append(settle);
     }
     element.dataset.motionKind = 'image';
-    if (element.matches('.property-card .property-photo>a')) {
+    if (element.matches('.property-card .property-photo>a,.story-photo[data-motion-image]')) {
       element.dataset.catalogReveal = 'true';
       if (revealedCatalogPhotos.has(catalogPhotoKey(element))) element.dataset.motionSeen = 'true';
     }

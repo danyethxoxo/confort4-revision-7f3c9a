@@ -18,11 +18,11 @@ function change(el,value){el.value=value;el.dispatchEvent(new window.Event('chan
 function input(el,value){el.value=value;el.dispatchEvent(new window.Event('input',{bubbles:true}));}
 const $=s=>document.querySelector(s);
 let w=await load('propiedades.html');await import('../dist/site.mjs?catalog');await tick();
-assert.equal(document.querySelectorAll('.property-card').length,4);
+assert.equal(document.querySelectorAll('.property-card').length,properties.length);
 $('.menu-toggle').click();assert.equal($('.menu-toggle').getAttribute('aria-expanded'),'true');assert.match($('.menu-toggle').textContent,/Cerrar/);assert.equal($('.brand-logo').closest('.header'),$('.menu-toggle').closest('.header'));document.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape'}));assert.equal($('.menu-toggle').getAttribute('aria-expanded'),'false');assert.match($('.menu-toggle').textContent,/Menú/);$('.menu-toggle').click();document.querySelector('main').click();assert.equal($('.menu-toggle').getAttribute('aria-expanded'),'false');
 const first=$('[data-favorite]');first.click();assert.equal(first.getAttribute('aria-pressed'),'true');
 assert.equal($('.catalog-toolbar'),null);assert.equal($('[data-compare]'),null);
-w=await load('index.html');await import('../dist/site.mjs?home');await tick();assert.equal(document.querySelectorAll('.featured-slide').length,4);assert.equal($('.featured-carousel').dataset.featureIndex,'0');$('[data-feature-direction="1"]').click();assert.equal($('.featured-carousel').dataset.featureIndex,'1');assert.equal(document.querySelectorAll('.featured-slide:not([hidden])').length,1);
+w=await load('index.html');await import('../dist/site.mjs?home');await tick();assert.equal(document.querySelectorAll('.featured-slide').length,properties.length);assert.equal($('.featured-carousel').dataset.featureIndex,'0');$('[data-feature-direction="1"]').click();assert.equal($('.featured-carousel').dataset.featureIndex,'1');assert.equal(document.querySelectorAll('.featured-slide:not([hidden])').length,1);
 input($('#faq-search'),'zzzz-no-results');assert.equal($('.faq-empty').hidden,false);input($('#faq-search'),'');assert.equal($('.faq-empty').hidden,true);
 assert.equal($('.contact-single'),null);assert.equal($('.journal-module'),null);assert.equal($('.intent-section'),null);assert.equal(document.querySelectorAll('.google-reviews [data-review-slide]').length,21);assert.equal(document.querySelectorAll('.google-reviews [data-review-slide]:not([hidden])').length,3);$('[data-review-direction="1"]').click();assert.equal($('[data-review-count]').textContent,'4–6 / 21');
 w=await load('contacto.html');await import('../dist/site.mjs?contact');await tick();

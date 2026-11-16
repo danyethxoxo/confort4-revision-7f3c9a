@@ -1,6 +1,7 @@
-﻿import {renderPage,googleReviewModule} from './ui.mjs?v=20261114catalog';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261114revealonce';
+﻿import {renderPage,googleReviewModule} from './ui.mjs?v=20261116stories';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261116stories';
 import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261114zoom10';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261116stories';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -82,6 +83,7 @@ function initReviews(){
 function init(){
  propertySlideshow?.destroy();propertySlideshow=null;
  initializeReferenceMotion(main);
+ initializeStoryCarousels(main);
  initReviews();
  $$('.property-gallery-thumbs').forEach(track=>{track.addEventListener('scroll',()=>updateThumbArrows(track),{passive:true});updateThumbArrows(track);});
 
@@ -208,6 +210,11 @@ if (!preview) {
   const signature = heroSignature(previousHero);
   const template = document.createElement('template');
   template.innerHTML = renderPage(bundle,page,params);
+  // Preserve unchanged galleries (and their scroll/reveal state) on feed hydration.
+  main.querySelectorAll('[data-story-carousel]').forEach(current => {
+   const next=template.content.querySelector('#'+current.id);
+   if(next&&next.dataset.storySignature===current.dataset.storySignature)next.replaceWith(current);
+  });
   const nextHero = template.content.querySelector('.hero');
   if (previousHero && signature === heroSignature(nextHero)) {
    nextHero.remove();

@@ -1,0 +1,37 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {JSDOM} from 'jsdom';
+import {renderPage,clientsModule,transactionsModule} from '../dist/ui.mjs';
+import {validateContent} from '../dist/content-validation.mjs';
+import {initializeStoryCarousels} from '../dist/story-carousels.mjs';
+const content=JSON.parse(fs.readFileSync(new URL('../content/site.json',import.meta.url)));
+const properties=JSON.parse(fs.readFileSync(new URL('../content/inventory.json',import.meta.url)));
+const home=renderPage({content,properties,reviews:[]},'home');
+assert(home.indexOf('nuestros-clientes')>home.indexOf('google-reviews-title'));
+assert.equal((clientsModule(content).match(/class="story-card/g)||[]).length,4);
+assert.equal(transactionsModule(content),'','No fabricated history or empty public module');
+const sample={...content,transactions:{items:[{title:'Casa de prueba',photo:'assets/home-detail.jpg',status:'vendida',date:'2025-11-01',published:true},{title:'Departamento de prueba',photo:'assets/home-detail.jpg',status:'rentada',published:true},{title:'Borrador',photo:'assets/home-detail.jpg',status:'vendida',published:false}]}};
+assert.equal(validateContent(sample),sample);
+const history=transactionsModule(sample);assert(history.includes('VENDIDA'));assert(history.includes('RENTADA'));assert(!history.includes('Borrador'));
+assert.throws(()=>validateContent({...sample,transactions:{items:[{...sample.transactions.items[0],date:'2026-02-30'}]}}));
+assert.throws(()=>validateContent({...sample,transactions:{items:[{...sample.transactions.items[0],status:'activa'}]}}));
+const unverified={...content,clients:{items:[{photo:'assets/home-detail.jpg',alt:'Foto',quote:'Comentario sin verificar'}]}};
+assert.throws(()=>validateContent(unverified));assert(!new JSDOM(clientsModule(unverified)).window.document.body.textContent.includes('Comentario sin verificar'));
+const escaped=clientsModule({...content,clients:{items:[{photo:'assets/home-detail.jpg',alt:'Foto',caption:'<script>injected</script>'}]}});assert(!escaped.includes('<script>'));
+const many=Array.from({length:65},(_,i)=>({...properties[0],id:'property-'+i,own:true}));
+assert.equal((renderPage({content,properties:many,reviews:[]},'catalog').match(/class="property-card"/g)||[]).length,65,'Catalog does not truncate own inventory');
+const catalog=new JSDOM(renderPage({content,properties,reviews:[]},'catalog')).window.document;
+for(const operation of ['sale','rent']){
+ const link=catalog.querySelector(`.full-catalog a[href*="/search/${operation}?"]`);
+ assert(link);assert.equal(link.target,'_blank');assert.equal(new URL(link.href).searchParams.get('viewport'),'19.524809717284178,-99.03496248046875,19.272544505959477,-99.30412751953125');
+}
+const dom=new JSDOM(clientsModule(content));globalThis.window=dom.window;globalThis.document=dom.window.document;
+window.matchMedia=()=>({matches:true});window.requestAnimationFrame=fn=>{fn();return 1;};
+const track=document.querySelector('[data-story-track]');let moves=0;
+track.scrollBy=options=>{moves++;assert.equal(options.behavior,'instant');};
+initializeStoryCarousels(document);initializeStoryCarousels(document);
+document.querySelector('[data-story-direction="-1"]').disabled=false;
+document.querySelector('[data-story-direction="-1"]').click();assert.equal(moves,1,'Initialization cannot duplicate listeners');
+track.dispatchEvent(new window.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));assert.equal(moves,2);
+dom.window.close();
+console.log('PASS: client gallery, verified quotes, real history states, unlimited own catalog, keyboard, reduced motion and idempotent controls.');

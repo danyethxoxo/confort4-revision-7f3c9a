@@ -45,6 +45,7 @@ export async function handle(req:Request){
   if(code.includes('not_a_member')||code.includes('admin_required'))return response({error:'Tu cuenta no tiene acceso a esta acción de Confort4.'},403);
   if(code.includes('version_conflict'))return response({error:'Hay cambios más recientes. Recarga el panel antes de guardar.'},409);
   if(code.includes('publication_consent_required'))return response({error:'Esta reseña no autoriza publicación.'},400);
+  if(code.includes('external_selection_limit'))return response({error:'Puedes seleccionar hasta 10 propiedades externas de KW. Retira una selección para añadir otra. Las propiedades del equipo no cuentan para este límite.'},400);
   console.error('confort4-site: operation failed');return response({error:'No se pudo completar la operación. Intenta de nuevo.'},503);
  }
 }
