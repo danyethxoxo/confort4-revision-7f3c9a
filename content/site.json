@@ -1,5 +1,44 @@
 {
   "brand": "Confort4",
+  "clients": {
+    "title": "Nuestros Clientes",
+    "intro": "Detrás de cada proyecto, hay personas. Gracias por dejarnos ser parte de su historia.",
+    "items": [
+      {
+        "id": "entrega",
+        "photo": "assets/clientes-entrega.webp",
+        "alt": "Alberto y Renata con una clienta en una entrega de obsequio",
+        "caption": "Gracias por la confianza, de principio a fin.",
+        "published": true
+      },
+      {
+        "id": "familia",
+        "photo": "assets/clientes-familia.webp",
+        "alt": "Alberto y Renata en una fotografía con una familia y su perro",
+        "caption": "Personas, familias y nuevas historias por comenzar.",
+        "published": true
+      },
+      {
+        "id": "celebracion",
+        "photo": "assets/clientes-celebracion.webp",
+        "alt": "El equipo Confort4 comparte un momento con sus clientes en un jardín",
+        "caption": "Compartir estos momentos es lo que más nos gusta de acompañarte.",
+        "published": true
+      },
+      {
+        "id": "encuentro",
+        "photo": "assets/clientes-encuentro.webp",
+        "alt": "Alberto y Renata con un grupo de clientes en un encuentro",
+        "caption": "Tu proyecto también se vuelve parte de nuestra historia.",
+        "published": true
+      }
+    ]
+  },
+  "transactions": {
+    "title": "Historias que ya encontraron su lugar.",
+    "intro": "Propiedades vendidas y rentadas con el acompañamiento de Confort4.",
+    "items": []
+  },
   "phone": "+52 55 2747 7538",
   "whatsapp": "https://wa.me/525527477538",
   "team": {
@@ -33,7 +72,7 @@
     "photos": [
       "assets/equipo-confort4.webp"
     ],
-    "cover": "assets/alberto-renata-confort4.webp",
+    "cover": "assets/equipo-jardin.webp",
     "approach": [
       {
         "title": "Primero, escucharte.",
@@ -64,6 +103,10 @@
       {
         "photo": "assets/equipo-kw-premier.webp",
         "caption": "Nuestro primer año como CAPPERS, juntos."
+      },
+      {
+        "photo": "assets/equipo-kw.webp",
+        "caption": "Alberto y Renata, equipo Confort4 en KW México."
       }
     ],
     "galleryTitle": "CAPPERS en nuestro primer año.",

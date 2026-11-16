@@ -24,5 +24,21 @@ export function validateContent(data){
  if(data.services.length!==3||!['vender','comprar','rentar'].every(id=>data.services.some(s=>s.id===id)))throw Error('Conserva los tres servicios.');
  if(!Array.isArray(data.home.modules)||!data.home.modules.every(m=>(m==='tool'||moduleTypes.includes(m)))||new Set(data.home.modules).size!==data.home.modules.length)throw Error('Revisa los módulos de inicio.');
  const slugs=new Set();for(const post of data.posts){if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(post.slug)||slugs.has(post.slug))throw Error('Slug de artículo inválido o repetido.');slugs.add(post.slug);if(!post.title||!Array.isArray(post.sections)||!Array.isArray(post.summary))throw Error('Revisa el artículo.');if(post.checklist&&!['venta','visita','renta'].includes(post.checklist))throw Error('Checklist de artículo inválido.');if(post.published){for(const key of ['title','excerpt','cover','author','updated'])string(post[key],'el campo '+key+' del artículo');if(!post.sections.length||!post.summary.length)throw Error('Completa el artículo antes de hacerlo visible.');for(const section of post.sections){string(section.title,'el título de la sección');string(section.text,'el contenido del artículo');}}}
+ if(data.clients){
+  list(data.clients.items,'las fotografías de clientes');
+  for(const item of data.clients.items){
+   string(item.photo,'la fotografía de clientes');string(item.alt,'la descripción de la fotografía');
+   if(item.quote&&item.quoteVerified!==true)throw Error('Solo publica comentarios reales verificados de clientes.');
+  }
+ }
+ if(data.transactions){
+  list(data.transactions.items,'el historial de operaciones');
+  for(const item of data.transactions.items){
+   if(!['vendida','rentada'].includes(item.status))throw Error('La operación debe estar vendida o rentada.');
+   string(item.title,'el título de la operación');string(item.photo,'la fotografía de la operación');
+   if(item.date&&!/^\d{4}-\d{2}-\d{2}$/.test(item.date))throw Error('Usa una fecha de operación válida.');
+   if(item.date&&(!Number.isFinite(Date.parse(item.date))||new Date(item.date).toISOString().slice(0,10)!==item.date))throw Error('Usa una fecha de operación válida.');
+  }
+ }
  return data;
 }
