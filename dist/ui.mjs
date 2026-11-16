@@ -11,7 +11,7 @@ export function clientsModule(data) {
 }
 export function transactionsModule(data) {
  const module=data.transactions;
- const items=(module?.items||[]).filter(item=>item.published===true&&item.photo&&item.title&&['vendida','rentada'].includes(item.status));
+ const items=(module?.items||[]).filter(item=>item.published===true&&item.cancelled!==true&&item.photo&&item.title&&['vendida','rentada'].includes(item.status));
  return storyCarousel('operaciones-cerradas',module?.title||'Historias que ya encontraron su lugar.',module?.intro||'Propiedades vendidas y rentadas con el acompañamiento de Confort4.',items,items.map(item=>`<article class="story-card transaction-story"><div class="story-photo" data-motion-image><img src="${safeURL(item.photo)}" alt="${e(item.title)}" width="1000" height="700" loading="lazy" decoding="async"><span class="transaction-status">${item.status==='vendida'?'VENDIDA':'RENTADA'}</span></div><div class="story-copy"><h3>${e(item.title)}</h3>${item.location?`<p>${e(item.location)}</p>`:''}${item.date?`<time datetime="${e(item.date)}">${e(new Intl.DateTimeFormat('es-MX',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(item.date)))}</time>`:''}${item.description?`<p>${e(item.description)}</p>`:''}</div></article>`).join(''));
 }
 export function featuredProperties(bundle) {

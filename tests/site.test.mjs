@@ -12,7 +12,7 @@ assert.throws(()=>validateContent({...content,posts:[{...content.posts[0],sectio
 const unsafe=structuredClone(content);unsafe.home.title='<script>alert(1)</script>';const home=renderPage({content:unsafe,properties,reviews:[]},'home');assert(!home.includes('<script>'));assert(home.includes('&lt;script&gt;'));
 let handler,mode='ok';const calls=[];
 globalThis.Deno={env:{get:n=>({SUPABASE_URL:'https://example.invalid',SUPABASE_SERVICE_ROLE_KEY:'test-service'}[n]||'')},serve:fn=>handler=fn};
-globalThis.fetch=async(url,opts)=>{const body=opts.body&&typeof opts.body==='string'?JSON.parse(opts.body):null;calls.push({url,opts,body});if(url.endsWith('/auth/v1/user'))return Response.json(mode==='unauthorized'?{}:{id:'validated-user',factors:mode==='mfa'?[{status:'verified'}]:[]},{status:mode==='unauthorized'?401:200});if(url.endsWith('/confort4_public_site'))return Response.json({content,properties,reviews:[]});if(url.endsWith('/confort4_admin'))return Response.json(mode==='nonmember'?{message:'not_a_member'}:mode==='conflict'?{message:'version_conflict'}:{revision:2},{status:['nonmember','conflict'].includes(mode)?400:200});throw Error('Unexpected '+url);};
+globalThis.fetch=async(url,opts)=>{const body=opts.body&&typeof opts.body==='string'?JSON.parse(opts.body):null;calls.push({url,opts,body});if(url.endsWith('/auth/v1/user'))return Response.json(mode==='unauthorized'?{}:{id:'validated-user',factors:mode==='mfa'?[{status:'verified'}]:[]},{status:mode==='unauthorized'?401:200});if(url.endsWith('/confort4_public_site'))return Response.json({content,properties,reviews:[]});if(url.endsWith('/confort4_history_admin'))return Response.json([]);if(url.endsWith('/confort4_admin'))return Response.json(mode==='nonmember'?{message:'not_a_member'}:mode==='conflict'?{message:'version_conflict'}:{revision:2},{status:['nonmember','conflict'].includes(mode)?400:200});throw Error('Unexpected '+url);};
 // Both deployments use the exact same validated module.
 assert.equal(fs.readFileSync(new URL('../dist/content-validation.mjs',import.meta.url),'utf8'),fs.readFileSync(new URL('../supabase/functions/confort4-site/content-validation.mjs',import.meta.url),'utf8'));
 await import('../supabase/functions/confort4-site/index.ts');
@@ -30,6 +30,7 @@ assert.equal((await handler(req({action:'save',args:{content:{}}}))).status,400)
 assert.equal((await handler(req({action:'upload',args:{mime:'image/svg+xml',data:btoa('<svg/>')}}))).status,400);
 assert.equal((await handler(req({action:'upload',args:{mime:'image/png',data:btoa('not a png')}}))).status,400);
 mode='conflict';assert.equal((await handler(req({action:'publish',args:{revision:1}}))).status,409);
+mode='ok';calls.length=0;assert.equal((await handler(req({action:'history',args:{id:'b487a75d-10e5-4b14-86b5-9539984df359',cancelled:true},p_user:'spoofed'}))).status,200);assert.equal(calls.find(c=>c.url.endsWith('/confort4_history_admin')).body.p_user,'validated-user');assert.equal((await handler(req({action:'history',args:{id:'invalid',cancelled:true}}))).status,400);
 console.log('PASS: CMS structure, escaped content, public feed, account validation, membership, MFA, actor binding, revision conflicts and upload validation.');
 
 // Construction and land are independent measurements, never substitutes.

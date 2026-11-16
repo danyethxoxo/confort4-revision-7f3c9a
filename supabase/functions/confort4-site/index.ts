@@ -14,7 +14,7 @@ export async function handle(req:Request){
   const buffer=new Uint8Array(size);let offset=0;for(const part of parts){buffer.set(part,offset);offset+=part.length;}
   let body;try{body=JSON.parse(new TextDecoder().decode(buffer));}catch{return response({error:'Solicitud inválida.'},400);}
   if(!body||typeof body!=='object'||Array.isArray(body)||typeof body.action!=='string')return response({error:'Solicitud inválida.'},400);
-  if(!['public','bootstrap','save','publish','restore','submissions','followup','moderate','inventory','select_property','settings','upload'].includes(body.action))return response({error:'Acción no permitida.'},400);
+  if(!['public','bootstrap','save','publish','restore','submissions','followup','moderate','inventory','select_property','settings','upload','history'].includes(body.action))return response({error:'Acción no permitida.'},400);
   if(body.action==='public')return response(await rpc('confort4_public_site'));
   const auth=await fetch(base+'/auth/v1/user',{headers:{apikey:key,Authorization:req.headers.get('authorization')||''},signal:AbortSignal.timeout(10000)});
   if(!auth.ok)return response({error:'Inicia sesión para continuar.'},401);
@@ -24,6 +24,10 @@ export async function handle(req:Request){
    const token=(req.headers.get('authorization')||'').split(' ')[1];
    const claims=JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
    if(claims.aal!=='aal2')return response({error:'Completa la verificación de tu cuenta.',code:'mfa_required'},403);
+  }
+  if(body.action==='history'){
+   if(body.args?.id&&(!/^[a-f0-9-]{36}$/i.test(body.args.id)||typeof body.args.cancelled!=='boolean'))return response({error:'Indica una propiedad y si la operación fue cancelada.'},400);
+   return response(await rpc('confort4_history_admin',{p_user:user.id,p_id:body.args?.id||null,p_cancelled:body.args?.cancelled??null}));
   }
   if(body.action==='save'){try{validateContent(body.args?.content);}catch(e){return response({error:(e as Error).message},400);}}
   if(body.action==='upload'){

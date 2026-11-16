@@ -37,7 +37,17 @@
   "transactions": {
     "title": "Historias que ya encontraron su lugar.",
     "intro": "Propiedades vendidas y rentadas con el acompañamiento de Confort4.",
-    "items": []
+    "items": [
+      {
+        "id": "inventory-b487a75d-10e5-4b14-86b5-9539984df359",
+        "propertyId": "b487a75d-10e5-4b14-86b5-9539984df359",
+        "title": "Único PH Duplex en Polanco: Terraza Privada y Máximo Confort",
+        "photo": "assets/historial-polanco.webp",
+        "location": "Polanco IV Sección · Miguel Hidalgo",
+        "status": "vendida",
+        "published": true
+      }
+    ]
   },
   "phone": "+52 55 2747 7538",
   "whatsapp": "https://wa.me/525527477538",
