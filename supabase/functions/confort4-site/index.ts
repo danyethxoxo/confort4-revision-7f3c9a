@@ -3,24 +3,41 @@ const env=(name:string)=>Deno.env.get(name)||'';
 const base=env('SUPABASE_URL'),key=env('SUPABASE_SERVICE_ROLE_KEY')||env('SERVICE_ROLE_KEY');
 const headers={'Access-Control-Allow-Origin':'https://danyethxoxo.github.io','Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Vary':'Origin'};
 const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers});
+const slowDown=()=>new Response(JSON.stringify({error:'Demasiadas solicitudes. Espera un momento e intenta de nuevo.'}),{status:429,headers:{...headers,'Retry-After':'60'}});
+async function digest(value:string){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(key+':'+value));return [...new Uint8Array(bytes)].map(b=>b.toString(16).padStart(2,'0')).join('');}
+async function rate(scope:string,subject:string,limit:number,seconds=60){return rpc('confort4_rate_gate',{p_scope:scope,p_subject:await digest(subject),p_limit:limit,p_seconds:seconds});}
 async function rpc(name:string,args:unknown={}){const r=await fetch(base+'/rest/v1/rpc/'+name,{method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify(args),signal:AbortSignal.timeout(15000)});const data=await r.json().catch(()=>null);if(!r.ok)throw Error(data?.message||'database_unavailable');return data;}
 export async function handle(req:Request){
  if(req.headers.get('origin')!=='https://danyethxoxo.github.io')return response({error:'Origen no permitido.'},403);
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
  if(req.method!=='POST')return response({error:'Método no permitido.'},405);
  try{
+  const address=(req.headers.get('x-forwarded-for')||req.headers.get('x-real-ip')||'unknown').split(',').at(-1)?.trim()||'unknown';
+  if(!await rate('requests',address,180))return slowDown();
   const reader=req.body?.getReader();if(!reader)return response({error:'Falta la solicitud.'},400);
   const parts:Uint8Array[]=[];let size=0;while(true){const item=await reader.read();if(item.done)break;size+=item.value.length;if(size>4500000){await reader.cancel();return response({error:'Archivo o contenido demasiado grande.'},413);}parts.push(item.value);}
   const buffer=new Uint8Array(size);let offset=0;for(const part of parts){buffer.set(part,offset);offset+=part.length;}
   let body;try{body=JSON.parse(new TextDecoder().decode(buffer));}catch{return response({error:'Solicitud inválida.'},400);}
   if(!body||typeof body!=='object'||Array.isArray(body)||typeof body.action!=='string')return response({error:'Solicitud inválida.'},400);
-  if(!['public','bootstrap','save','publish','restore','submissions','followup','moderate','inventory','select_property','settings','upload','history'].includes(body.action))return response({error:'Acción no permitida.'},400);
+  if(!['public','login','bootstrap','save','publish','restore','submissions','followup','moderate','inventory','select_property','settings','upload','history'].includes(body.action))return response({error:'Acción no permitida.'},400);
+  if(body.action==='login'){
+   const email=String(body.args?.email||'').trim().toLowerCase(),password=body.args?.password;
+   if(!await rate('login-ip',address,20,900)||!await rate('login-account',email,10,900))return slowDown();
+   if(email.length>254||typeof password!=='string'||password.length>256)return response({error:'No pudimos validar tu acceso. Revisa los datos e intenta de nuevo.'},401);
+   const result=await fetch(base+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:JSON.stringify({email,password}),signal:AbortSignal.timeout(15000)});
+   const data=await result.json().catch(()=>null);
+   if(!result.ok||!data?.user?.id||!await rpc('confort4_actor_role',{p_user:data.user.id}))return response({error:'No pudimos validar tu acceso. Revisa los datos e intenta de nuevo.'},401);
+   return response(data);
+  }
   if(body.action==='public')return response(await rpc('confort4_public_site'));
   const auth=await fetch(base+'/auth/v1/user',{headers:{apikey:key,Authorization:req.headers.get('authorization')||''},signal:AbortSignal.timeout(10000)});
   if(!auth.ok)return response({error:'Inicia sesión para continuar.'},401);
   const user=await auth.json();if(!user.id)return response({error:'Inicia sesión para continuar.'},401);
-  // getUser validated the token; require the account's native MFA when enabled.
-  if(user.factors?.some((factor:{status:string})=>factor.status==='verified')){
+  if(!await rpc('confort4_actor_role',{p_user:user.id}))return response({error:'Tu cuenta no tiene acceso a Confort4.'},403);
+  if(!await rate(body.action==='upload'?'uploads':'editor',user.id,body.action==='upload'?10:60))return slowDown();
+  // MFA is mandatory for this editor; membership still comes from the private table.
+  if(!user.factors?.some((factor:{status:string})=>factor.status==='verified'))return response({error:'Activa la verificación en dos pasos para entrar al editor.',code:'mfa_enrollment_required'},403);
+  {
    const token=(req.headers.get('authorization')||'').split(' ')[1];
    const claims=JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
    if(claims.aal!=='aal2')return response({error:'Completa la verificación de tu cuenta.',code:'mfa_required'},403);

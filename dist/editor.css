@@ -1,0 +1,36 @@
+body[data-page=admin] .footer,body[data-page=admin] .header #navigation,body[data-page=admin] .menu-toggle { display:none; }
+body[data-page=admin] .admin-shell { grid-template-columns:245px minmax(0,1fr);min-height:calc(100svh - 80px); }
+body[data-page=admin] .admin-sidebar { position:sticky;top:80px;height:calc(100svh - 80px);overflow-y:auto;background:#f3f3f3;padding:30px 20px; }
+.admin-sidebar nav .admin-nav-group { display:grid;gap:4px;padding:14px 0;margin:8px 0;border-block:1px solid var(--line); }
+.admin-nav-group > span { font-size:12px;color:var(--muted);padding:0 12px 6px; }
+body[data-page=admin] .admin-toolbar { position:sticky;top:80px;z-index:8;background:#fff;padding-block:18px;margin-top:-18px; }
+.editor-module { border:1px solid var(--line);border-radius:10px;margin:18px 0;max-width:920px;background:#fff; }
+.editor-module > summary { display:flex;justify-content:space-between;gap:18px;padding:22px;cursor:pointer;font-size:19px;font-weight:500; }
+.editor-module > summary span { font-size:12px;color:var(--muted);font-weight:400; }
+.editor-module[open] > summary { border-bottom:1px solid var(--line); }
+.editor-module > div { padding:8px 24px 28px; }
+.editor-image { margin:18px 0;padding:16px;background:#f6f6f6;border-radius:8px; }
+.editor-image:has(>img) { display:grid;grid-template-columns:160px minmax(0,1fr);gap:20px;align-items:start; }
+.editor-image > img { width:160px;max-height:180px;object-fit:contain;background:#e9e9e9; }
+#admin-panel .editor-image label { margin:0 0 16px; }
+#admin-panel .editor-upload input { font-size:12px; }
+.editor-photo-row { padding-bottom:22px;margin:18px 0;border-bottom:1px solid var(--line); }
+.editor-item { border-block-end:1px solid var(--line);padding:18px 0; }
+.editor-item summary { cursor:pointer;font-size:16px; }
+#admin-panel .module-sort .consent { margin:0;white-space:nowrap; }
+.module-sort > div { flex-wrap:wrap; }
+.mfa-setup img { width:220px;max-width:100%;background:#fff; }
+.mfa-setup code { display:block;overflow-wrap:anywhere;margin:16px 0;font-size:13px; }
+.admin-login { max-width:680px; }
+@media(max-width:700px){
+ body[data-page=admin] .admin-shell { display:block; }
+ body[data-page=admin] .admin-sidebar { position:static;height:auto;padding:20px; }
+ .admin-sidebar nav .admin-nav-group { display:contents; }
+ .admin-nav-group > span { display:none; }
+ body[data-page=admin] .admin-toolbar { top:75px; }
+ .editor-module > summary { padding:18px;font-size:17px; }
+ .editor-module > div { padding:4px 16px 22px; }
+ .editor-image:has(>img) { grid-template-columns:1fr; }
+ .editor-image > img { width:100%;max-height:180px; }
+ .module-sort > div > span { flex-basis:100%; }
+}
