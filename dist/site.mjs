@@ -1,7 +1,7 @@
-﻿import {renderPage,googleReviewModule} from './ui.mjs?v=20261116stories';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261116stories';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261116clientloop';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261116clientloop';
 import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261114zoom10';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261116stories';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261116clientloop';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -184,9 +184,17 @@ function heroSignature(hero) {
 }
 let reviewSignature=JSON.stringify([bundle.content.googleReviews,bundle.reviews||[]]),lastReviewRefresh=0,reviewRefreshPending=false;
 function syncReviews(next){
+ if(page==='review')syncClientGallery(next.content);
  const signature=JSON.stringify([next.content.googleReviews,next.reviews||[]]);if(signature===reviewSignature)return;
  const current=$('.google-reviews');if(!current||$('.review-full-dialog[open]',current)||$('.review-carousel',current)?.dataset.animating==='true')return;
  const template=document.createElement('template');template.innerHTML=googleReviewModule(next.content,next.reviews||[]);current.replaceWith(template.content);reviewSignature=signature;initReviews();
+}
+function syncClientGallery(content){
+ const template=document.createElement('template');template.innerHTML=clientsModule(content);
+ const current=$('#nuestros-clientes'),next=template.content.firstElementChild;
+ if(current?.dataset.storySignature===next?.dataset.storySignature)return;
+ if(current)current.replaceWith(template.content);else main.append(template.content);
+ initializeStoryCarousels(main);initializeReferenceMotion(main);
 }
 async function refreshLatestReviews(){
  if(reviewRefreshPending||document.hidden||Date.now()-lastReviewRefresh<30000)return;reviewRefreshPending=true;

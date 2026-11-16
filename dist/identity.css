@@ -666,3 +666,6 @@ body[data-page=contact] .contact-form-section { min-height:calc(100svh - 48px);p
 .full-catalog > div { display:flex;gap:12px; }
 .full-catalog .button { min-width:150px;justify-content:space-between; }
 @media(max-width:600px) { .full-catalog { align-items:stretch;flex-direction:column;gap:18px; }.full-catalog .button { min-width:0;flex:1; }.full-catalog > div { gap:10px; } }
+
+.story-controls .story-toggle { width:auto;min-width:94px;padding-inline:16px;font-size:14px; }
+.story-controls .story-toggle[hidden] { display:none; }
