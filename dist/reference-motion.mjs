@@ -533,7 +533,7 @@ export function initializeReferenceMotion(root) {
     sceneElements.heroParallax=hero?.querySelector('.hero-parallax');
     sceneElements.footerLetters=[...document.querySelectorAll('.footer-letter')];
     prepareEntranceObserver(root);
-    sceneElements.parallax = [...root.querySelectorAll('.narrative-process .motion-image-parallax,[data-motion-image] .motion-image-parallax')].map(element=>({element,figure:element.closest('[data-motion-image]')||element.closest('figure')}));
+    sceneElements.parallax = [...root.querySelectorAll('.narrative-process .motion-image-parallax,[data-motion-image] .motion-image-parallax')].filter(element=>!element.closest('.story-module')).map(element=>({element,figure:element.closest('[data-motion-image]')||element.closest('figure')}));
     sizeObserver?.disconnect();
     if (window.ResizeObserver) {
       sizeObserver = new window.ResizeObserver(() => { resizePending = true; scheduleScrollScene(); });
