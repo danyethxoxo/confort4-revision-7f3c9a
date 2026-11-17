@@ -6,7 +6,7 @@ import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
 const sharp=require(path.join(process.env.TEMP,'confort-media/node_modules/sharp'));
 const source='I:/Imágenes/confort 4/historial de propiedades';
-const files=fs.readdirSync(source).sort();
+const files=fs.readdirSync(source).filter(name=>name.startsWith('Captura de pantalla ')).sort();
 const rows=[
  [0,'2130688277883868','Único PH Duplex en Polanco: Terraza Privada y Máximo Confort','80 Aristóteles · Ciudad de México 11550','fuera_del_mercado',1450000,'USD',330,330,3,2.5,'Withdrawn','b487a75d-10e5-4b14-86b5-9539984df359'],
  [5,'2057546314147482','Departamento en Venta: 2 Recámaras y Roof Garden Privado','33 Carlos B. Zetina #B-802 · Cuauhtémoc 06170','cancelada',9900000,'MXN',168,168,2,2,'Cancelled'],
