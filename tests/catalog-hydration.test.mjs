@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {JSDOM} from 'jsdom';
+import {preserveCatalogPhotos} from '../dist/catalog-hydration.mjs';
+const card=(photo,title='Original',price='100')=>`<article class="property-card" data-property="one"><div class="property-photo"><a href="one.html"><img src="${photo}" alt="${title}"></a></div><h3>${title}</h3><p class="property-price">${price}</p></article>`;
+const dom=new JSDOM(`<main>${card('same.jpg')}</main>`),document=dom.window.document;
+const main=document.querySelector('main'),frame=main.querySelector('a');
+frame.dataset.motionSeen='true';
+const incoming=document.createElement('template');incoming.innerHTML=card('same.jpg','Updated','200');
+preserveCatalogPhotos(main,incoming.content);main.replaceChildren(incoming.content);
+assert.equal(main.querySelector('a'),frame,'An in-flight reveal must keep its original target during inventory hydration');
+assert.equal(main.querySelector('h3').textContent,'Updated');
+assert.equal(main.querySelector('.property-price').textContent,'200');
+assert.equal(frame.querySelector('img').alt,'Updated');
+incoming.innerHTML=card('different.jpg');preserveCatalogPhotos(main,incoming.content);main.replaceChildren(incoming.content);
+assert.notEqual(main.querySelector('a'),frame,'A changed photo must use the fresh image');
+assert.equal(main.querySelector('img').getAttribute('src'),'different.jpg');
+dom.window.close();
+console.log('PASS: inventory hydration preserves the reveal target while refreshing title/price and replacing changed photos.');
