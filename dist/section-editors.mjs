@@ -1,5 +1,14 @@
-import {e} from './ui.mjs?v=20261117panel';
+import {e} from './ui.mjs?v=20261117team';
 const module=(title,body)=>`<details class="editor-module"><summary>${e(title)}</summary><div>${body}</div></details>`;
+export function teamEditor(d,{input,block,image,photos}){
+ const visible=(id,label)=>`<label class="consent"><input type="checkbox" data-team-visible="${id}" ${d.team.hiddenSections.includes(id)?'':'checked'}>${label}</label>`;
+ return module('1. Portada · foto de pantalla completa',visible('cover','Mostrar foto de portada')+image('team.cover','Foto de portada')+input('team.heroEyebrow','Texto pequeño sobre el título')+input('team.title','Título sobre la foto',{area:true})+input('team.intro','Texto sobre la foto',{area:true}))+
+ module('2. Nuestra historia · texto y fotos',input('team.photosTitle','Título')+input('team.paragraphs','Historia · un párrafo por línea',{lines:true})+visible('photos','Mostrar fotos de la historia')+d.team.photos.map((_,i)=>image(`team.photos.${i}`,'Foto del equipo '+(i+1))).join(''))+
+ module('3. Alberto y Renata · perfiles',input('team.membersTitle','Título del módulo')+d.team.members.map((p,i)=>block(p.name,input(`team.members.${i}.name`,'Nombre')+image(`team.members.${i}.photo`,'Retrato')+input(`team.members.${i}.bio`,'Presentación',{area:true})+input(`team.members.${i}.contactLabel`,'Texto del botón de contacto')+input(`team.members.${i}.contact`,'Destino del contacto HTTPS')+input(`team.members.${i}.phone`,'Teléfono'))).join(''))+
+ module('4. Cómo te acompañamos',visible('approach','Mostrar módulo')+input('team.approachTitle','Título')+d.team.approach.map((_,i)=>block('Contenido '+(i+1),input(`team.approach.${i}.title`,'Título')+input(`team.approach.${i}.text`,'Texto',{area:true}))).join(''))+
+ module('Galería de fotos 1 · hasta 8 fotos',visible('cappers','Mostrar galería')+input('team.galleryTitle','Título')+input('team.galleryIntro','Texto',{area:true})+photos('team.gallery',8))+
+ module('Galería de fotos 2 · hasta 2 fotos',visible('national','Mostrar galería')+input('team.nationalAward.title','Título')+input('team.nationalAward.description','Texto',{area:true})+photos('team.nationalAward.photos',2));
+}
 export function serviceEditor(tab,d,{input,block,image}){
  const index=d.services.findIndex(s=>s.id===tab),s=d.services[index],p='services.'+index;
  const visible=id=>input(p+'.visibility.'+id,'Mostrar este módulo',{check:true});

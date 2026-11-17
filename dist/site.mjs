@@ -1,9 +1,10 @@
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117panel';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117panel';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117panel';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117panel';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117team';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117team';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117team';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117team';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261117team';
 import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261114zoom10';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117panel';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117team';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -172,10 +173,10 @@ main.addEventListener('submit',async ev=>{
 });
 if(['property','article'].includes(page))main.innerHTML=renderPage(bundle,page,params);
 let heroIntroPending=false,heroIntroTimer=null;
-function releaseHeroIntro(initialize=true){if(!heroIntroPending)return;heroIntroPending=false;window.clearTimeout(heroIntroTimer);main.querySelector('.hero')?.removeAttribute('data-motion-pending');if(initialize)initializeReferenceMotion(main);}
+function releaseHeroIntro(initialize=true){if(!heroIntroPending)return;heroIntroPending=false;window.clearTimeout(heroIntroTimer);main.querySelector('.hero,.team-hero')?.removeAttribute('data-motion-pending');if(initialize)initializeReferenceMotion(main);}
 let preview=false;
 if(params.preview==='1'){const content=storage.get('preview',null);if(content){bundle={...bundle,content};main.innerHTML=renderPage(bundle,page,params)||main.innerHTML;const banner=document.createElement('div');banner.className='preview-banner';banner.textContent='Vista previa del borrador · estos cambios todavía no son públicos.';main.before(banner);preview=true;}}
-if(page==='home'&&!preview&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){heroIntroPending=true;main.querySelector('.hero')?.setAttribute('data-motion-pending','true');heroIntroTimer=window.setTimeout(()=>releaseHeroIntro(),2000);}
+if(['home','team'].includes(page)&&!preview&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){heroIntroPending=true;main.querySelector('.hero,.team-hero')?.setAttribute('data-motion-pending','true');heroIntroTimer=window.setTimeout(()=>releaseHeroIntro(),2000);}
 init();
 
 let reviewSignature=JSON.stringify([bundle.content.googleReviews,bundle.content.widgets?.reviews,bundle.reviews||[]]),lastReviewRefresh=0,reviewRefreshPending=false;
@@ -215,6 +216,7 @@ if (!preview) {
   const template = document.createElement('template');
   template.innerHTML = renderPage(bundle,page,params);
   preserveCatalogPhotos(main,template.content);
+  if(page==='team'){releaseHeroIntro(false);preserveTeamMotion(main,template.content);}
   // Preserve unchanged galleries (and their scroll/reveal state) on feed hydration.
   main.querySelectorAll('[data-story-carousel]').forEach(current => {
    if(current.hasAttribute('data-history-pending'))return;
