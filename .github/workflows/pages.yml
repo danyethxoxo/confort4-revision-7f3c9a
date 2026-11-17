@@ -37,6 +37,7 @@ jobs:
           node tests/motion.test.mjs
           node tests/reviews.test.mjs
           node tests/ui.test.mjs
+          node tests/home-modules.test.mjs
           node tests/property-sdr.test.mjs
           node --experimental-strip-types tests/photo-gateway.test.mjs
       - uses: actions/configure-pages@v5
