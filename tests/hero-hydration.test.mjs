@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {JSDOM} from 'jsdom';
+import {heroSignature,updateHeroContent} from '../dist/hero-hydration.mjs';
+const dom=new JSDOM(`<section class="hero hero-intro-playing" data-motion-prepared="true"><div class="hero-frame"><div class="hero-parallax"><img class="hero-image" src="old.webp" alt="Anterior"></div></div><h1 data-motion-text="Mi portada"><span class="motion-line">Mi portada</span></h1><div class="hero-aside"><p>Descripción</p><a href="contacto.html">Hablemos</a></div></section>`);
+const current=dom.window.document.querySelector('.hero'),image=current.querySelector('img'),frame=current.querySelector('.hero-frame'),line=current.querySelector('.motion-line');
+const next=dom.window.document.createElement('section');next.innerHTML='<img class="hero-image" src="cropped.webp" alt="Recortada"><h1>Mi portada</h1><div class="hero-aside"><p>Descripción</p><a href="contacto.html">Hablemos</a></div>';
+const previousSignature=heroSignature(current);updateHeroContent(current,next);
+assert.notEqual(heroSignature(current),previousSignature);assert.equal(current.querySelector('img'),image);assert.equal(current.querySelector('.hero-frame'),frame);assert.equal(current.querySelector('.motion-line'),line);assert(current.classList.contains('hero-intro-playing'));assert.equal(image.getAttribute('src'),'cropped.webp');
+next.querySelector('h1').textContent='Nueva portada';next.querySelector('p').textContent='Otro texto';next.querySelector('a').setAttribute('href','comprar.html');updateHeroContent(current,next);
+assert.equal(current.querySelector('h1').textContent,'Nueva portada');assert.equal(current.querySelector('p').textContent,'Otro texto');assert.equal(current.querySelector('a').getAttribute('href'),'comprar.html');assert.equal(current.querySelector('.hero-frame'),frame);
+dom.window.close();console.log('PASS: cropped image hydration preserves active frame/unchanged line nodes and updates published text/links.');
