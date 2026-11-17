@@ -19,7 +19,7 @@ export async function handle(req:Request){
   const buffer=new Uint8Array(size);let offset=0;for(const part of parts){buffer.set(part,offset);offset+=part.length;}
   let body;try{body=JSON.parse(new TextDecoder().decode(buffer));}catch{return response({error:'Solicitud inválida.'},400);}
   if(!body||typeof body!=='object'||Array.isArray(body)||typeof body.action!=='string')return response({error:'Solicitud inválida.'},400);
-  if(!['public','login','bootstrap','save','publish','restore','submissions','followup','moderate','inventory','select_property','settings','upload','history'].includes(body.action))return response({error:'Acción no permitida.'},400);
+  if(!['public','login','bootstrap','save','publish','restore','submissions','followup','moderate','inventory','select_property','settings','upload','history','catalog','resolve_property'].includes(body.action))return response({error:'Acción no permitida.'},400);
   if(body.action==='login'){
    const username=String(body.args?.username||'').trim().toLowerCase(),password=body.args?.password;
    if(!await rate('login-ip',address,20,900)||!await rate('login-account',username,10,900))return slowDown();
@@ -37,6 +37,13 @@ export async function handle(req:Request){
   const user=await auth.json();if(!user.id)return response({error:'Inicia sesión para continuar.'},401);
   if(!await rpc('confort4_actor_role',{p_user:user.id}))return response({error:'Tu cuenta no tiene acceso a Confort4.'},403);
   if(!await rate(body.action==='upload'?'uploads':'editor',user.id,body.action==='upload'?10:60))return slowDown();
+  if(body.action==='catalog')return response(await rpc('confort4_catalog_picker',{p_user:user.id}));
+  if(body.action==='resolve_property'){
+   let url;try{url=new URL(body.args?.url);}catch{return response({error:'Pega un enlace de propiedad de KW.'},400);}
+   const reference=url.pathname.match(/\/property\/[^/]+\/(\d{8,20})\/?$/)?.[1];
+   if(String(body.args?.url).length>2048||!['https:','http:'].includes(url.protocol)||!(url.hostname==='kw.com'||url.hostname.endsWith('.kw.com'))||url.username||url.password||url.port||!reference)return response({error:'Usa un enlace de propiedad de kw.com o de un sitio de KW.'},400);
+   return response(await rpc('confort4_catalog_picker',{p_user:user.id,p_reference:reference}));
+  }
   if(body.action==='history'){
    if(body.args?.id&&('status' in body.args||'visible' in body.args)){
     if(!/^[a-f0-9-]{36}$/i.test(body.args.id)||!['vendida','rentada','cancelada','fuera_del_mercado','expirada'].includes(body.args.status)||typeof body.args.visible!=='boolean')return response({error:'Indica un estado y la visibilidad de la propiedad.'},400);

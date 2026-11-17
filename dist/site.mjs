@@ -1,9 +1,9 @@
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261116reveal';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261116reveal';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261116reveal';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261116reveal';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117panel';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117panel';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117panel';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117panel';
 import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261114zoom10';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261116reveal';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117panel';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -208,7 +208,7 @@ if (!preview) {
   const live = await response.json();
   if (!live.content?.home) throw Error('feed');
   bundle = live;lastReviewRefresh=Date.now();
-  if(page==='review'||(page==='home'&&dirty)){releaseHeroIntro();syncReviews(live);return;}
+  if((page==='review'||page==='home')&&dirty){releaseHeroIntro();syncReviews(live);return;}
   if (dirty || page==='privacy') return;
   const previousHero = main.querySelector('.hero');
   const signature = heroSignature(previousHero);
