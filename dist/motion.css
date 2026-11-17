@@ -25,6 +25,7 @@
 .motion-gradient-clip { display: block; }
 .motion-gradient-line { display: block; width: fit-content; background-clip: text; -webkit-background-clip: text; color: transparent; }
 .motion-image-settle { position: relative; width: 100%; height: 100%; }
+html.motion-images-armed :is([data-motion-image],.narrative-process figure,.journal-card>a,.property-card .property-photo>a):not([data-motion-seen]) img{visibility:hidden}
 .motion-image-parallax { position: relative; width: 100%; height: 100%; }
 .narrative-process figure { height: 510px; overflow: hidden; }
 .narrative-process figure img { height: 100%; }

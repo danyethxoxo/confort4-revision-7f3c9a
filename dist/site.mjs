@@ -1,10 +1,10 @@
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117team';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117team';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117team';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117team';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261117team';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117fast';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117fast';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117fast';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117fast';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261117fast';
 import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261114zoom10';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117team';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117fast';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -171,12 +171,16 @@ main.addEventListener('submit',async ev=>{
  catch(error){status.textContent=error.name==='TimeoutError'?'La conexión tardó demasiado. Intenta de nuevo; evitaremos duplicar el envío.':error.message||'No se pudo enviar. Usa WhatsApp o intenta otra vez.';status.classList.add('is-error');button.disabled=false;button.innerHTML=label;status.focus();}
  finally{form.removeAttribute('aria-busy');}
 });
-if(['property','article'].includes(page))main.innerHTML=renderPage(bundle,page,params);
+if(page==='team'&&params.preview!=='1'){
+ const cached=storage.get('team-public',null);
+ if(Array.isArray(cached?.members)&&cached.members.length&&Array.isArray(cached.paragraphs)&&cached.title&&cached.intro)bundle.content.team=cached;
+}
+if(['property','article','team'].includes(page))main.innerHTML=renderPage(bundle,page,params);
 let heroIntroPending=false,heroIntroTimer=null;
 function releaseHeroIntro(initialize=true){if(!heroIntroPending)return;heroIntroPending=false;window.clearTimeout(heroIntroTimer);main.querySelector('.hero,.team-hero')?.removeAttribute('data-motion-pending');if(initialize)initializeReferenceMotion(main);}
 let preview=false;
 if(params.preview==='1'){const content=storage.get('preview',null);if(content){bundle={...bundle,content};main.innerHTML=renderPage(bundle,page,params)||main.innerHTML;const banner=document.createElement('div');banner.className='preview-banner';banner.textContent='Vista previa del borrador · estos cambios todavía no son públicos.';main.before(banner);preview=true;}}
-if(['home','team'].includes(page)&&!preview&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){heroIntroPending=true;main.querySelector('.hero,.team-hero')?.setAttribute('data-motion-pending','true');heroIntroTimer=window.setTimeout(()=>releaseHeroIntro(),2000);}
+if(page==='home'&&!preview&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){heroIntroPending=true;main.querySelector('.hero')?.setAttribute('data-motion-pending','true');heroIntroTimer=window.setTimeout(()=>releaseHeroIntro(),2000);}
 init();
 
 let reviewSignature=JSON.stringify([bundle.content.googleReviews,bundle.content.widgets?.reviews,bundle.reviews||[]]),lastReviewRefresh=0,reviewRefreshPending=false;
@@ -209,6 +213,7 @@ if (!preview) {
   const live = await response.json();
   if (!live.content?.home) throw Error('feed');
   bundle = live;lastReviewRefresh=Date.now();
+  if(page==='team'&&live.content.team)storage.set('team-public',live.content.team);
   if((page==='review'||page==='home')&&dirty){releaseHeroIntro();syncReviews(live);return;}
   if (dirty || page==='privacy') return;
   const previousHero = main.querySelector('.hero');
@@ -234,7 +239,7 @@ if (!preview) {
    main.replaceChildren(template.content);
   }
   init();
-  if (location.hash) $(location.hash)?.scrollIntoView({block:'start'});
+  if (location.hash&&!window.CONFORT4_TEAM_RELOAD) $(location.hash)?.scrollIntoView({block:'start'});
  }).catch(() => {
   releaseHeroIntro();
   $$('.catalog-status').forEach(element => {

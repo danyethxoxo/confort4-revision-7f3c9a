@@ -1,4 +1,4 @@
-import {motionTiming as timing, clampProgress, intervalProgress, expansionState, lineGradientPosition} from './motion-rules.mjs';
+import {motionTiming as timing, clampProgress, intervalProgress, expansionState, lineGradientPosition} from './motion-rules.mjs?v=20261117fast';
 import {initializeMotionNavigation} from './motion-navigation.mjs?v=20261114catalog';
 
 const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -99,7 +99,8 @@ function revealLines(block, delay = 0) {
   block.element.dataset.motionSeen = 'true';
   block.lines.forEach((line, index) => {
     line.style.transform = 'translateY(0%)';
-    play(line, [{transform: 'translateY(110%)'}, {transform: 'translateY(0%)'}], timing.line, delay + index * timing.lineStagger);
+    const cover=Boolean(block.element.closest('.team-hero'));
+    play(line, [{transform: 'translateY(110%)'}, {transform: 'translateY(0%)'}], cover?650:timing.line, delay + index * (cover?40:timing.lineStagger));
   });
 }
 
@@ -159,14 +160,15 @@ function prepareEntranceObserver(root) {
           const revealImage = () => {
             if (!element.isConnected) return;
             element.style.clipPath = '';
-            play(element, [{clipPath: 'inset(100% 0% 0%)'}, {clipPath: 'inset(0%)'}], timing.imageWipe, 0, timing.inOut);
+            const cover=element.classList.contains('team-hero-media');
+            play(element, [{clipPath: 'inset(100% 0% 0%)'}, {clipPath: 'inset(0%)'}], cover?650:timing.imageWipe, 0, timing.out);
             const settle = element.querySelector('.motion-image-settle');
             if (settle) settle.style.clipPath = '';
-            if (settle) play(settle, [{transform: element.dataset.motionFraming==='faces'?'scale(1.03)':'scale(1.15)'}, {transform: 'scale(1)'}], timing.imageSettle);
+            if (settle) play(settle, [{transform: element.dataset.motionFraming==='faces'?'scale(1.03)':'scale(1.15)'}, {transform: 'scale(1)'}], cover?800:timing.imageSettle);
           };
           const photo = element.querySelector('img');
-          if ((element.dataset.catalogReveal||element.dataset.teamKey) && photo) photo.loading = 'eager';
-          if ((element.dataset.catalogReveal||element.dataset.teamKey) && photo?.decode) photo.decode().catch(() => {}).then(revealImage);
+          if (photo) photo.loading = 'eager';
+          if (photo?.decode) photo.decode().catch(() => {}).then(revealImage);
           else revealImage();
         } else if (element.dataset.motionKind === 'rule') {
           play(element, [{transform:'scaleX(0)'}, {transform:'scaleX(1)'}], 900);
@@ -175,7 +177,7 @@ function prepareEntranceObserver(root) {
         }
         entranceObserver.unobserve(element);
       }
-    }, {rootMargin: '0px 0px -10% 0px', threshold: 0});
+    }, {rootMargin: '0px', threshold: 0});
   }
 
   const lineTargets = root.querySelectorAll('.brand-statement p,.module-heading h2,.module-heading>p,.module-heading>div>p,.process-stage h3,.process-stage>div>p,.living-copy h2,.faq-module h2,.contact-form-intro h2,.contact-form-intro h1,[data-team-text]');
@@ -212,9 +214,9 @@ function prepareEntranceObserver(root) {
       if (revealedCatalogPhotos.has(catalogPhotoKey(element))) element.dataset.motionSeen = 'true';
     }
     if (canObserve && !element.dataset.motionSeen) {
-      if (element.dataset.catalogReveal||element.dataset.teamKey) element.querySelector('.motion-image-settle').style.clipPath = 'inset(100% 0% 0%)';
+      element.querySelector('.motion-image-settle').style.clipPath = 'inset(100% 0% 0%)';
       entranceObserver.observe(element);
-    } else { element.style.clipPath = ''; element.querySelector('.motion-image-settle').style.clipPath = ''; }
+    } else { element.dataset.motionSeen='true';element.style.clipPath = ''; element.querySelector('.motion-image-settle').style.clipPath = ''; }
   });
 
   root.querySelectorAll('[data-team-rule]').forEach(element => {

@@ -1,4 +1,4 @@
-import {e,safeURL} from './ui.mjs?v=20261117team';
+import {e,safeURL} from './ui.mjs?v=20261117fast';
 export function metricsScene(bundle){
  const m=bundle.content.metrics,properties=bundle.properties||[];
  const automatic={properties:properties.length,team:bundle.content.team.members.length,services:bundle.content.services.length,locations:new Set(properties.map(p=>p.municipio).filter(Boolean)).size};
