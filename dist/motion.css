@@ -183,6 +183,13 @@ body[data-page=catalog] .catalog-intro { padding-bottom: 22px; }
 .catalog-intro .full-catalog { grid-column: auto; flex-direction: column; align-items: flex-start; justify-content: center; gap: 14px; margin-top: 0; padding-top: 0; border-top: 0; }
 .catalog-intro .full-catalog .button { white-space: nowrap; }
 @media(max-width:800px) { .catalog-intro .full-catalog > div { width:100%; } .catalog-intro .full-catalog .button { flex:1; min-width:0; } }
+@media(min-width:1001px) {
+ body[data-page=catalog] .property-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:32px 24px; }
+ body[data-page=catalog] .property-photo { height:clamp(180px,30svh,320px); aspect-ratio:auto; }
+ body[data-page=catalog] .property-copy { padding-top:16px; }
+ body[data-page=catalog] .property-copy h3 { font-size:clamp(20px,1.5vw,25px); line-height:1.2; }
+ body[data-page=catalog] .property-price { margin-top:12px; }
+}
 .intro-copy > p:first-child { font-size: 19px; color: var(--ink); }
 body[data-page=team] .page-intro { align-items: start; }
 .team-story .team-profile-grid { margin-top: 8px; }
