@@ -165,8 +165,8 @@ function prepareEntranceObserver(root) {
             if (settle) play(settle, [{transform: element.dataset.motionFraming==='faces'?'scale(1.03)':'scale(1.15)'}, {transform: 'scale(1)'}], timing.imageSettle);
           };
           const photo = element.querySelector('img');
-          if (element.dataset.catalogReveal && photo) photo.loading = 'eager';
-          if (element.dataset.catalogReveal && photo?.decode) photo.decode().catch(() => {}).then(revealImage);
+          if ((element.dataset.catalogReveal||element.dataset.teamKey) && photo) photo.loading = 'eager';
+          if ((element.dataset.catalogReveal||element.dataset.teamKey) && photo?.decode) photo.decode().catch(() => {}).then(revealImage);
           else revealImage();
         } else if (element.dataset.motionKind === 'rule') {
           play(element, [{transform:'scaleX(0)'}, {transform:'scaleX(1)'}], 900);
@@ -180,7 +180,9 @@ function prepareEntranceObserver(root) {
 
   const lineTargets = root.querySelectorAll('.brand-statement p,.module-heading h2,.module-heading>p,.module-heading>div>p,.process-stage h3,.process-stage>div>p,.living-copy h2,.faq-module h2,.contact-form-intro h2,.contact-form-intro h1,[data-team-text]');
   lineBlocks = [...lineTargets].map(element => {
-    const block = measureLines(element);
+    const existing=element.querySelectorAll('.motion-line');
+    const block = element.dataset.motionSeen&&existing.length?{element,lines:[...existing]}:measureLines(element);
+    if(element.closest('[data-motion-pending]'))return block;
     if (canObserve && !element.dataset.motionSeen) {
       block.lines.forEach(line => { line.style.transform = 'translateY(110%)'; });
       entranceObserver.observe(element);
@@ -193,6 +195,7 @@ function prepareEntranceObserver(root) {
   gradientBlocks = [...root.querySelectorAll('.process-guide .scroll-copy')].map(element => measureLines(element, 'gradient'));
 
   root.querySelectorAll('.narrative-process figure,.journal-card>a,[data-motion-image],.property-card .property-photo>a').forEach(element => {
+    if(element.closest('[data-motion-pending]'))return;
     if (!element.querySelector('.motion-image-settle')) {
       const image = element.querySelector('img');
       const settle = document.createElement('div');
@@ -209,7 +212,7 @@ function prepareEntranceObserver(root) {
       if (revealedCatalogPhotos.has(catalogPhotoKey(element))) element.dataset.motionSeen = 'true';
     }
     if (canObserve && !element.dataset.motionSeen) {
-      if (element.dataset.catalogReveal) element.querySelector('.motion-image-settle').style.clipPath = 'inset(100% 0% 0%)';
+      if (element.dataset.catalogReveal||element.dataset.teamKey) element.querySelector('.motion-image-settle').style.clipPath = 'inset(100% 0% 0%)';
       entranceObserver.observe(element);
     } else { element.style.clipPath = ''; element.querySelector('.motion-image-settle').style.clipPath = ''; }
   });
