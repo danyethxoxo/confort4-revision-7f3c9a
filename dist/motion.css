@@ -182,6 +182,7 @@ body:not([data-page=home]) .page-intro > p { margin: 0; max-width: 48ch; font-si
 body[data-page=catalog] .catalog-intro { padding-bottom: 22px; }
 .catalog-intro .full-catalog { grid-column: auto; flex-direction: column; align-items: flex-start; justify-content: center; gap: 14px; margin-top: 0; padding-top: 0; border-top: 0; }
 .catalog-intro .full-catalog .button { white-space: nowrap; }
+@media(min-width:801px) { .catalog-intro .full-catalog { align-items:flex-end; } .catalog-intro .full-catalog h2 { text-align:right; } }
 @media(max-width:800px) { .catalog-intro .full-catalog > div { width:100%; } .catalog-intro .full-catalog .button { flex:1; min-width:0; } }
 @media(min-width:1001px) {
  body[data-page=catalog] .property-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:32px 24px; }
