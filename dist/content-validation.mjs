@@ -3,6 +3,7 @@ export function validateContent(data){
  if(!data||typeof data!=='object'||!data.team||!Array.isArray(data.services)||!data.home||!Array.isArray(data.posts)||!Array.isArray(data.faq))throw Error('Faltan secciones de contenido.');
  if(JSON.stringify(data).length>440000)throw Error('El contenido es demasiado grande.');
  function walk(value,depth=0,key=''){
+  if(['visible','published'].includes(key)&&typeof value!=='boolean')throw Error('Revisa la visibilidad del contenido.');
   if(depth>12)throw Error('Estructura demasiado profunda.');
   if(key.endsWith('Href')&&typeof value!=='string')throw Error('El destino de un botón debe ser texto.');
   if(typeof value==='string'){
@@ -29,14 +30,22 @@ export function validateContent(data){
  if((data.team.gallery||[]).length>8)throw Error('Galería de fotos 1 admite un máximo de 8 fotografías.');
  if((data.team.nationalAward?.photos||[]).length>2)throw Error('Galería de fotos 2 admite un máximo de 2 fotografías.');
  if(data.team.hiddenSections&&(!Array.isArray(data.team.hiddenSections)||!data.team.hiddenSections.every(id=>['cover','approach','photos','cappers','national'].includes(id))))throw Error('Revisa los módulos del equipo.');
- for(const photo of [...(data.team.gallery||[]),...(data.team.nationalAward?.photos||[])]){string(photo.photo,'la fotografía del equipo');string(photo.caption,'la descripción de la fotografía');}
+ for(const photo of [...(data.team.gallery||[]),...(data.team.nationalAward?.photos||[])]){string(photo.photo,'la fotografía del equipo');}
  if(data.metrics){list(data.metrics.items,'las cifras');if(data.metrics.items.length>8)throw Error('Conserva hasta 8 cifras.');for(const item of data.metrics.items){string(item.label,'el nombre de la cifra');if(!['manual','properties','team','services','locations'].includes(item.source)||!Number.isFinite(item.value)||item.value<0||item.value>1000000)throw Error('Revisa el número y origen de las cifras.');}}
  if(data.living){list(data.living.photos,'las imágenes de Un espacio para vivir');if(data.living.photos.length!==7)throw Error('Conserva las siete imágenes de la composición.');for(const photo of data.living.photos)string(photo.photo,'la fotografía de la composición');}
- const slugs=new Set();for(const post of data.posts){if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(post.slug)||slugs.has(post.slug))throw Error('Slug de artículo inválido o repetido.');slugs.add(post.slug);if(!post.title||!Array.isArray(post.sections)||!Array.isArray(post.summary))throw Error('Revisa el artículo.');if(post.checklist&&!['venta','visita','renta'].includes(post.checklist))throw Error('Checklist de artículo inválido.');if(post.published){for(const key of ['title','excerpt','cover','author','updated'])string(post[key],'el campo '+key+' del artículo');if(!post.sections.length||!post.summary.length)throw Error('Completa el artículo antes de hacerlo visible.');for(const section of post.sections){string(section.title,'el título de la sección');string(section.text,'el contenido del artículo');}}}
+ const slugs=new Set();for(const post of data.posts){if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(post.slug)||slugs.has(post.slug))throw Error('Slug de artículo inválido o repetido.');slugs.add(post.slug);if(!post.title||!Array.isArray(post.sections)||!Array.isArray(post.summary))throw Error('Revisa el artículo.');if(post.checklist&&!['venta','visita','renta'].includes(post.checklist))throw Error('Checklist de artículo inválido.');if(post.published){for(const key of ['title','excerpt','cover','author','updated'])string(post[key],'el campo '+key+' del artículo');if(!post.sections.length)throw Error('Completa el artículo antes de hacerlo visible.');for(const section of post.sections){string(section.title,'el título de la sección');string(section.text,'el contenido del artículo');}}}
+ for(const service of data.services){
+  if(service.visibility)for(const value of Object.values(service.visibility))if(typeof value!=='boolean')throw Error('Revisa la visibilidad de los módulos del servicio.');
+  if(service.process){if(service.process.length!==3)throw Error('Conserva las tres fases del servicio.');for(const step of service.process){string(step.title,'el título de la fase');string(step.text,'el texto de la fase');string(step.image,'la foto de la fase');list(step.items,'los puntos de la fase');}}
+  if(service.comparison){list(service.comparison.rows,'las filas de la tabla');if(service.comparison.rows.length>20)throw Error('La tabla admite hasta 20 filas.');for(const row of service.comparison.rows){if(!Array.isArray(row)||row.length!==3||row.some(cell=>typeof cell!=='string'))throw Error('Cada fila de la tabla debe tener tres textos.');}}
+  if(service.faq){list(service.faq,'las preguntas del servicio');for(const question of service.faq){string(question.question,'la pregunta');string(question.answer,'la respuesta');}}
+ }
+ if(data.reviewPage)for(const key of ['title','intro','formTitle','nameLabel','emailLabel','interestLabel','ratingLabel','messageLabel','buttonLabel'])string(data.reviewPage[key],'el texto '+key+' de reseñas');
+ if(data.blogPage){string(data.blogPage.title,'el título del blog');string(data.blogPage.intro,'la presentación del blog');}
  if(data.clients){
-  list(data.clients.items,'las fotografías de clientes');
+  list(data.clients.items,'las fotografías de clientes');if(data.clients.items.length>20)throw Error('Nuestros clientes admite hasta 20 fotos.');
   for(const item of data.clients.items){
-   string(item.photo,'la fotografía de clientes');string(item.alt,'la descripción de la fotografía');
+   string(item.photo,'la fotografía de clientes');
    if(item.quote&&item.quoteVerified!==true)throw Error('Solo publica comentarios reales verificados de clientes.');
   }
  }
