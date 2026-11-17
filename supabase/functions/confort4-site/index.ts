@@ -38,6 +38,10 @@ export async function handle(req:Request){
   if(!await rpc('confort4_actor_role',{p_user:user.id}))return response({error:'Tu cuenta no tiene acceso a Confort4.'},403);
   if(!await rate(body.action==='upload'?'uploads':'editor',user.id,body.action==='upload'?10:60))return slowDown();
   if(body.action==='history'){
+   if(body.args?.id&&('status' in body.args||'visible' in body.args)){
+    if(!/^[a-f0-9-]{36}$/i.test(body.args.id)||!['vendida','rentada','cancelada','fuera_del_mercado','expirada'].includes(body.args.status)||typeof body.args.visible!=='boolean')return response({error:'Indica un estado y la visibilidad de la propiedad.'},400);
+    return response(await rpc('confort4_history_manage',{p_user:user.id,p_id:body.args.id,p_status:body.args.status,p_visible:body.args.visible}));
+   }
    if(body.args?.id&&(!/^[a-f0-9-]{36}$/i.test(body.args.id)||typeof body.args.cancelled!=='boolean'))return response({error:'Indica una propiedad y si la operación fue cancelada.'},400);
    return response(await rpc('confort4_history_admin',{p_user:user.id,p_id:body.args?.id||null,p_cancelled:body.args?.cancelled??null}));
   }
