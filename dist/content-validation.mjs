@@ -26,8 +26,8 @@ export function validateContent(data){
  if(data.services.length!==3||!['vender','comprar','rentar'].every(id=>data.services.some(s=>s.id===id)))throw Error('Conserva los tres servicios.');
  if(!Array.isArray(data.home.modules)||!data.home.modules.every(m=>(m==='tool'||moduleTypes.includes(m)))||new Set(data.home.modules).size!==data.home.modules.length)throw Error('Revisa los módulos de inicio.');
  if(data.home.hiddenModules&&(!Array.isArray(data.home.hiddenModules)||!data.home.hiddenModules.every(id=>moduleTypes.includes(id))))throw Error('Revisa la visibilidad de los módulos.');
- if((data.team.gallery||[]).length>8)throw Error('CAPPERS admite un máximo de 8 fotografías.');
- if((data.team.nationalAward?.photos||[]).length>2)throw Error('Novatos admite un máximo de 2 fotografías.');
+ if((data.team.gallery||[]).length>8)throw Error('Galería de fotos 1 admite un máximo de 8 fotografías.');
+ if((data.team.nationalAward?.photos||[]).length>2)throw Error('Galería de fotos 2 admite un máximo de 2 fotografías.');
  if(data.team.hiddenSections&&(!Array.isArray(data.team.hiddenSections)||!data.team.hiddenSections.every(id=>['cover','approach','photos','cappers','national'].includes(id))))throw Error('Revisa los módulos del equipo.');
  for(const photo of [...(data.team.gallery||[]),...(data.team.nationalAward?.photos||[])]){string(photo.photo,'la fotografía del equipo');string(photo.caption,'la descripción de la fotografía');}
  if(data.metrics){list(data.metrics.items,'las cifras');if(data.metrics.items.length>8)throw Error('Conserva hasta 8 cifras.');for(const item of data.metrics.items){string(item.label,'el nombre de la cifra');if(!['manual','properties','team','services','locations'].includes(item.source)||!Number.isFinite(item.value)||item.value<0||item.value>1000000)throw Error('Revisa el número y origen de las cifras.');}}
