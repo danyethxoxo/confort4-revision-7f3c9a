@@ -679,3 +679,14 @@ body[data-page=contact] .contact-form-section { min-height:calc(100svh - 48px);p
 .transaction-overlay .history-price { margin:0;color:#fff; }
 .history-price strong { font-size:23px;font-weight:400;letter-spacing:-.03em; }
 .history-price small { font-size:13px;letter-spacing:0; }
+
+/* Keep the shading above every transformed photo, including moving clones. */
+.property-editorial .property-gallery .property-gallery-cover{isolation:isolate;overflow:hidden;background:#111;filter:none;opacity:1}
+.property-photo-stage .property-gallery-cover::after{z-index:2}
+.property-photo-stage .property-gallery-cover>img,.property-photo-stage .property-photo-zoom{position:absolute;inset:0;z-index:0}
+.property-photo-stage .property-photo-outgoing{z-index:1}
+.property-photo-stage{touch-action:pan-y pinch-zoom}
+.story-track,.property-gallery-thumbs{touch-action:pan-x pan-y pinch-zoom;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.review-carousel,.property-viewer-stage{touch-action:pan-y pinch-zoom}
+.admin-property-photos{display:flex;gap:10px;overflow-x:auto;padding:12px 0;touch-action:pan-x pan-y pinch-zoom}
+.admin-property-photos img{width:140px;height:100px;object-fit:cover;flex:0 0 140px}

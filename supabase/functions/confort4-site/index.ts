@@ -1,4 +1,5 @@
 import {validateContent} from './content-validation.mjs';
+import {ensurePropertyMedia} from './property-media.mjs';
 const env=(name:string)=>Deno.env.get(name)||'';
 const base=env('SUPABASE_URL'),key=env('SUPABASE_SERVICE_ROLE_KEY')||env('SERVICE_ROLE_KEY');
 const headers={'Access-Control-Allow-Origin':'https://danyethxoxo.github.io','Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Vary':'Origin'};
@@ -19,7 +20,7 @@ export async function handle(req:Request){
   const buffer=new Uint8Array(size);let offset=0;for(const part of parts){buffer.set(part,offset);offset+=part.length;}
   let body;try{body=JSON.parse(new TextDecoder().decode(buffer));}catch{return response({error:'Solicitud inválida.'},400);}
   if(!body||typeof body!=='object'||Array.isArray(body)||typeof body.action!=='string')return response({error:'Solicitud inválida.'},400);
-  if(!['public','login','bootstrap','save','publish','restore','submissions','followup','moderate','inventory','select_property','settings','upload','history','catalog','resolve_property'].includes(body.action))return response({error:'Acción no permitida.'},400);
+  if(!['public','login','bootstrap','save','publish','restore','submissions','followup','moderate','inventory','select_property','settings','upload','history','catalog','resolve_property','property_media'].includes(body.action))return response({error:'Acción no permitida.'},400);
   if(body.action==='login'){
    const username=String(body.args?.username||'').trim().toLowerCase(),password=body.args?.password;
    if(!await rate('login-ip',address,20,900)||!await rate('login-account',username,10,900))return slowDown();
@@ -38,11 +39,18 @@ export async function handle(req:Request){
   if(!await rpc('confort4_actor_role',{p_user:user.id}))return response({error:'Tu cuenta no tiene acceso a Confort4.'},403);
   if(!await rate(body.action==='upload'?'uploads':'editor',user.id,body.action==='upload'?10:60))return slowDown();
   if(body.action==='catalog')return response(await rpc('confort4_catalog_picker',{p_user:user.id}));
+  if(body.action==='property_media')return response({images:await ensurePropertyMedia(rpc,user.id,body.args?.id,body.args?.refresh===true)});
+  if(body.action==='select_property'){
+   if(typeof body.args?.selected!=='boolean'||!/^[a-f0-9-]{36}$/i.test(body.args?.id||''))return response({error:'Selecciona una propiedad válida.'},400);
+   if(body.args.selected)await ensurePropertyMedia(rpc,user.id,body.args.id);
+  }
   if(body.action==='resolve_property'){
    let url;try{url=new URL(body.args?.url);}catch{return response({error:'Pega un enlace de propiedad de KW.'},400);}
    const reference=url.pathname.match(/\/property\/[^/]+\/(\d{8,20})\/?$/)?.[1];
    if(String(body.args?.url).length>2048||!['https:','http:'].includes(url.protocol)||!(url.hostname==='kw.com'||url.hostname.endsWith('.kw.com'))||url.username||url.password||url.port||!reference)return response({error:'Usa un enlace de propiedad de kw.com o de un sitio de KW.'},400);
-   return response(await rpc('confort4_catalog_picker',{p_user:user.id,p_reference:reference}));
+   const rows=await rpc('confort4_catalog_picker',{p_user:user.id,p_reference:reference});
+   for(const row of rows)row.imagenes=await ensurePropertyMedia(rpc,user.id,row.id);
+   return response(rows);
   }
   if(body.action==='history'){
    if(body.args?.id&&('status' in body.args||'visible' in body.args)){
@@ -71,6 +79,9 @@ export async function handle(req:Request){
   const code=(error as Error).message;
   if(code.includes('not_a_member')||code.includes('admin_required'))return response({error:'Tu cuenta no tiene acceso a esta acción de Confort4.'},403);
   if(code.includes('version_conflict'))return response({error:'Hay cambios más recientes. Recarga el panel antes de guardar.'},409);
+  if(code.includes('gallery_unavailable'))return response({error:'No pudimos cargar la galería completa desde KW. Intenta de nuevo antes de agregar la propiedad.'},502);
+  if(code.includes('property_missing'))return response({error:'Esta propiedad ya no está activa en el catálogo conectado.'},404);
+  if(code.includes('invalid_property_reference'))return response({error:'Selecciona una propiedad válida.'},400);
   if(code.includes('publication_consent_required'))return response({error:'Esta reseña no autoriza publicación.'},400);
   if(code.includes('external_selection_limit'))return response({error:'Puedes seleccionar hasta 10 propiedades externas de KW. Retira una selección para añadir otra. Las propiedades del equipo no cuentan para este límite.'},400);
   console.error('confort4-site: operation failed');return response({error:'No se pudo completar la operación. Intenta de nuevo.'},503);

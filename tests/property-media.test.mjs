@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {propertyPhotos,ensurePropertyMedia} from '../supabase/functions/confort4-site/property-media.mjs';
+const payload={data:{Property_Data:[{Photo_URL:'https://example.com/main.jpg'}],Property_Photos:[{Photo_Order:2,Photo_URL:'https://example.com/second.jpg'},{Photo_Order:1,Photo_URL:'https://example.com/main.jpg'},{Photo_Order:3,Photo_URL:'javascript:alert(1)'},{Photo_Order:4,Photo_URL:'https://example.com/second.jpg'}]}};
+assert.deepEqual(propertyPhotos(payload),['https://example.com/main.jpg','https://example.com/second.jpg']);
+let calls=[],fetched=0,mode='missing';
+const rpc=async(name,args)=>{calls.push({name,args});if(args.p_images)return {images:args.p_images,fresh:true};return {source:'kwmexico',source_id:'538580',images:mode==='stale'?['https://example.com/old1.jpg','https://example.com/old2.jpg']:['https://example.com/main.jpg'],fresh:mode==='fresh'};};
+globalThis.fetch=async url=>{fetched++;assert.equal(url,'https://www.kwmexico.mx/api/properties/538580');if(mode==='fail'||mode==='stale')throw Error('network');return Response.json(payload);};
+const id='adbc24f2-61ce-4311-a76e-15a1b5578ee2';
+assert.equal((await ensurePropertyMedia(rpc,'validated-user',id)).length,2);assert.equal(fetched,1);assert.equal(calls.at(-1).args.p_user,'validated-user');assert.equal(calls.at(-1).args.p_source_id,'538580');
+mode='fresh';await ensurePropertyMedia(rpc,'validated-user',id);assert.equal(fetched,1,'Fresh full galleries must avoid upstream calls');
+mode='fail';await assert.rejects(()=>ensurePropertyMedia(rpc,'validated-user',id),/gallery_unavailable/);
+mode='stale';assert.equal((await ensurePropertyMedia(rpc,'validated-user',id)).length,2,'Retain a full cached gallery during upstream failure');
+await assert.rejects(()=>ensurePropertyMedia(rpc,'validated-user','not-a-uuid'),/invalid_property_reference/);
+console.log('PASS: full ordered/deduplicated galleries, URL validation, fixed upstream, actor binding, cache reuse and safe upstream failure.');
