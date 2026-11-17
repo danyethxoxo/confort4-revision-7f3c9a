@@ -1,3 +1,4 @@
+import {propertyImageSource} from './property-image-sources.mjs?v=20261117sdr';
 import {reviewForm} from './review-form.mjs?v=34';
 import {livingScene,metricsScene} from './living-scene.mjs?v=20261117gallery';
 import {editorialContent} from './editorial-model.mjs?v=20261117gallery';
@@ -27,7 +28,7 @@ export function featuredProperties(bundle) {
 }
 import {articleRoutes,propertyRoutes} from './routes.mjs';
 export const e=value=>String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
-export function safeURL(value){const s=String(value||'');return /^(https:\/\/|assets\/|[a-z0-9-]+\.html(?:[?#]|$)|#)/i.test(s)?e(s):'#';}
+export function safeURL(value){const s=String(propertyImageSource(value)||'');return /^(https:\/\/|assets\/|[a-z0-9-]+\.html(?:[?#]|$)|#)/i.test(s)?e(s):'#';}
 const paths={arrow:'M5 12h14m-6-6 6 6-6 6',up:'M5 19 19 5M5 5h14v14',house:'m3 10 9-7 9 7v10H3Zm6 10v-7h6v7',key:'M10 13a5 5 0 1 1 3-3l8 8-3 3-2-2 2-2',calendar:'M8 3v4m8-4v4M4 11h16M5 5h14v16H5Z',check:'m5 12 4 4L19 6',search:'m16 16 5 5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',heart:'M20 5c-3-3-6-1-8 1-2-2-5-4-8-1-4 4 1 9 8 15 7-6 12-11 8-15Z',compare:'M4 4h6v16H4Zm10 0h6v16h-6Z',map:'m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Zm6-2v16m6-14v16',file:'M14 3H5v18h14V8Zm0 0v5h5M8 12h8m-8 4h8',chevron:'m8 5 7 7-7 7',plus:'M5 12h14m-7-7v14',clock:'M12 8v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0',star:'m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z'};
 export const icon=(name,cls='')=>`<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name]||paths.arrow}"/></svg>`;
 export const link=(href,label,cls='text-link')=>`<a class="${cls}" href="${safeURL(href)}">${e(label)} ${icon('arrow')}</a>`;
