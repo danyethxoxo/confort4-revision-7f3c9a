@@ -67,3 +67,5 @@ Object.defineProperty(document,'hidden',{value:true,configurable:true});document
 assert.equal(frames.size,0,'Hidden tabs stop motion');
 autoplayDom.window.close();
 console.log('PASS: client gallery, verified quotes, real history states, unlimited own catalog, keyboard, reduced motion and idempotent controls.');
+
+for(const [status,label] of Object.entries({vendida:'VENDIDA',rentada:'RENTADA',cancelada:'CANCELADA',fuera_del_mercado:'FUERA DEL MERCADO',expirada:'EXPIRADA'})){const item={title:'Estado documentado',photo:'assets/home-detail.jpg',status,published:true};assert(transactionsModule({transactions:{items:[item]}}).includes(label));assert.equal(transactionsModule({transactions:{items:[{...item,published:false}]}}),'');}
