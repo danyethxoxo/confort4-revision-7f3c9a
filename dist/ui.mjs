@@ -1,6 +1,6 @@
 import {reviewForm} from './review-form.mjs?v=34';
-import {livingScene,metricsScene} from './living-scene.mjs?v=20261117team';
-import {editorialContent} from './editorial-model.mjs?v=20261117team';
+import {livingScene,metricsScene} from './living-scene.mjs?v=20261117fast';
+import {editorialContent} from './editorial-model.mjs?v=20261117fast';
 function storyCarousel(id,title,intro,items,cards) {
  if (!items.length) return '';
  return `<section class="story-module wrap" id="${id}" data-story-carousel ${['nuestros-clientes','operaciones-cerradas'].includes(id)?'data-story-autoplay':''} data-story-signature="${e(JSON.stringify([title,intro,items]))}" aria-labelledby="${id}-title"><div class="module-heading"><div><h2 id="${id}-title">${e(title)}</h2><p>${e(intro)}</p></div></div><div class="story-track" data-story-track tabindex="0" role="region" aria-label="${e(title)}">${cards}</div><div class="story-controls">${['nuestros-clientes','operaciones-cerradas'].includes(id)?'<button class="story-toggle" type="button" data-story-toggle aria-pressed="false">Pausar</button>':''}<span data-story-count aria-live="polite">1 / ${items.length}</span><button type="button" data-story-direction="-1" aria-label="Anterior">${icon('arrow')}</button><button type="button" data-story-direction="1" aria-label="Siguiente">${icon('arrow')}</button></div></section>`;

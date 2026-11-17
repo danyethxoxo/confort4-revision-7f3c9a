@@ -23,7 +23,10 @@ Panel → Quiénes somos sigue el orden público: portada, historia, perfiles,
 acompañamiento y las dos galerías. Portada permite subir/recortar la foto y editar
 texto pequeño, título y presentación. Historia y título de perfiles son editables.
 
-La portada espera el contenido publicado o libera el respaldo a los dos segundos.
+La portada inicia sin esperar la API y recuerda localmente el último contenido
+público recibido para mostrarlo desde la siguiente visita. La aparición del hero
+dura 650 ms, con salida rápida; al recargar se vuelve arriba incluso si había un
+fragmento en la URL. La navegación normal a secciones conserva sus anclas.
 Las imágenes se decodifican antes de revelar; una actualización tardía conserva
 los nodos animados y precarga la foto nueva antes de sustituirla. Los textos ya
 animados conservan sus líneas durante reinicializaciones. Se respeta movimiento
@@ -32,3 +35,8 @@ reducido. Ningún borrador o texto publicado se sobrescribe durante el despliegu
 Comprobado: 1440×900, 768×1024 y 390×844 sin desbordamiento; datos rápidos (350 ms)
 y demorados (2700 ms), animación única y movimiento reducido; controles del editor,
 guardado y vista previa con contenido simulado; suite completa de regresión.
+
+Las fotos generales se enmascaran desde el primer pintado y antes de observarlas,
+incluyendo fases, galerías y blog. Se disparan al tocar el borde de la ventana,
+sin el retraso anterior del 10%. La aparición general dura 850 ms con salida
+rápida. Sin JavaScript o con movimiento reducido se mantienen visibles.

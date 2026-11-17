@@ -1,4 +1,4 @@
-import {e} from './ui.mjs?v=20261117team';
+import {e} from './ui.mjs?v=20261117fast';
 const module=(title,body)=>`<details class="editor-module"><summary>${e(title)}</summary><div>${body}</div></details>`;
 export function teamEditor(d,{input,block,image,photos}){
  const visible=(id,label)=>`<label class="consent"><input type="checkbox" data-team-visible="${id}" ${d.team.hiddenSections.includes(id)?'':'checked'}>${label}</label>`;
