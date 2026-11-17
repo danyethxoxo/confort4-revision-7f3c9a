@@ -37,13 +37,6 @@ export async function handle(req:Request){
   const user=await auth.json();if(!user.id)return response({error:'Inicia sesión para continuar.'},401);
   if(!await rpc('confort4_actor_role',{p_user:user.id}))return response({error:'Tu cuenta no tiene acceso a Confort4.'},403);
   if(!await rate(body.action==='upload'?'uploads':'editor',user.id,body.action==='upload'?10:60))return slowDown();
-  // MFA is mandatory for this editor; membership still comes from the private table.
-  if(!user.factors?.some((factor:{status:string})=>factor.status==='verified'))return response({error:'Activa la verificación en dos pasos para entrar al editor.',code:'mfa_enrollment_required'},403);
-  {
-   const token=(req.headers.get('authorization')||'').split(' ')[1];
-   const claims=JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-   if(claims.aal!=='aal2')return response({error:'Completa la verificación de tu cuenta.',code:'mfa_required'},403);
-  }
   if(body.action==='history'){
    if(body.args?.id&&(!/^[a-f0-9-]{36}$/i.test(body.args.id)||typeof body.args.cancelled!=='boolean'))return response({error:'Indica una propiedad y si la operación fue cancelada.'},400);
    return response(await rpc('confort4_history_admin',{p_user:user.id,p_id:body.args?.id||null,p_cancelled:body.args?.cancelled??null}));
