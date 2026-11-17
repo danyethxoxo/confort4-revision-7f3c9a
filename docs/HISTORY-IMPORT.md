@@ -1,5 +1,16 @@
 # Historial importado el 16 de noviembre de 2026
 
+Actualización posterior del propietario: se reincorpora Polanco como **vendida
+y visible**, respetando su confirmación previa. Se conserva como evidencia el
+estado Withdrawn de la captura en `source_details`; la clasificación editorial
+no modifica KW. Quedan **7 visibles y 5 ocultas**.
+
+Se sustituyen las seis miniaturas visibles importadas por los originales JPG
+proporcionados (1000×667), convertidos a WebP sin ampliar ni alterar las fotos.
+Giorgione conserva sus dos operaciones independientes. Polanco usa su original
+ya existente (1200×800). Las cinco ocultas conservan sus recortes de captura.
+La actualización está en `db/20261116-history-original-photos.sql`.
+
 Fuente: 16 capturas de KW proporcionadas por el propietario en la carpeta
 `confort 4/historial de propiedades`. Se cotejaron individualmente sus estados.
 
