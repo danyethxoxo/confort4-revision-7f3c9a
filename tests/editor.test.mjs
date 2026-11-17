@@ -29,3 +29,5 @@ const teamDom=new JSDOM(renderPage({content:team,properties,reviews:[]},'team'))
 assert(teamDom.querySelector('.team-contact-button').textContent.includes('Escríbeme'));assert.equal(teamDom.querySelector('.team-contact-button').href,'https://example.com/contacto');assert(teamDom.querySelector('.team-moments h2').textContent.includes('Nuevo CAPPER'));
 team.team.hiddenSections=['cappers','national'];const hidden=new JSDOM(renderPage({content:team,properties,reviews:[]},'team')).window.document;assert.equal(hidden.querySelector('.team-moments'),null);assert.equal(hidden.querySelector('.team-awards'),null);
 console.log('PASS: independent modules, ordering, visibility, hero/button/media/metrics/FAQ binding, contact labels, XSS-safe text and server photo limits.');
+
+const login=new JSDOM(fs.readFileSync(new URL('../dist/admin.html',import.meta.url))).window.document;assert(login.querySelector('#login-form input[name=username][type=text]'));assert.equal(login.querySelector('#login-form input[name=email]'),null);

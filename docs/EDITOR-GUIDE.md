@@ -2,7 +2,7 @@
 
 Acceso: https://danyethxoxo.github.io/confort4-revision-7f3c9a/admin.html
 
-Usa el correo y contraseña de una cuenta autorizada de Confort4. No hay autorregistro ni contraseña compartida incrustada en la página. Dani y Alberto conservan su membresía. Renata necesita una cuenta y confirmación del correo antes de habilitar acceso. No se enviaron invitaciones ni se cambiaron contraseñas.
+Usa el nombre de usuario y contraseña de una cuenta autorizada del editor de Confort4. No hay autorregistro ni contraseña compartida incrustada en la página. Dani y Alberto conservan su membresía. Renata necesita una cuenta y confirmación del correo antes de habilitar acceso. No se enviaron invitaciones ni se cambiaron contraseñas.
 
 ## Acceso y seguridad
 
@@ -36,3 +36,7 @@ La exportación estática conserva la base anterior; el modelo incorpora valores
 ## Verificación
 
 Pruebas de API: identidad, membresía, MFA obligatorio, límites 429, conflicto de revisión, asignación de actor y subidas inválidas. SQL aislado con rollback: límites atómicos y separación de cuentas/acciones. Pruebas de contenido: módulos independientes, orden, ocultar/mostrar, botones, imágenes, cifras, FAQ, perfiles y límites 8/2. Navegador de escritorio y móvil con Auth simulado: edición, ocho imágenes, guardado, conservación de campos y vista previa. Flujo de alta TOTP probado con respuestas simuladas, sin tocar factores reales ni contraseñas. La autenticación personal se completa con el usuario y su aplicación de códigos.
+
+## Acceso por nombre de usuario
+
+El formulario acepta nombres de usuario, no correos. Una tabla privada resuelve la identidad interna y Supabase Auth comprueba la contraseña; no se guarda una contraseña propia en texto plano ni en el repositorio. Las cuentas dedicadas no ingresan al padrón de asesores de KW ni modifican las contraseñas de las cuentas KW existentes. Se conserva MFA, permisos, límites y cierre por inactividad. La política de Auth exige al menos 12 caracteres; no se redujo para aceptar contraseñas más cortas. El alta se realiza por la API administrativa en el servidor; no existe autorregistro.
