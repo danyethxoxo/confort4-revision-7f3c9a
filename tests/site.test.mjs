@@ -24,15 +24,15 @@ assert.equal((await handler(req({action:'invalid-action'}))).status,400);
 let res=await handler(req({action:'public'}));assert.equal(res.status,200);assert(!calls.some(c=>c.url.endsWith('/auth/v1/user')));
 mode='unauthorized';assert.equal((await handler(req({action:'bootstrap'}))).status,401);
 mode='nonmember';assert.equal((await handler(req({action:'bootstrap'}))).status,403);
-mode='mfa';assert.equal((await (await handler(req({action:'bootstrap'}))).json()).code,'mfa_required');
-mode='enroll';assert.equal((await (await handler(req({action:'bootstrap'}))).json()).code,'mfa_enrollment_required');mode='ok';assert.equal((await handler(req({action:'login',args:{username:'<script>',password:'fake-only'}}))).status,401);mode='rate';assert.equal((await handler(req({action:'public'}))).status,429);mode='ok';assert.equal((await handler(req({action:'login',args:{username:'testadmin',password:'test-only'}}))).status,200);
+mode='mfa';assert.equal((await handler(req({action:'bootstrap'}))).status,200);
+mode='enroll';assert.equal((await handler(req({action:'bootstrap'}))).status,200);mode='ok';assert.equal((await handler(req({action:'login',args:{username:'<script>',password:'fake-only'}}))).status,401);mode='rate';assert.equal((await handler(req({action:'public'}))).status,429);mode='ok';assert.equal((await handler(req({action:'login',args:{username:'testadmin',password:'test-only'}}))).status,200);
 mode='ok';calls.length=0;res=await handler(req({action:'save',args:{content,revision:1},p_user:'spoofed-user'}));assert.equal(res.status,200);assert.equal(calls.find(c=>c.body?.p_action==='save').body.p_user,'validated-user');
 assert.equal((await handler(req({action:'save',args:{content:{}}}))).status,400);
 assert.equal((await handler(req({action:'upload',args:{mime:'image/svg+xml',data:btoa('<svg/>')}}))).status,400);
 assert.equal((await handler(req({action:'upload',args:{mime:'image/png',data:btoa('not a png')}}))).status,400);
 mode='conflict';assert.equal((await handler(req({action:'publish',args:{revision:1}}))).status,409);
 mode='ok';calls.length=0;assert.equal((await handler(req({action:'history',args:{id:'b487a75d-10e5-4b14-86b5-9539984df359',cancelled:true},p_user:'spoofed'}))).status,200);assert.equal(calls.find(c=>c.url.endsWith('/confort4_history_admin')).body.p_user,'validated-user');assert.equal((await handler(req({action:'history',args:{id:'invalid',cancelled:true}}))).status,400);
-console.log('PASS: CMS structure, escaped content, public feed, account validation, membership, MFA, actor binding, revision conflicts and upload validation.');
+console.log('PASS: CMS structure, escaped content, public feed, account validation, membership, password-only access, actor binding, revision conflicts and upload validation.');
 
 // Construction and land are independent measurements, never substitutes.
 const surfaceProperty={...properties[0],tipo:'Casa en condominio',m2_construccion:180,m2_terreno:240};

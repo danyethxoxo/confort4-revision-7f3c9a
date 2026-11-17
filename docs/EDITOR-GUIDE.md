@@ -6,7 +6,7 @@ Usa el nombre de usuario y contraseña de una cuenta autorizada del editor de Co
 
 ## Acceso y seguridad
 
-El editor exige verificación en dos pasos. Si la cuenta no tiene una aplicación de autenticación configurada, muestra QR y clave de configuración; luego solicita un código. Los accesos existentes con TOTP verificado usan su código actual. La API verifica identidad con Supabase Auth, membresía en la tabla privada y nivel AAL2 para cada operación privada. No confía en un rol enviado por el navegador ni en metadatos editables del usuario.
+El editor acepta nombre de usuario y contraseña, sin QR ni código adicional, por indicación del propietario. La API valida cada sesión con Supabase Auth y comprueba la membresía privada para cada operación. No confía en roles enviados por el navegador ni en metadatos editables del usuario.
 
 Los límites persistentes son 180 solicitudes/minuto por IP de proxy, 20 intentos de acceso/15 minutos por IP, 10/15 minutos por cuenta, 60 operaciones/minuto por usuario y 10 subidas/minuto por usuario. Los límites de IP complementan los controles nativos de Supabase Auth; los de cuenta y usuario no dependen de que el navegador respete un contador. La tabla almacena hashes con sal del servidor y elimina ventanas vencidas. Una respuesta 429 indica que debe esperar. No se cambió la política global de Auth compartida con KW.
 
@@ -35,8 +35,8 @@ La exportación estática conserva la base anterior; el modelo incorpora valores
 
 ## Verificación
 
-Pruebas de API: identidad, membresía, MFA obligatorio, límites 429, conflicto de revisión, asignación de actor y subidas inválidas. SQL aislado con rollback: límites atómicos y separación de cuentas/acciones. Pruebas de contenido: módulos independientes, orden, ocultar/mostrar, botones, imágenes, cifras, FAQ, perfiles y límites 8/2. Navegador de escritorio y móvil con Auth simulado: edición, ocho imágenes, guardado, conservación de campos y vista previa. Flujo de alta TOTP probado con respuestas simuladas, sin tocar factores reales ni contraseñas. La autenticación personal se completa con el usuario y su aplicación de códigos.
+Pruebas de API: identidad, membresía, acceso con contraseña, límites 429, conflicto de revisión, asignación de actor y subidas inválidas. SQL aislado con rollback: límites atómicos y separación de cuentas/acciones. Pruebas de contenido: módulos independientes, orden, ocultar/mostrar, botones, imágenes, cifras, FAQ, perfiles y límites 8/2. Navegador de escritorio y móvil con Auth simulado: edición, ocho imágenes, guardado, conservación de campos y vista previa. El acceso con y sin factores configurados se valida sin exigir códigos adicionales.
 
 ## Acceso por nombre de usuario
 
-El formulario acepta nombres de usuario, no correos. Una tabla privada resuelve la identidad interna y Supabase Auth comprueba la contraseña; no se guarda una contraseña propia en texto plano ni en el repositorio. Las cuentas dedicadas no ingresan al padrón de asesores de KW ni modifican las contraseñas de las cuentas KW existentes. Se conserva MFA, permisos, límites y cierre por inactividad. La política de Auth exige al menos 12 caracteres; no se redujo para aceptar contraseñas más cortas. El alta se realiza por la API administrativa en el servidor; no existe autorregistro.
+El formulario acepta nombres de usuario, no correos. Una tabla privada resuelve la identidad interna y Supabase Auth comprueba la contraseña; no se guarda una contraseña propia en texto plano ni en el repositorio. Las cuentas dedicadas no ingresan al padrón de asesores de KW ni modifican las contraseñas de las cuentas KW existentes. Se conservan permisos, límites y cierre por inactividad. La política de Auth exige al menos 12 caracteres; no se redujo para aceptar contraseñas más cortas. El alta se realiza por la API administrativa en el servidor; no existe autorregistro.
