@@ -1,5 +1,6 @@
 import {motionTiming} from './motion-rules.mjs';
 import {bindSwipe} from './swipe.mjs?v=20261117gallery';
+import {savePhotoData} from './photo-policy.mjs?v=20261117budget';
 
 export function initializePropertySlideshow(root,choose,options={}){
  const stage=root.querySelector('.property-photo-stage'),image=root.querySelector('#gallery-main'),thumbs=[...root.querySelectorAll('[data-gallery]')];
@@ -9,7 +10,7 @@ export function initializePropertySlideshow(root,choose,options={}){
  const controls=document.createElement('div');controls.className='property-slideshow-controls';
  controls.innerHTML='<span data-photo-count></span><button type="button" data-photo-prev aria-label="Foto anterior">&#8592;</button><button type="button" data-photo-next aria-label="Foto siguiente">&#8594;</button><button type="button" data-photo-pause aria-label="Pausar fotos">Pausar</button>';
  const progress=document.createElement('div');progress.className='featured-progress property-photo-progress';progress.setAttribute('aria-hidden','true');progress.innerHTML='<span></span>';stage.append(controls,progress);
- let timer,animation,zoom,inView=!window.IntersectionObserver,paused=false,viewerOpen=false,destroyed=false,revision=0,changing=false,internalChoice=false,outgoingNode=null,transitions=[];
+ let timer,animation,zoom,inView=!window.IntersectionObserver,paused=savePhotoData(),viewerOpen=false,destroyed=false,revision=0,changing=false,internalChoice=false,outgoingNode=null,transitions=[];
  const failed=new Set();let nextImage=null;
  const current=()=>Math.max(0,thumbs.findIndex(t=>t.getAttribute('aria-pressed')==='true'));
  function lock(value){controls.querySelectorAll('[data-photo-prev],[data-photo-next]').forEach(b=>b.disabled=value);}
@@ -18,6 +19,7 @@ export function initializePropertySlideshow(root,choose,options={}){
  function reset(){
   if(!internalChoice){++revision;cancelTransition();}
   stop();controls.querySelector('[data-photo-count]').textContent=(current()+1)+' / '+thumbs.length;
+  const toggle=controls.querySelector('[data-photo-pause]');toggle.textContent=paused?'Reanudar':'Pausar';toggle.setAttribute('aria-pressed',String(paused));toggle.setAttribute('aria-label',paused?'Reanudar fotos':'Pausar fotos');
   if(destroyed||paused||viewerOpen||!inView||reduced.matches||document.hidden)return;
   animation=progress.firstElementChild.animate?.([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration,easing:'linear',fill:'both'});
   zoom=image.animate?.([{transform:'scale(1)'},{transform:'scale(1.04)'}],{duration,easing:'linear',fill:'both'});

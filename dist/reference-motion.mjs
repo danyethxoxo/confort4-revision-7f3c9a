@@ -1,3 +1,4 @@
+import {savePhotoData} from './photo-policy.mjs?v=20261117budget';
 import {motionTiming as timing, clampProgress, intervalProgress, expansionState, lineGradientPosition} from './motion-rules.mjs?v=20261117gallery';
 import {initializeMotionNavigation} from './motion-navigation.mjs?v=20261114catalog';
 
@@ -372,7 +373,7 @@ function prepareFeaturedProperties(root) {
   let inView = !window.IntersectionObserver;
   let visibilityObserver = null;
   let index = 0;
-  let paused = motionPreference.matches || slides.length < 2;
+  let paused = motionPreference.matches || savePhotoData() || slides.length < 2;
   let advanceTimer = null;
   let progressAnimation = null;
   let zoomAnimation = null;

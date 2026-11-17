@@ -1,0 +1,50 @@
+# Photo delivery: SDR and bandwidth budgets
+
+All dynamic public photographs use `safeImage` / `propertyImageSource`, including
+property cards, galleries, thumbnails, history and editorial photos. Navigation
+links continue to use `safeURL`; it must never be used to embed an inventory photo.
+
+| Profile | Longest side | Maximum bytes per file |
+| --- | ---: | ---: |
+| thumb | 240 px | 24,000 |
+| card | 800 px | 160,000 |
+| large | 1,440 px | 320,000 |
+
+Known optimized photos have three checked-in derivatives. New photos automatically
+use the public `confort4-photo` Edge Function, which accepts only the approved public
+KW image hosts, this site's public assets, and its public editorial uploads. It
+fetches an explicitly resized WebP conversion from wsrv.nl **on the server**,
+validates its byte length, RIFF chunks and dimensions, then caches it in the public
+`confort4-property-sdr` bucket. Only the service role can write to that bucket.
+
+The converter is an external best-effort dependency for cold cache entries;
+already cached photos remain available from Supabase Storage. Cached responses
+and immutable redirects have a one-year browser cache lifetime. Source URLs must
+change when replacing a photo in place, or bump `PHOTO_VERSION` to invalidate.
+No credentials, private documents or user sessions are sent to the converter.
+
+Validation rejects profiles, EXIF, XMP, gain maps, animations and unknown chunks;
+only static 8-bit WebP pixels and alpha are accepted. Conversion retries at lower
+quality when necessary. On failure or unsupported input, return a small SVG
+placeholder, **never the original image**. New source hosts must be deliberately
+added to `originalPhotoURL`; do not introduce a permissive fallback.
+
+Thumbnails use the thumb profile, rather than downloading each full-size gallery
+photo. The property slideshow preloads at most the next large image. Save-Data or
+2G pauses property autoplay by default; manual navigation and explicit resume
+remain available. Native lazy loading is retained for galleries and cards.
+The static contact-form background is a verified 234 KB sRGB JPEG without HDR.
+
+Regenerate known assets with `npm run photos:sdr`; pass `-- --refresh` to download
+the original sources again. The script auto-orients before removing metadata and
+enforces the same byte/dimension budgets. It writes the manifest, not the routing
+policy. Build mirrors the shared policy into the Edge Function deployment folder.
+
+Deploy `confort4-photo` with JWT verification **disabled** (public `<img>` GETs),
+including `index.ts`, `media.mjs`, and `photo-policy.mjs`. Conversion cache misses
+use the existing service-only rate gate; there is no public upload action.
+
+Validation: `npm test` includes real asset byte/metadata checks, future-source
+routing, conversion rejection/retries, streamed byte bounds, cache-only redirects,
+safe failure, rate limits and source allowlists. Browser QA additionally verifies
+that no property photo requests go directly to the original KW image hosts.

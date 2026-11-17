@@ -1,11 +1,11 @@
-import {bindSwipe} from './swipe.mjs?v=20261117sdr';
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117sdr';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117sdr';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117sdr';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117sdr';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261117sdr';
-import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261117sdr';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117sdr';
+import {bindSwipe} from './swipe.mjs?v=20261117budget';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117budget';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117budget';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117budget';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117budget';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261117budget';
+import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261117budget';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117budget';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
