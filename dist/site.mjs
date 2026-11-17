@@ -1,7 +1,8 @@
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261116crop';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261116crop';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261116herofix';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261116herofix';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261116herofix';
 import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261114zoom10';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261116crop';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261116herofix';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -169,19 +170,13 @@ main.addEventListener('submit',async ev=>{
  finally{form.removeAttribute('aria-busy');}
 });
 if(['property','article'].includes(page))main.innerHTML=renderPage(bundle,page,params);
+let heroIntroPending=false,heroIntroTimer=null;
+function releaseHeroIntro(initialize=true){if(!heroIntroPending)return;heroIntroPending=false;window.clearTimeout(heroIntroTimer);main.querySelector('.hero')?.removeAttribute('data-motion-pending');if(initialize)initializeReferenceMotion(main);}
 let preview=false;
 if(params.preview==='1'){const content=storage.get('preview',null);if(content){bundle={...bundle,content};main.innerHTML=renderPage(bundle,page,params)||main.innerHTML;const banner=document.createElement('div');banner.className='preview-banner';banner.textContent='Vista previa del borrador · estos cambios todavía no son públicos.';main.before(banner);preview=true;}}
+if(page==='home'&&!preview&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){heroIntroPending=true;main.querySelector('.hero')?.setAttribute('data-motion-pending','true');heroIntroTimer=window.setTimeout(()=>releaseHeroIntro(),2000);}
 init();
 
-function heroSignature(hero) {
- if (!hero) return '';
- const heading = hero.querySelector('h1');
- return JSON.stringify([
-  heading?.dataset.motionText || heading?.textContent.trim(),
-  hero.querySelector('.hero-image')?.getAttribute('src'),
-  hero.querySelector('.hero-aside p')?.textContent.trim(),hero.querySelector('.hero-aside a')?.textContent.trim(),hero.querySelector('.hero-aside a')?.getAttribute('href'),hero.querySelector('.hero-image')?.getAttribute('alt')
- ]);
-}
 let reviewSignature=JSON.stringify([bundle.content.googleReviews,bundle.content.widgets?.reviews,bundle.reviews||[]]),lastReviewRefresh=0,reviewRefreshPending=false;
 function syncReviews(next){
  if(page==='review')syncClientGallery(next.content);
@@ -212,7 +207,7 @@ if (!preview) {
   const live = await response.json();
   if (!live.content?.home) throw Error('feed');
   bundle = live;lastReviewRefresh=Date.now();
-  if(page==='review'||(page==='home'&&dirty)){syncReviews(live);return;}
+  if(page==='review'||(page==='home'&&dirty)){releaseHeroIntro();syncReviews(live);return;}
   if (dirty || page==='privacy') return;
   const previousHero = main.querySelector('.hero');
   const signature = heroSignature(previousHero);
@@ -225,7 +220,9 @@ if (!preview) {
    if(next&&next.dataset.storySignature===current.dataset.storySignature)next.replaceWith(current);
   });
   const nextHero = template.content.querySelector('.hero');
-  if (previousHero && signature === heroSignature(nextHero)) {
+  releaseHeroIntro(false);
+  if (previousHero && nextHero && (signature === heroSignature(nextHero)||previousHero.dataset.motionPrepared)) {
+   if(signature!==heroSignature(nextHero))updateHeroContent(previousHero,nextHero);
    nextHero.remove();
    [...main.children].forEach(element => { if (element !== previousHero) element.remove(); });
    main.append(template.content);
@@ -235,6 +232,7 @@ if (!preview) {
   init();
   if (location.hash) $(location.hash)?.scrollIntoView({block:'start'});
  }).catch(() => {
+  releaseHeroIntro();
   $$('.catalog-status').forEach(element => {
    element.textContent='Mostrando la última selección disponible. Confirma vigencia con el equipo.';
   });

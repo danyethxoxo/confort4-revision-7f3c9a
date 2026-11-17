@@ -104,7 +104,7 @@ function revealLines(block, delay = 0) {
 }
 
 function prepareHero(hero) {
-  if (!hero || hero.dataset.motionPrepared) return;
+  if (!hero || hero.dataset.motionPrepared || hero.dataset.motionPending) return;
   hero.dataset.motionPrepared = 'true';
   const visual = hero.querySelector('.hero-visual');
   const image = visual.querySelector('img');
