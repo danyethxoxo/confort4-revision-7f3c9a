@@ -21,13 +21,15 @@ export async function handle(req:Request){
   if(!body||typeof body!=='object'||Array.isArray(body)||typeof body.action!=='string')return response({error:'Solicitud inválida.'},400);
   if(!['public','login','bootstrap','save','publish','restore','submissions','followup','moderate','inventory','select_property','settings','upload','history'].includes(body.action))return response({error:'Acción no permitida.'},400);
   if(body.action==='login'){
-   const email=String(body.args?.email||'').trim().toLowerCase(),password=body.args?.password;
-   if(!await rate('login-ip',address,20,900)||!await rate('login-account',email,10,900))return slowDown();
-   if(email.length>254||typeof password!=='string'||password.length>256)return response({error:'No pudimos validar tu acceso. Revisa los datos e intenta de nuevo.'},401);
+   const username=String(body.args?.username||'').trim().toLowerCase(),password=body.args?.password;
+   if(!await rate('login-ip',address,20,900)||!await rate('login-account',username,10,900))return slowDown();
+   if(!/^[a-z][a-z0-9_]{2,31}$/.test(username)||typeof password!=='string'||password.length>256)return response({error:'No pudimos validar tu acceso. Revisa los datos e intenta de nuevo.'},401);
+   const email=await rpc('confort4_username_email',{p_username:username});
+   if(!email)return response({error:'No pudimos validar tu acceso. Revisa los datos e intenta de nuevo.'},401);
    const result=await fetch(base+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:JSON.stringify({email,password}),signal:AbortSignal.timeout(15000)});
    const data=await result.json().catch(()=>null);
    if(!result.ok||!data?.user?.id||!await rpc('confort4_actor_role',{p_user:data.user.id}))return response({error:'No pudimos validar tu acceso. Revisa los datos e intenta de nuevo.'},401);
-   return response(data);
+   return response({...data,editor_username:username});
   }
   if(body.action==='public')return response(await rpc('confort4_public_site'));
   const auth=await fetch(base+'/auth/v1/user',{headers:{apikey:key,Authorization:req.headers.get('authorization')||''},signal:AbortSignal.timeout(10000)});
