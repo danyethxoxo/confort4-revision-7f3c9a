@@ -9,7 +9,8 @@
   },
   "scripts": {
     "build": "node scripts/build-pages.mjs",
-    "test": "node scripts/build-pages.mjs && node scripts/check-pages.mjs && node --experimental-strip-types tests/forms.test.mjs && node --experimental-strip-types tests/site.test.mjs && node tests/reviews.test.mjs && node tests/ui.test.mjs && node tests/motion.test.mjs && node tests/stories.test.mjs && node tests/editor.test.mjs && node tests/cropper.test.mjs && node tests/hero-hydration.test.mjs && node tests/catalog-hydration.test.mjs && node tests/editor-sections.test.mjs && node tests/team-layout.test.mjs && node tests/property-media.test.mjs && node tests/swipe.test.mjs"
+    "test": "node scripts/build-pages.mjs && node scripts/check-pages.mjs && node --experimental-strip-types tests/forms.test.mjs && node --experimental-strip-types tests/site.test.mjs && node tests/reviews.test.mjs && node tests/ui.test.mjs && node tests/motion.test.mjs && node tests/stories.test.mjs && node tests/editor.test.mjs && node tests/cropper.test.mjs && node tests/hero-hydration.test.mjs && node tests/catalog-hydration.test.mjs && node tests/editor-sections.test.mjs && node tests/team-layout.test.mjs && node tests/property-media.test.mjs && node tests/swipe.test.mjs && node tests/property-sdr.test.mjs",
+    "photos:sdr": "node scripts/prepare-property-photos.mjs"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,8 @@
   },
   "homepage": "https://github.com/danyethxoxo/confort4-revision-7f3c9a#readme",
   "devDependencies": {
-    "jsdom": "26.1.0"
+    "jsdom": "26.1.0",
+    "sharp": "^0.35.5"
   },
   "dependencies": {
     "lenis": "1.3.27"

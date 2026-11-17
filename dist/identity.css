@@ -690,3 +690,7 @@ body[data-page=contact] .contact-form-section { min-height:calc(100svh - 48px);p
 .review-carousel,.property-viewer-stage{touch-action:pan-y pinch-zoom}
 .admin-property-photos{display:flex;gap:10px;overflow-x:auto;padding:12px 0;touch-action:pan-x pan-y pinch-zoom}
 .admin-property-photos img{width:140px;height:100px;object-fit:cover;flex:0 0 140px}
+
+/* Keep property photography at SDR luminance on HDR-capable displays.
+   SDR WebP derivatives also cover browsers without dynamic-range-limit. */
+.property-photo img,.featured-image img,.property-gallery img,.property-viewer img{dynamic-range-limit:standard}
