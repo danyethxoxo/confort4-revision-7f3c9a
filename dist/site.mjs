@@ -1,11 +1,12 @@
-import {bindSwipe} from './swipe.mjs?v=20261117budget';
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117budget';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117budget';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117budget';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117budget';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261117budget';
-import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261117budget';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117budget';
+import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261117modules';
+import {bindSwipe} from './swipe.mjs?v=20261117modules';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117modules';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117modules';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117modules';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117modules';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261117modules';
+import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261117modules';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117modules';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -203,7 +204,7 @@ async function refreshLatestReviews(){
  try{const response=await fetch(config.endpoint.replace('confort4-forms','confort4-site'),{method:'POST',headers:{'Content-Type':'application/json',apikey:config.publishableKey,Authorization:'Bearer '+config.anonKey},body:JSON.stringify({action:'public'}),signal:AbortSignal.timeout(15000)});if(!response.ok)return;const next=await response.json();if(next.content?.home){syncReviews(next);lastReviewRefresh=Date.now();}}
  catch{}finally{reviewRefreshPending=false;}
 }
-if (!preview) {
+{
  fetch(config.endpoint.replace('confort4-forms','confort4-site'), {
   method:'POST',
   headers:{'Content-Type':'application/json',apikey:config.publishableKey,Authorization:'Bearer '+config.anonKey},
@@ -211,12 +212,13 @@ if (!preview) {
   signal:AbortSignal.timeout(15000)
  }).then(async response => {
   if (!response.ok) throw Error('feed');
-  const live = await response.json();
+  let live = await response.json();
   if (!live.content?.home) throw Error('feed');
+  if(preview)live=withPreviewWidgets(bundle.content,live);
   bundle = live;lastReviewRefresh=Date.now();
   if(page==='team'&&live.content.team)storage.set('team-public',live.content.team);
-  if((page==='review'||page==='home')&&dirty){releaseHeroIntro();syncReviews(live);return;}
-  if (dirty || page==='privacy') return;
+  if(page==='review'&&dirty){releaseHeroIntro();syncReviews(live);return;}
+  if ((dirty&&page!=='home') || page==='privacy') return;
   const previousHero = main.querySelector('.hero');
   const signature = heroSignature(previousHero);
   const template = document.createElement('template');
@@ -226,6 +228,7 @@ if (!preview) {
    const signature=gallery=>JSON.stringify([$$('[data-gallery]',gallery).map(t=>t.dataset.gallery),$('h1',gallery)?.textContent,$('.property-price',gallery)?.textContent,$('.property-location-line',gallery)?.textContent]);
    if(current&&next&&signature(current)===signature(next))next.replaceWith(current);
   }
+  if(page==='home')preserveHomeModules(main,template.content);
   preserveCatalogPhotos(main,template.content);
   if(page==='team'){releaseHeroIntro(false);preserveTeamMotion(main,template.content);}
   // Preserve unchanged galleries (and their scroll/reveal state) on feed hydration.
