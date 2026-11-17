@@ -13,7 +13,7 @@ export function initializeStoryCarousels(root) {
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
     const loop = section.hasAttribute('data-story-autoplay') && cards.length > 0;
     const events = new window.AbortController();
-    let frame = null, motionFrame = null, lastTime = null, position = null, paused = false, dragging = false;
+    let frame = null, motionFrame = null, lastTime = null, position = null, paused = false, dragging = false,interacting=false,touching=false,resumeTimer=null;
     let cardStep = 0;
     let inView = !window.IntersectionObserver, visibilityObserver, sizeObserver;
     function addCopies(){cards.forEach(card => {
@@ -33,12 +33,12 @@ export function initializeStoryCarousels(root) {
       position=null;update();
     }
     function stop() { if(motionFrame!==null)window.cancelAnimationFrame(motionFrame);motionFrame=null;lastTime=null;position=null; }
-    function destroy() { stop();events.abort();visibilityObserver?.disconnect();sizeObserver?.disconnect();if(frame!==null)window.cancelAnimationFrame(frame); }
+    function destroy() { stop();window.clearTimeout(resumeTimer);events.abort();visibilityObserver?.disconnect();sizeObserver?.disconnect();if(frame!==null)window.cancelAnimationFrame(frame); }
     function arm() {
       stop();
       if (!section.isConnected) { destroy();return; }
       const focused = section.contains(document.activeElement) && document.activeElement !== toggle;
-      const running = loop && !paused && !dragging && !focused && !document.hidden && inView && !preference.matches;
+      const running = loop && !paused && !dragging && !interacting && !focused && !document.hidden && inView && !preference.matches;
       count.setAttribute('aria-live',running ? 'off' : 'polite');
       if(running)motionFrame=window.requestAnimationFrame(advance);
     }
@@ -56,7 +56,7 @@ export function initializeStoryCarousels(root) {
     function update() {
       frame = null;
       const distance = step();
-      if (loop && distance > 0 && track.scrollLeft >= distance * cards.length - 1) track.scrollTo({left:Math.max(0,track.scrollLeft - distance * cards.length),behavior:'instant'});
+      if (loop && !interacting && distance > 0 && track.scrollLeft >= distance * cards.length - 1) track.scrollTo({left:Math.max(0,track.scrollLeft - distance * cards.length),behavior:'instant'});
       const index = loop&&distance>0?Math.round(track.scrollLeft/distance)%cards.length:cards.reduce((nearest,card,i)=>Math.abs(card.offsetLeft-track.scrollLeft)<Math.abs(cards[nearest].offsetLeft-track.scrollLeft)?i:nearest,0);
       const lastVisible = loop?index:cards.reduce((last,card,i) => card.offsetLeft + card.offsetWidth <= track.scrollLeft + track.clientWidth + 2 ? i : last,index);
       previous.disabled = loop ? false : track.scrollLeft < 2;
@@ -75,11 +75,16 @@ export function initializeStoryCarousels(root) {
     track.addEventListener('keydown',event => {
       if(event.target===track&&['ArrowLeft','ArrowRight'].includes(event.key)){event.preventDefault();move(event.key==='ArrowLeft'?-1:1);arm();}
     });
-    track.addEventListener('scroll',()=>{if(motionFrame===null&&frame===null)frame=window.requestAnimationFrame(update);},{passive:true});
-    section.addEventListener('pointerleave',() => { dragging=false;arm(); });
-    section.addEventListener('pointerdown',() => { dragging=true;arm(); });
-    section.addEventListener('pointerup',() => { dragging=false;arm(); });
-    section.addEventListener('pointercancel',() => { dragging=false;arm(); });
+    function release(){window.clearTimeout(resumeTimer);if(touching)return;dragging=false;resumeTimer=window.setTimeout(()=>{interacting=false;update();arm();},1800);}
+    function hold(){window.clearTimeout(resumeTimer);dragging=true;interacting=true;stop();if(loop&&track.scrollLeft<1)track.scrollLeft=cardStep*cards.length;}
+    track.addEventListener('scroll',()=>{if(motionFrame===null&&frame===null)frame=window.requestAnimationFrame(update);if(interacting&&!dragging)release();},{passive:true});
+    section.addEventListener('pointerleave',event => { if(event.pointerType!=='touch')release(); });
+    section.addEventListener('pointerdown',hold);
+    section.addEventListener('pointerup',release);
+    section.addEventListener('pointercancel',release);
+    track.addEventListener('touchstart',()=>{touching=true;hold();},{passive:true});
+    track.addEventListener('touchend',()=>{touching=false;release();},{passive:true});
+    track.addEventListener('touchcancel',()=>{touching=false;release();},{passive:true});
     section.addEventListener('focusin',arm);
     section.addEventListener('focusout',() => window.queueMicrotask(arm));
     document.addEventListener('visibilitychange',arm,{signal:events.signal});

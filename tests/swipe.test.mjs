@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {JSDOM} from 'jsdom';
+import {bindSwipe} from '../dist/swipe.mjs';
+const dom=new JSDOM('<div id="carousel"><div id="photo">Photo</div></div>'),w=dom.window,el=w.document.querySelector('#carousel'),moves=[];
+const cleanup=bindSwipe(el,n=>moves.push(n));
+const pointer=(type,x,y)=>{const event=new w.Event(type,{bubbles:true,cancelable:true});Object.assign(event,{clientX:x,clientY:y,pointerType:'touch',pointerId:1,isPrimary:true});w.document.querySelector('#photo').dispatchEvent(event);};
+pointer('pointerdown',300,200);pointer('pointermove',180,205);pointer('pointerup',100,210);assert.deepEqual(moves,[1]);
+let clicks=0;el.addEventListener('click',()=>clicks++);w.document.querySelector('#photo').click();assert.equal(clicks,0,'A swipe cannot open a photo accidentally');
+pointer('pointerdown',200,100);pointer('pointermove',170,350);pointer('pointerup',140,500);assert.deepEqual(moves,[1],'Vertical scrolling must not change slides');
+pointer('pointerdown',100,200);pointer('pointermove',250,210);pointer('pointerup',300,215);assert.deepEqual(moves,[1,-1]);
+pointer('pointerdown',300,200);pointer('pointercancel',100,200);pointer('pointerup',100,200);assert.equal(moves.length,2);
+cleanup();pointer('pointerdown',300,200);pointer('pointerup',100,200);assert.equal(moves.length,2);assert(!el.dataset.swipeReady);dom.window.close();
+console.log('PASS: horizontal touch direction, vertical scroll protection, click suppression, cancellation and cleanup.');

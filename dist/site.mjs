@@ -1,16 +1,18 @@
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117fast';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117fast';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117fast';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117fast';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261117fast';
-import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261114zoom10';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117fast';
+import {bindSwipe} from './swipe.mjs?v=20261117gallery';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117gallery';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117gallery';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117gallery';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117gallery';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261117gallery';
+import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261117gallery';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117gallery';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
-let bundle=JSON.parse(document.querySelector('#site-data').textContent),dirty=false,propertySlideshow=null;
+let bundle=JSON.parse(document.querySelector('#site-data').textContent),dirty=false,propertySlideshow=null,propertySlideshowStage=null;
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const storage={get(k,f){try{return JSON.parse(localStorage.getItem('confort4-'+k))??f;}catch{return f;}},set(k,v){try{localStorage.setItem('confort4-'+k,JSON.stringify(v));}catch{}}};
+main.addEventListener('click',event=>{const link=event.target.closest('a[href]');if(!link)return;const url=new URL(link.href,location.href);if(url.origin!==location.origin)return;const id=url.searchParams.get('id')||url.pathname.match(/inmueble-([a-f0-9-]{36})\.html$/)?.[1];const property=bundle.properties.find(p=>p.id===id);if(property)storage.set('property-preview',property);},true);
 let favorites=new Set(storage.get('favorites',[]));
 const menu=$('.menu-toggle'),nav=$('#navigation');
 const interest=$('.nav-interest'),interestToggle=$('.nav-interest-toggle'),interestLinks=$('#interest-links');
@@ -77,14 +79,13 @@ function initReviews(){
  $$('.review-carousel').forEach(carousel=>{
   carousel.dataset.reviewIndex='0';carousel.tabIndex=0;showReviewGroup(carousel,0);
   carousel.addEventListener('keydown',event=>{if(event.target===carousel&&['ArrowLeft','ArrowRight'].includes(event.key)){event.preventDefault();moveReview(carousel,event.key==='ArrowLeft'?-1:1);}});
-  let start=null;
-  carousel.addEventListener('touchstart',event=>{start=event.touches[0]?.clientX;},{passive:true});
-  carousel.addEventListener('touchend',event=>{const end=event.changedTouches[0]?.clientX;if(start!=null&&Math.abs(end-start)>60)moveReview(carousel,end<start?1:-1);start=null;},{passive:true});
+  bindSwipe(carousel,direction=>moveReview(carousel,direction));
  });
  $$('.review-full-dialog').forEach(dialog=>{dialog.setAttribute('data-lenis-prevent','');dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});});
 }
 function init(){
- propertySlideshow?.destroy();propertySlideshow=null;
+ const sameGallery=propertySlideshow&&propertySlideshowStage===main.querySelector('.property-photo-stage');
+ if(!sameGallery){propertySlideshow?.destroy();propertySlideshow=null;propertySlideshowStage=null;}
  initializeReferenceMotion(main);
  initializeStoryCarousels(main);
  initReviews();
@@ -97,18 +98,17 @@ function init(){
  markFavorites();
  if(page==='article'){const post=bundle.content.posts.find(p=>p.slug===params.slug&&p.published!==false);if(post)document.title=post.title+' | Confort4';}
  if(page==='property'){
-  propertySlideshow=initializePropertySlideshow(main,chooseGallery);
+  if(!sameGallery){propertySlideshow=initializePropertySlideshow(main,chooseGallery);propertySlideshowStage=main.querySelector('.property-photo-stage');}
   const property=bundle.properties.find(p=>p.id===params.id);if(property)document.title=property.titulo+' | Confort4';
   const description=$('#property-description'),toggle=$('[data-description-toggle]');
   if(toggle&&description){description.classList.add('is-collapsed');toggle.hidden=false;}
   const viewer=$('.property-viewer');
+  if(viewer&&sameGallery){const thumbs=$$('[data-gallery]'),index=Math.max(0,thumbs.findIndex(t=>t.getAttribute('aria-pressed')==='true'));viewer.dataset.index=String(index);$('[data-gallery-full]',viewer).src=thumbs[index].dataset.gallery;$('[data-gallery-count]',viewer).textContent=(index+1)+' / '+thumbs.length;}
   viewer?.setAttribute('data-lenis-prevent','');
   viewer?.addEventListener('close',()=>propertySlideshow?.setViewer(false));
   viewer?.addEventListener('click',ev=>{if(ev.target===viewer)viewer.close();});
   viewer?.addEventListener('keydown',ev=>{if(['ArrowLeft','ArrowRight'].includes(ev.key)){ev.preventDefault();chooseGallery(Number(viewer.dataset.index||0)+(ev.key==='ArrowLeft'?-1:1));}});
-  let swipeStart=null;
-  viewer?.addEventListener('touchstart',ev=>{swipeStart=ev.touches[0]?.clientX;},{passive:true});
-  viewer?.addEventListener('touchend',ev=>{const end=ev.changedTouches[0]?.clientX;if(swipeStart!=null&&Math.abs(end-swipeStart)>60)chooseGallery(Number(viewer.dataset.index||0)+(end<swipeStart?1:-1));swipeStart=null;},{passive:true});
+  bindSwipe(viewer,direction=>chooseGallery(Number(viewer.dataset.index||0)+direction));
  }
 }
 function chooseGallery(index){
@@ -175,6 +175,7 @@ if(page==='team'&&params.preview!=='1'){
  const cached=storage.get('team-public',null);
  if(Array.isArray(cached?.members)&&cached.members.length&&Array.isArray(cached.paragraphs)&&cached.title&&cached.intro)bundle.content.team=cached;
 }
+if(page==='property'&&!bundle.properties.some(p=>p.id===params.id)){const cached=storage.get('property-preview',null);if(cached?.id===params.id&&Array.isArray(cached.imagenes))bundle.properties.push(cached);}
 if(['property','article','team'].includes(page))main.innerHTML=renderPage(bundle,page,params);
 let heroIntroPending=false,heroIntroTimer=null;
 function releaseHeroIntro(initialize=true){if(!heroIntroPending)return;heroIntroPending=false;window.clearTimeout(heroIntroTimer);main.querySelector('.hero,.team-hero')?.removeAttribute('data-motion-pending');if(initialize)initializeReferenceMotion(main);}
@@ -220,6 +221,11 @@ if (!preview) {
   const signature = heroSignature(previousHero);
   const template = document.createElement('template');
   template.innerHTML = renderPage(bundle,page,params);
+  if(page==='property'){
+   const current=main.querySelector('.property-gallery'),next=template.content.querySelector('.property-gallery');
+   const signature=gallery=>JSON.stringify([$$('[data-gallery]',gallery).map(t=>t.dataset.gallery),$('h1',gallery)?.textContent,$('.property-price',gallery)?.textContent,$('.property-location-line',gallery)?.textContent]);
+   if(current&&next&&signature(current)===signature(next))next.replaceWith(current);
+  }
   preserveCatalogPhotos(main,template.content);
   if(page==='team'){releaseHeroIntro(false);preserveTeamMotion(main,template.content);}
   // Preserve unchanged galleries (and their scroll/reveal state) on feed hydration.

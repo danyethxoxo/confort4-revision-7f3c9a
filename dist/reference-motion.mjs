@@ -1,4 +1,4 @@
-import {motionTiming as timing, clampProgress, intervalProgress, expansionState, lineGradientPosition} from './motion-rules.mjs?v=20261117fast';
+import {motionTiming as timing, clampProgress, intervalProgress, expansionState, lineGradientPosition} from './motion-rules.mjs?v=20261117gallery';
 import {initializeMotionNavigation} from './motion-navigation.mjs?v=20261114catalog';
 
 const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -464,6 +464,7 @@ function prepareFeaturedProperties(root) {
   carousel.addEventListener('pointerdown', event => {
     if (event.target.closest('button') || event.button !== 0) return;
     pointerStart = {x: event.clientX, y: event.clientY};
+    window.clearTimeout(advanceTimer);progressAnimation?.pause();zoomAnimation?.pause();
     dragged = false;
     carousel.removeAttribute('data-dragging');
   });
@@ -478,13 +479,14 @@ function prepareFeaturedProperties(root) {
   });
   carousel.addEventListener('pointerup', event => {
     if (pointerStart === null) return;
-    const distance = event.clientX - pointerStart.x;
+    const distance = event.clientX - pointerStart.x,vertical=event.clientY-pointerStart.y;
     pointerStart = null;
     const media = slides[index].querySelector('.featured-image');
     const dragTransform = media.style.transform || 'translateX(0px)';
     media.style.transform = '';
-    if (Math.abs(distance) < 80) {
+    if (Math.abs(distance) < 45||Math.abs(distance)<Math.abs(vertical)*1.25) {
       if (dragged) play(media, [{transform: dragTransform}, {transform: 'translateX(0px)'}], 300);
+      armAutoplay();
       return;
     }
     dragged = true;
@@ -495,6 +497,7 @@ function prepareFeaturedProperties(root) {
     dragged = false;
     carousel.removeAttribute('data-dragging');
     slides[index].querySelector('.featured-image').style.transform = '';
+    armAutoplay();
   });
   carousel.addEventListener('click', event => {
     if (dragged) { event.preventDefault(); dragged = false; carousel.removeAttribute('data-dragging'); }
