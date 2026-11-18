@@ -37,13 +37,13 @@ export async function readLimited(response,limit){
 }
 export async function convertPhoto(original,size,fetcher=fetch){
  const profile=PHOTO_PROFILES[size];if(!originalPhotoURL(original)||!profile)throw Error('invalid_photo');
- for(const quality of [profile.quality,50,35]){
+ for(const quality of [profile.quality,profile.quality-6,profile.quality-12]){
   const url=new URL('https://wsrv.nl/');url.search=new URLSearchParams({url:original,w:String(profile.width),h:String(profile.width),fit:'inside',we:'',output:'webp',q:String(quality),maxage:'1y'});
   try{
    const response=await fetcher(url,{redirect:'error',signal:AbortSignal.timeout(20000)});
    if(!response.ok||!response.headers.get('content-type')?.startsWith('image/webp'))throw Error('conversion_failed');
    const bytes=await readLimited(response,profile.maxBytes);validateSDR(bytes,profile);return bytes;
-  }catch(error){if(quality===35)throw error;}
+  }catch(error){if(quality===profile.quality-12)throw error;}
  }
  throw Error('conversion_failed');
 }

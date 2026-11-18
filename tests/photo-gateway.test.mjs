@@ -15,7 +15,7 @@ globalThis.fetch=async(value,options={})=>{
 await import('../supabase/functions/confort4-photo/index.ts');
 const original='https://storage.googleapis.com/attachment-listing-prod-5af4/new/photo.jpeg';
 const request=(url=original,size='thumb',method='GET')=>new Request('https://project.invalid/functions/v1/confort4-photo?'+new URLSearchParams({url,size}),{method});
-let response=await handler(request());assert.equal(response.status,302);assert(response.headers.get('location').startsWith('https://project.invalid/storage/v1/object/public/confort4-property-sdr/sdr2/thumb/'));assert.equal(calls.length,1,'Cached images must skip conversion and rate writes');
+let response=await handler(request());assert.equal(response.status,302);assert(response.headers.get('location').startsWith('https://project.invalid/storage/v1/object/public/confort4-property-sdr/sdr3/thumb/'));assert.equal(calls.length,1,'Cached images must skip conversion and rate writes');
 mode='cold';calls=[];response=await handler(request());assert.equal(response.status,302);assert(calls.some(c=>c.url.startsWith('https://wsrv.nl/')));assert(calls.some(c=>c.url.includes('/object/confort4-property-sdr/')));assert(!calls.some(c=>c.url===original),'Never fetch the HDR original into the browser or function');
 mode='bad-image';calls=[];response=await handler(request());assert.equal(response.status,200);assert.equal(response.headers.get('Content-Type'),'image/svg+xml');assert.equal(response.headers.get('location'),null);assert(!calls.some(c=>c.url.includes('/object/confort4-property-sdr/')),'Unverified files must not enter the cache');
 mode='rate';response=await handler(request());assert.equal(response.status,429);assert.equal(response.headers.get('location'),null);

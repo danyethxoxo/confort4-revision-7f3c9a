@@ -1,6 +1,6 @@
 import {motionTiming} from './motion-rules.mjs';
 import {bindSwipe} from './swipe.mjs?v=20261117gallery';
-import {savePhotoData} from './photo-policy.mjs?v=20261117budget';
+import {savePhotoData,galleryImageURL} from './photo-policy.mjs?v=20261117sharp';
 
 export function initializePropertySlideshow(root,choose,options={}){
  const stage=root.querySelector('.property-photo-stage'),image=root.querySelector('#gallery-main'),thumbs=[...root.querySelectorAll('[data-gallery]')];
@@ -23,14 +23,14 @@ export function initializePropertySlideshow(root,choose,options={}){
   if(destroyed||paused||viewerOpen||!inView||reduced.matches||document.hidden)return;
   animation=progress.firstElementChild.animate?.([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration,easing:'linear',fill:'both'});
   zoom=image.animate?.([{transform:'scale(1)'},{transform:'scale(1.04)'}],{duration,easing:'linear',fill:'both'});
-  nextImage=new Image();nextImage.decoding='async';nextImage.src=thumbs[(current()+1)%thumbs.length].dataset.gallery;
+  nextImage=new Image();nextImage.decoding='async';nextImage.src=galleryImageURL(thumbs[(current()+1)%thumbs.length]);
   timer=setTimeout(()=>advance(1),duration);
  }
  async function advance(step){
   if(changing||destroyed)return;changing=true;lock(true);stop();const request=++revision;let index=current();
   try{for(let attempt=0;attempt<thumbs.length;attempt++){
    index=(index+step+thumbs.length)%thumbs.length;if(failed.has(index))continue;
-   const url=thumbs[index].dataset.gallery;
+   const url=galleryImageURL(thumbs[index]);
    try{await new Promise((resolve,reject)=>{const img=new Image(),timeout=setTimeout(()=>done(false),12000);function done(ok){clearTimeout(timeout);img.onload=img.onerror=null;ok?resolve():reject(Error('Foto no disponible'));}img.decoding='async';img.onload=()=>img.decode?img.decode().catch(()=>{}).then(()=>done(true)):done(true);img.onerror=()=>done(false);img.src=url;});}
    catch{failed.add(index);continue;}
    if(destroyed||request!==revision)return;
