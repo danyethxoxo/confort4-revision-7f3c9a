@@ -31,4 +31,4 @@ assert.equal(savePhotoData({saveData:true}),true);assert.equal(savePhotoData({ef
 const data=JSON.parse(fs.readFileSync(new URL('../content/site.json',import.meta.url))),property={id:'test',titulo:'Future photo',imagenes:[future],precio:100,operacion:'Venta'};
 const html=renderPage({content:data,properties:[property],reviews:[]},'property',{id:'test'});
 assert(html.includes('size=thumb'),'Gallery thumbnails must use the small profile');assert(html.includes('size=large'),'Gallery cover must use the large profile');assert(!html.includes('src="'+future+'"'),'Future originals must never be embedded directly');
-console.log('SDR photos: 114 budgeted variants, strict format/dimension/metadata validation, automatic future sources, safe failure and low-data policy passed.');
+console.log('SDR photos: 152 responsive budgeted variants, strict format/dimension/metadata validation, automatic future sources, safe failure and low-data policy passed.');

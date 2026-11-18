@@ -1,12 +1,13 @@
-import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261117modules';
-import {bindSwipe} from './swipe.mjs?v=20261117modules';
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117modules';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117modules';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117modules';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117modules';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261117modules';
-import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261117modules';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117modules';
+import {applyGalleryImage} from './photo-policy.mjs?v=20261117sharp';
+import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261117sharp';
+import {bindSwipe} from './swipe.mjs?v=20261117sharp';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261117sharp';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261117sharp';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261117sharp';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261117sharp';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261117sharp';
+import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261117sharp';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261117sharp';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -104,7 +105,7 @@ function init(){
   const description=$('#property-description'),toggle=$('[data-description-toggle]');
   if(toggle&&description){description.classList.add('is-collapsed');toggle.hidden=false;}
   const viewer=$('.property-viewer');
-  if(viewer&&sameGallery){const thumbs=$$('[data-gallery]'),index=Math.max(0,thumbs.findIndex(t=>t.getAttribute('aria-pressed')==='true'));viewer.dataset.index=String(index);$('[data-gallery-full]',viewer).src=thumbs[index].dataset.gallery;$('[data-gallery-count]',viewer).textContent=(index+1)+' / '+thumbs.length;}
+  if(viewer&&sameGallery){const thumbs=$$('[data-gallery]'),index=Math.max(0,thumbs.findIndex(t=>t.getAttribute('aria-pressed')==='true'));viewer.dataset.index=String(index);applyGalleryImage($('[data-gallery-full]',viewer),thumbs[index]);$('[data-gallery-count]',viewer).textContent=(index+1)+' / '+thumbs.length;}
   viewer?.setAttribute('data-lenis-prevent','');
   viewer?.addEventListener('close',()=>propertySlideshow?.setViewer(false));
   viewer?.addEventListener('click',ev=>{if(ev.target===viewer)viewer.close();});
@@ -115,9 +116,9 @@ function init(){
 function chooseGallery(index){
  const thumbnails=$$('[data-gallery]');if(!thumbnails.length)return;
  const selected=(index+thumbnails.length)%thumbnails.length,thumb=thumbnails[selected],viewer=$('.property-viewer');
- $('#gallery-main').src=thumb.dataset.gallery;
+ applyGalleryImage($('#gallery-main'),thumb);
  thumbnails.forEach(b=>b.setAttribute('aria-pressed',String(b===thumb)));
- if(viewer){viewer.dataset.index=String(selected);const image=$('[data-gallery-full]',viewer);image.src=thumb.dataset.gallery;image.alt=$('#gallery-main').alt+' · Foto '+(selected+1);$('[data-gallery-count]',viewer).textContent=(selected+1)+' / '+thumbnails.length;}
+ if(viewer){viewer.dataset.index=String(selected);const image=$('[data-gallery-full]',viewer);applyGalleryImage(image,thumb);image.alt=$('#gallery-main').alt+' · Foto '+(selected+1);$('[data-gallery-count]',viewer).textContent=(selected+1)+' / '+thumbnails.length;}
  propertySlideshow?.reset();
 }
 function reviewGroupSize(){return window.innerWidth>1000?3:window.innerWidth>600?2:1;}
