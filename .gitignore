@@ -4,3 +4,5 @@ node_modules/
 .impeccable/
 *.zip
 qa/
+
+.cache/

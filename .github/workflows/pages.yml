@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '23 */6 * * *'
 
 permissions:
   contents: read
@@ -40,6 +42,10 @@ jobs:
           node tests/home-modules.test.mjs
           node tests/property-sdr.test.mjs
           node --experimental-strip-types tests/photo-gateway.test.mjs
+          node scripts/fetch-public-snapshot.mjs
+          node scripts/build-pages.mjs --live
+          node scripts/check-pages.mjs
+          node tests/seo.test.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

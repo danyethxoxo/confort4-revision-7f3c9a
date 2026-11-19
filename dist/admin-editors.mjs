@@ -1,6 +1,6 @@
-import {e,safeURL} from './ui.mjs?v=20261117sharp';
-import {homeModuleLabels} from './editorial-model.mjs?v=20261117sharp';
-import {serviceEditor,postsEditor,reviewsEditor,teamEditor} from './section-editors.mjs?v=20261117sharp';
+import {e,safeURL} from './ui.mjs?v=20261118brand';
+import {homeModuleLabels} from './editorial-model.mjs?v=20261118brand';
+import {serviceEditor,postsEditor,reviewsEditor,teamEditor} from './section-editors.mjs?v=20261118brand';
 export function imageEditor(path,label,value,input){return `<div class="editor-image">${value?`<img src="${safeURL(value)}" alt="Vista previa de ${e(label)}" loading="lazy">`:''}<div><strong>${e(label)}</strong><div class="editor-image-actions">${value?`<button type="button" class="button button-outline" data-crop-path="${e(path)}">Ajustar encuadre</button>`:''}<label class="editor-upload">Subir foto<input type="file" data-upload-path="${e(path)}" accept="image/jpeg,image/png,image/webp"></label></div></div></div>`;}
 export function editorialEditor(tab,d,{input,block}){
  const at=path=>path.split('.').reduce((value,key)=>value?.[key],d);
