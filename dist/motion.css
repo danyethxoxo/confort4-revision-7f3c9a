@@ -359,3 +359,6 @@ html.lenis,html.lenis body { scroll-behavior: auto; }
 
 /* Give the supplied header logo breathing room without changing bar height. */
 .header .brand-logo{display:flex;align-items:center;justify-content:center}
+
+/* Gray matches the latest supplied footer SVG; the existing circle clips its canvas. */
+.footer-logo-round{background:#242625}
