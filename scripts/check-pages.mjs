@@ -18,7 +18,7 @@ for(const file of pages){
   }
   references++;
  }
- if(!html.includes('class="header-contact-button" href="https://wa.me/525527477538"'))throw Error(`${file}: Alberto WhatsApp header action missing`);
+ if(!html.includes('id="navigation"'))throw Error(file+': shared header missing');
 }
 const home=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const homeMain=home.match(/<main[^>]*>([\s\S]*?)<\/main>/)[1];

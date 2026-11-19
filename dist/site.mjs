@@ -1,13 +1,15 @@
-import {applyGalleryImage} from './photo-policy.mjs?v=20261118logo';
-import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261118logo';
-import {bindSwipe} from './swipe.mjs?v=20261118logo';
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261118logo';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261118logo';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261118logo';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261118logo';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261118logo';
-import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261118logo';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261118logo';
+import {headerConfig} from './header-model.mjs?v=20261118header';
+import {renderHeaderNavigation} from './header-render.mjs?v=20261118header';
+import {applyGalleryImage} from './photo-policy.mjs?v=20261118header';
+import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261118header';
+import {bindSwipe} from './swipe.mjs?v=20261118header';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261118header';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261118header';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261118header';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261118header';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261118header';
+import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261118header';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261118header';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -17,19 +19,29 @@ const storage={get(k,f){try{return JSON.parse(localStorage.getItem('confort4-'+k
 main.addEventListener('click',event=>{const link=event.target.closest('a[href]');if(!link)return;const url=new URL(link.href,location.href);if(url.origin!==location.origin)return;const id=url.searchParams.get('id')||url.pathname.match(/inmueble-([a-f0-9-]{36})\.html$/)?.[1];const property=bundle.properties.find(p=>p.id===id);if(property)storage.set('property-preview',property);},true);
 let favorites=new Set(storage.get('favorites',[]));
 const menu=$('.menu-toggle'),nav=$('#navigation');
-const interest=$('.nav-interest'),interestToggle=$('.nav-interest-toggle'),interestLinks=$('#interest-links');
+let interest,interestToggle,interestLinks;
+let activeHeader=headerConfig(bundle.content),headerKey=JSON.stringify(activeHeader);
 function setInterest(open){if(!interestToggle||!interestLinks)return;interestToggle.setAttribute('aria-expanded',String(open));interestLinks.hidden=!open;}
+function bindHeaderInterest(){
+interest=$('.nav-interest');interestToggle=$('.nav-interest-toggle');interestLinks=$('#interest-links');
 interestToggle?.addEventListener('click',()=>setInterest(interestToggle.getAttribute('aria-expanded')!=='true'));
 interest?.addEventListener('pointerenter',event=>{if(event.pointerType==='mouse'&&window.innerWidth>1000)setInterest(true);});
 interest?.addEventListener('pointerleave',event=>{if(event.pointerType==='mouse'&&!interest.contains(document.activeElement))setInterest(false);});
 interest?.addEventListener('focusout',event=>{if(!interest.contains(event.relatedTarget))setInterest(false);});
 interest?.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();setInterest(false);interestToggle.focus();}if(event.key==='ArrowDown'&&event.target===interestToggle){event.preventDefault();setInterest(true);$('a',interestLinks)?.focus();}});
+}
+bindHeaderInterest();
 document.addEventListener('click',event=>{if(!event.target.closest('.nav-interest'))setInterest(false);});
 function setMenu(open){
  if(!menu||!nav)return;
  nav.classList.toggle('open',open);menu.setAttribute('aria-expanded',String(open));if(!open)setInterest(false);
- menu.firstChild.textContent=open?'Cerrar ':'Menú ';
+ menu.firstChild.textContent=(open?activeHeader.closeLabel:activeHeader.menuLabel)+' ';
  menu.querySelector('path')?.setAttribute('d',open?'M6 6l12 12M6 18 18 6':'M4 8h16M4 16h16');
+}
+function syncHeader(content){
+ const next=headerConfig(content),key=JSON.stringify(next);if(key===headerKey||!nav)return;
+ const open=menu?.getAttribute('aria-expanded')==='true';activeHeader=next;headerKey=key;
+ nav.innerHTML=renderHeaderNavigation(next,location.pathname.split('/').pop()||'index.html');bindHeaderInterest();setMenu(open);
 }
 function closeMenu(){setMenu(false);}
 menu?.addEventListener('click',()=>setMenu(menu.getAttribute('aria-expanded')!=='true'));
@@ -86,6 +98,7 @@ function initReviews(){
  $$('.review-full-dialog').forEach(dialog=>{dialog.setAttribute('data-lenis-prevent','');dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});});
 }
 function init(){
+ syncHeader(bundle.content);
  const sameGallery=propertySlideshow&&propertySlideshowStage===main.querySelector('.property-photo-stage');
  if(!sameGallery){propertySlideshow?.destroy();propertySlideshow=null;propertySlideshowStage=null;}
  initializeReferenceMotion(main);
@@ -202,7 +215,7 @@ function syncClientGallery(content){
 }
 async function refreshLatestReviews(){
  if(reviewRefreshPending||document.hidden||Date.now()-lastReviewRefresh<30000)return;reviewRefreshPending=true;
- try{const response=await fetch(config.endpoint.replace('confort4-forms','confort4-site'),{method:'POST',headers:{'Content-Type':'application/json',apikey:config.publishableKey,Authorization:'Bearer '+config.anonKey},body:JSON.stringify({action:'public'}),signal:AbortSignal.timeout(15000)});if(!response.ok)return;const next=await response.json();if(next.content?.home){syncReviews(next);lastReviewRefresh=Date.now();}}
+ try{const response=await fetch(config.endpoint.replace('confort4-forms','confort4-site'),{method:'POST',headers:{'Content-Type':'application/json',apikey:config.publishableKey,Authorization:'Bearer '+config.anonKey},body:JSON.stringify({action:'public'}),signal:AbortSignal.timeout(15000)});if(!response.ok)return;const next=await response.json();if(next.content?.home){syncHeader(next.content);syncReviews(next);lastReviewRefresh=Date.now();}}
  catch{}finally{reviewRefreshPending=false;}
 }
 {
@@ -216,7 +229,7 @@ async function refreshLatestReviews(){
   let live = await response.json();
   if (!live.content?.home) throw Error('feed');
   if(preview)live=withPreviewWidgets(bundle.content,live);
-  bundle = live;lastReviewRefresh=Date.now();
+  bundle = live;syncHeader(live.content);lastReviewRefresh=Date.now();
   if(page==='team'&&live.content.team)storage.set('team-public',live.content.team);
   if(page==='review'&&dirty){releaseHeroIntro();syncReviews(live);return;}
   if ((dirty&&page!=='home') || page==='privacy') return;

@@ -1,13 +1,13 @@
-import {editorialContent,homeModuleLabels} from './editorial-model.mjs?v=20261118logo';
-import {openImageCropper} from './image-cropper.mjs?v=20261118logo';
-import {editorialEditor,imageEditor} from './admin-editors.mjs?v=20261118logo';
-import {e,safeURL,safeImage,money,imageOf} from './ui.mjs?v=20261118logo';
-import {validateContent,moduleTypes} from './content-validation.mjs?v=20261118logo';
+import {editorialContent,homeModuleLabels} from './editorial-model.mjs?v=20261118header';
+import {openImageCropper} from './image-cropper.mjs?v=20261118header';
+import {editorialEditor,imageEditor} from './admin-editors.mjs?v=20261118header';
+import {e,safeURL,safeImage,money,imageOf} from './ui.mjs?v=20261118header';
+import {validateContent,moduleTypes} from './content-validation.mjs?v=20261118header';
 const config=window.CONFORT4_FORMS,base=config.endpoint.split('/functions/')[0],endpoint=config.endpoint.replace('confort4-forms','confort4-site');
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 let session=null,state=null,draft=null,tab='home',offset=0,unsaved=false,pending=false;
 try{session=JSON.parse(sessionStorage.getItem('confort4-session'));}catch{}
-const labels={vender:'Vender',rentar:'Rentar',comprar:'Comprar',home:'Pantalla principal',team:'Quiénes somos',services:'Servicios',process:'Proceso',faq:'Preguntas frecuentes',posts:'Blog',checklists:'Checklists',leads:'Contactos',reviews:'Reseñas',inventory:'Propiedades',media:'Imágenes',settings:'Configuración',versions:'Versiones'};
+const labels={header:'Header',vender:'Vender',rentar:'Rentar',comprar:'Comprar',home:'Pantalla principal',team:'Quiénes somos',services:'Servicios',process:'Proceso',faq:'Preguntas frecuentes',posts:'Blog',checklists:'Checklists',leads:'Contactos',reviews:'Reseñas',inventory:'Propiedades',media:'Imágenes',settings:'Configuración',versions:'Versiones'};
 const moduleLabels=homeModuleLabels;
 function normalizedSession(data){return {...data,editor_username:data.editor_username||session?.editor_username,expires_at:data.expires_at||Math.floor(Date.now()/1000)+(data.expires_in||3600)};}
 function persist(){if(session)sessionStorage.setItem('confort4-session',JSON.stringify(session));else sessionStorage.removeItem('confort4-session');}
@@ -32,7 +32,7 @@ function editor(){
 }
 function editorNavigation(){
  const buttons=keys=>keys.map(key=>`<button data-tab="${key}" ${tab===key?'aria-current="page"':''}>${e(labels[key])}</button>`).join('');
- return buttons(['home','team'])+'<div class="admin-nav-group"><span>Me interesa</span>'+buttons(['vender','rentar','comprar'])+'</div>'+buttons(['inventory','reviews','posts'])+'<div class="admin-nav-group"><span>Administración</span>'+buttons(['leads','media','settings','versions'])+'</div>';
+ return buttons(['header','home','team'])+'<div class="admin-nav-group"><span>Me interesa</span>'+buttons(['vender','rentar','comprar'])+'</div>'+buttons(['inventory','reviews','posts'])+'<div class="admin-nav-group"><span>Administración</span>'+buttons(['leads','media','settings','versions'])+'</div>';
 }
 function shell(){
  const opened=new Set($$('details[open]',$('#admin-panel')).map(element=>$('summary',element)?.textContent));
@@ -72,6 +72,8 @@ document.addEventListener('input',ev=>{if(ev.target.matches('[data-bind]')){unsa
 $('#admin-panel').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
  if(b.dataset.tab){collect();tab=b.dataset.tab;offset=0;shell();return;}
  if(b.id==='logout'){withPending(async()=>{await fetch(base+'/auth/v1/logout?scope=local',{method:'POST',headers:{apikey:config.publishableKey,Authorization:'Bearer '+session.access_token}}).catch(()=>{});session=null;persist();localStorage.removeItem('confort4-preview');location.reload();});return;}
+ if(b.hasAttribute('data-add-header-social')){collect();if(draft.header.socials.length>=8)return;draft.header.socials.push({icon:'tiktok',label:'Nueva red social',href:'https://www.tiktok.com/',visible:true});unsaved=true;shell();return;}
+ if(b.dataset.removeHeaderSocial!==undefined){collect();const i=Number(b.dataset.removeHeaderSocial);if(Number.isInteger(i)&&i>=0&&i<draft.header.socials.length){draft.header.socials.splice(i,1);unsaved=true;shell();}return;}
  if(b.id==='save')withPending(save);
  if(b.dataset.loadMedia)withPending(async()=>{status('Cargando la galería completa desde KW…');const result=await api('property_media',{id:b.dataset.loadMedia,refresh:true}),container=b.closest('details');container.querySelector('.admin-property-photos')?.remove();const track=document.createElement('div');track.className='admin-property-photos';track.innerHTML=result.images.map(url=>`<img src="${safeImage(url,'thumb')}" alt="" loading="lazy">`).join('');container.insertBefore(track,b);container.querySelector('summary').textContent='Fotos de la propiedad · '+result.images.length;status(result.images.length+' fotos cargadas.');});
  if(b.id==='add-properties'){$('#extra-picker').open=true;$('#kw-property-link input').focus();}

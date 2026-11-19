@@ -341,7 +341,7 @@ html.lenis,html.lenis body { scroll-behavior: auto; }
 .header .nav-inner{min-height:80px;padding-block:1px}
 .header .brand-logo,.header.over-hero .brand-logo,.header:not(.over-hero) .brand-logo{width:132px;height:78px;filter:none;color:#fff}
 .header .brand-logo svg{display:block;width:100%;height:100%;fill:currentColor;stroke:none;overflow:visible}
-.header #navigation>a.nav-project{font-weight:700}
+
 .header #navigation>a.header-contact-button{gap:9px}
 .header #navigation>a.header-contact-button .whatsapp-icon{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .header #navigation>a.header-contact-button:is(:hover,:focus-visible),.header.over-hero #navigation>a.header-contact-button:is(:hover,:focus-visible),.header:not(.over-hero) #navigation>a.header-contact-button:is(:hover,:focus-visible){background:#8f0000;border-color:#fff;color:#fff}
@@ -362,3 +362,11 @@ html.lenis,html.lenis body { scroll-behavior: auto; }
 
 /* Gray matches the latest supplied footer SVG; the existing circle clips its canvas. */
 .footer-logo-round{background:#242625}
+
+/* Editable shared navigation. */
+.header #navigation .header-link{font-weight:400}
+.header #navigation .header-link.is-bold{font-weight:700}
+.header-network-icon{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.header-network-icon.icon-filled{fill:currentColor;stroke:none}
+
+.header #navigation .nav-interest,.header #navigation .nav-interest-links,.header #navigation .nav-interest-links a{color:#fff}

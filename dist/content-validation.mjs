@@ -1,3 +1,4 @@
+import {validateHeader} from './header-model.mjs';
 export const moduleTypes=['statement','properties','reviews','clients','process','metrics','living','faq','transactions','journal'];
 export function validateContent(data){
  if(!data||typeof data!=='object'||!data.team||!Array.isArray(data.services)||!data.home||!Array.isArray(data.posts)||!Array.isArray(data.faq))throw Error('Faltan secciones de contenido.');
@@ -14,6 +15,7 @@ export function validateContent(data){
   else if(value&&typeof value==='object')for(const [k,v]of Object.entries(value)){if(['__proto__','prototype','constructor'].includes(k))throw Error('Campo no permitido.');walk(v,depth+1,k);}
  }
  walk(data);
+ validateHeader(data.header);
  const string=(value,label)=>{if(typeof value!=='string'||!value.trim())throw Error('Completa '+label+'.');};
  const list=(value,label)=>{if(!Array.isArray(value))throw Error('Revisa '+label+'.');};
  string(data.home.title,'el título de inicio');string(data.home.intro,'la presentación');string(data.home.photo,'la imagen principal');

@@ -1,0 +1,10 @@
+import {e} from './ui.mjs?v=20261118header';
+import {HEADER_LINKS,SOCIAL_ICONS} from './header-model.mjs?v=20261118header';
+export function headerEditor(d,{input,block}){
+ const link=(path,label)=>`<details class="editor-item"><summary>${e(label)}</summary>${input(path+'.label','Texto')+input(path+'.href','Enlace · página interna o HTTPS')+input(path+'.bold','Texto en negritas',{check:true})+input(path+'.visible','Mostrar',{check:true})}</details>`;
+ return block('Header · navegación de todas las páginas','<p>Edita el menú y las redes del encabezado. Usa Vista previa para revisarlo y Publicar para aplicar los cambios.</p>'+input('header.menuLabel','Texto del botón de menú en celular')+input('header.closeLabel','Texto del botón para cerrar el menú'))+
+ block('Menú principal',Object.entries(HEADER_LINKS).map(([id,label])=>link('header.links.'+id,label)).join(''))+
+ block('Me interesa · submenú',input('header.interest.label','Texto del submenú')+input('header.interest.bold','Texto en negritas',{check:true})+input('header.interest.visible','Mostrar submenú',{check:true})+d.header.interest.items.map((item,i)=>link('header.interest.items.'+i,item.label)).join(''))+
+ block('Botón de contacto',link('header.contact','Texto y enlace de contacto')+input('header.contact.icon','Icono del botón',{choices:{none:'Sin icono',...SOCIAL_ICONS}}))+
+ block('Redes sociales',d.header.socials.map((social,i)=>`<details class="editor-item"><summary>${e(social.label||SOCIAL_ICONS[social.icon]||'Nueva red')}</summary>${input('header.socials.'+i+'.icon','Icono',{choices:SOCIAL_ICONS})+input('header.socials.'+i+'.label','Nombre de la red')+input('header.socials.'+i+'.href','Enlace HTTPS')+input('header.socials.'+i+'.visible','Mostrar red social',{check:true})}<button type="button" class="text-button danger" data-remove-header-social="${i}">Eliminar red social</button></details>`).join('')+`<button type="button" class="button button-outline" data-add-header-social ${d.header.socials.length>=8?'disabled':''}>Agregar red social · ${d.header.socials.length}/8</button>`);
+}
