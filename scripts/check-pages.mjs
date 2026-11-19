@@ -27,7 +27,7 @@ const contact=fs.readFileSync(path.join(root,'contacto.html'),'utf8');
 if(!contact.includes('data-kind="contact"')||!home.includes('href="contacto.html"')||!home.includes('href="resena.html"'))throw Error('Missing dedicated contact/review flow');
 if(/alberto\.webp|renata\.webp/.test(home.match(/<main[^>]*>([\s\S]*?)<\/main>/)[1]))throw Error('Advisor photos belong on the team page only');
 const team=fs.readFileSync(path.join(root,'quienes-somos.html'),'utf8');
-if(!team.includes('alberto.webp')||!team.includes('renata.webp'))throw Error('Team photographs missing');
+if(!team.includes('class="team-hero')||!team.includes('data-page="team"'))throw Error('Team page structure missing');
 const reviews=fs.readFileSync(path.join(root,'resena.html'),'utf8');
 if(!reviews.includes('data-kind="review"')||!reviews.includes('name="publishConsent"'))throw Error('Review consent flow missing');
 console.log(`PASS: ${pages.length} pages, ${references} local links/assets, simplified home, dedicated contact and review consent.`);
