@@ -334,3 +334,19 @@ html.lenis,html.lenis body { scroll-behavior: auto; }
 .header #navigation .header-social > a::after { content:""; position:absolute; left:9px; right:9px; bottom:4px; height:1px; background:currentColor; transform:scaleX(0); transform-origin:left; transition:transform .2s ease; pointer-events:none; }
 .header #navigation .header-social > a:is(:hover,:focus-visible)::after { transform:scaleX(1); }
 @media(prefers-reduced-motion:reduce) { .header #navigation .header-social > a::after { transition:none; } }
+
+/* Brand lock: original C4 mark, white navigation and a solid KW red scroll state. */
+.header:not(.over-hero),.header:not(.over-hero):has(nav.open){background:#b40101;backdrop-filter:none;-webkit-backdrop-filter:none}
+.header.over-hero,.header.over-hero:has(nav.open){background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+.header .nav-inner{min-height:80px;padding-block:1px}
+.header .brand-logo,.header.over-hero .brand-logo,.header:not(.over-hero) .brand-logo{width:132px;height:78px;filter:none;color:#fff}
+.header .brand-logo svg{display:block;width:100%;height:100%;fill:currentColor;stroke:none;overflow:visible}
+.header #navigation>a.nav-project{font-weight:700}
+.header #navigation>a.header-contact-button{gap:9px}
+.header #navigation>a.header-contact-button .whatsapp-icon{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.header #navigation>a.header-contact-button:is(:hover,:focus-visible),.header.over-hero #navigation>a.header-contact-button:is(:hover,:focus-visible),.header:not(.over-hero) #navigation>a.header-contact-button:is(:hover,:focus-visible){background:#8f0000;border-color:#fff;color:#fff}
+.footer-logo-round{display:flex;width:86px;height:86px;flex-shrink:0;align-items:center;justify-content:center;background:#242725;border-radius:50%;color:#fff}
+.footer-logo-round svg{width:78px;height:62px;fill:currentColor;stroke:none}
+.footer .footer-main .footer-wordmark{align-items:baseline;white-space:nowrap;overflow:visible}
+.footer-wordmark .footer-by{font-size:.5em;letter-spacing:-.035em;margin-left:.28em;white-space:nowrap}
+@media(max-width:1000px){.header .nav-inner{min-height:74px;padding-block:1px}.header .brand-logo{width:122px;height:72px}.header #navigation.open,.header.over-hero #navigation.open,.header:not(.over-hero) #navigation.open{background:#b40101;backdrop-filter:none;-webkit-backdrop-filter:none}.header #navigation.open>a.header-contact-button:is(:hover,:focus-visible){background:#8f0000}.footer-logo-round{width:78px;height:78px}}

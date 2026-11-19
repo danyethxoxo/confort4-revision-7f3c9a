@@ -1,0 +1,33 @@
+import {propertyImageSource} from '../dist/property-image-sources.mjs';
+const clean=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+const excerpt=(value,max=165)=>{const text=clean(value);return text.length>max?text.slice(0,max-1).replace(/\s+\S*$/,'')+'…':text;};
+export function absoluteURL(value,origin){try{const url=new URL(value,origin);return url.protocol==='https:'?url.href:origin;}catch{return origin;}}
+const pages={
+ home:['Bienes raíces en CDMX','Compra, vende o renta en Ciudad de México con Alberto y Renata, Confort4 by KW, asociados a KW Premier. Explora propiedades y recibe acompañamiento inmobiliario.'],
+ team:['Alberto y Renata · Asesores inmobiliarios en CDMX','Conoce a Alberto y Renata, el equipo Confort4 by KW asociado a KW Premier. Acompañamiento para comprar, vender y rentar propiedades en Ciudad de México.'],
+ vender:['Vender tu propiedad en CDMX','Vende tu casa o departamento en Ciudad de México con Confort4 by KW. Estrategia, difusión y acompañamiento de Alberto y Renata, asociados a KW Premier.'],
+ comprar:['Comprar casa o departamento en CDMX','Encuentra casa o departamento en Ciudad de México con Confort4 by KW. Alberto y Renata te acompañan en la búsqueda y compra de tu próxima propiedad.'],
+ rentar:['Rentar una propiedad en CDMX','Renta tu propiedad o encuentra un espacio en Ciudad de México con Confort4 by KW. Acompañamiento para propietarios e inquilinos con Alberto y Renata.'],
+ catalog:['Casas y departamentos en venta y renta en CDMX','Explora las propiedades en venta y renta de Confort4 by KW en Ciudad de México y consulta disponibilidad con Alberto y Renata, asociados a KW Premier.'],
+ blog:['Guías para comprar, vender y rentar inmuebles','Resuelve tus dudas sobre compra, venta y renta de propiedades en CDMX. Guías y consejos inmobiliarios del equipo Confort4 by KW.'],
+ contact:['Contacta a Alberto y Renata en CDMX','Cuéntanos tu proyecto inmobiliario. Contacta a Alberto y Renata de Confort4 by KW para comprar, vender o rentar propiedades en Ciudad de México.'],
+ review:['Reseñas y experiencias de clientes','Conoce las experiencias de clientes de Confort4 by KW y comparte cómo fue trabajar con Alberto y Renata en tu proyecto inmobiliario.'],
+ faq:['Preguntas frecuentes sobre bienes raíces','Respuestas a preguntas frecuentes sobre comprar, vender y rentar propiedades con Confort4 by KW en Ciudad de México.'],
+ resources:['Recursos para tu proyecto inmobiliario','Prepara tu compra, venta o renta con recursos y listas de revisión del equipo Confort4 by KW en Ciudad de México.'],
+ privacy:['Aviso de privacidad','Consulta cómo Confort4 trata los datos que compartes en sus formularios de contacto y reseñas.'],
+ admin:['Acceso del equipo','Panel privado de edición de Confort4.']
+};
+export function pageSEO({page,file,title,content,property,post,origin,indexable}){
+ const brand='Confort4 by KW',url=file==='index'?origin:absoluteURL(file+'.html',origin);
+ let [heading,description]=pages[page]||[title,'Confort4 by KW: bienes raíces en Ciudad de México.'];
+ if(post){heading=clean(post.title);description=excerpt(post.excerpt);}
+ if(property){heading=excerpt(property.titulo,110);description=excerpt([property.titulo,[property.colonia,property.municipio,property.estado].filter(Boolean).join(', '),'Consulta disponibilidad con Alberto y Renata, Confort4 by KW.'].join('. '));}
+ const originalImage=property?(typeof property.imagenes?.[0]==='string'?property.imagenes[0]:property.imagenes?.[0]?.url)||content.home.photo:post?.cover||content.home.photo;
+ const image=absoluteURL(propertyImageSource(originalImage,'large'),origin);
+ const agency={'@type':'RealEstateAgent','@id':origin+'#agency',name:brand,alternateName:'Confort4',url:origin,logo:absoluteURL('assets/confort4-vector.svg',origin),image:absoluteURL(content.home.photo,origin),telephone:content.team.members.find(m=>m.id==='alberto')?.phone||'+52 55 2747 7538',email:content.email,address:{'@type':'PostalAddress',streetAddress:content.office,addressLocality:'Benito Juárez',addressRegion:'Ciudad de México',postalCode:'03103',addressCountry:'MX'},areaServed:[{'@type':'City',name:'Ciudad de México'},{'@type':'State',name:'Estado de México'}],sameAs:['https://confort4.kw.com/','https://www.facebook.com/confortcuatro/','https://www.instagram.com/confort4bienesraicesbykw/','https://www.youtube.com/@confort4bienesraices'],memberOf:{'@type':'Organization',name:'KW Premier',url:'https://www.kwpremieroficial.com/','memberOf':{'@type':'Organization',name:'Keller Williams',url:'https://www.kw.com/'}}};
+ const graph=[agency,{'@type':'WebSite','@id':origin+'#website',url:origin,name:brand,inLanguage:'es-MX',publisher:{'@id':origin+'#agency'}},{'@type':page==='team'?'AboutPage':page==='contact'?'ContactPage':['catalog','blog'].includes(page)?'CollectionPage':'WebPage','@id':url+'#page',url,name:heading,description,inLanguage:'es-MX',isPartOf:{'@id':origin+'#website'},about:{'@id':origin+'#agency'}}];
+ if(file!=='index'&&indexable){const parent=property?['Propiedades','propiedades.html']:post?['Blog','blog.html']:null;const crumbs=[['Inicio',origin],...(parent?[[parent[0],absoluteURL(parent[1],origin)]]:[]),[heading,url]];graph.push({'@type':'BreadcrumbList','@id':url+'#breadcrumbs',itemListElement:crumbs.map(([name,item],i)=>({'@type':'ListItem',position:i+1,name,item}))});}
+ if(post)graph.push({'@type':'BlogPosting','@id':url+'#article',headline:clean(post.title),description,image,dateModified:post.updated,author:{'@type':'Organization',name:post.author||brand},publisher:{'@id':origin+'#agency'},mainEntityOfPage:{'@id':url+'#page'},inLanguage:'es-MX'});
+ if(property){const about={'@type':/casa/i.test(property.tipo)?'House':/departamento|apartamento/i.test(property.tipo)?'Apartment':'Accommodation',name:clean(property.titulo),address:{'@type':'PostalAddress',addressLocality:[property.colonia,property.municipio].filter(Boolean).join(', '),addressRegion:property.estado,addressCountry:'MX'}};if(Number(property.m2_construccion)>0)about.floorSize={'@type':'QuantitativeValue',value:Number(property.m2_construccion),unitCode:'MTK'};if(Number(property.recamaras)>0)about.numberOfBedrooms=Number(property.recamaras);const listing={'@type':'RealEstateListing','@id':url+'#listing',url,name:clean(property.titulo),description:excerpt(property.descripcion,600)||description,image,about,provider:{'@id':origin+'#agency'}};if(Number(property.precio)>0)listing.offers={'@type':'Offer',price:Number(property.precio),priceCurrency:property.moneda||'MXN',url};graph.push(listing);}
+ return {title:heading+' | '+brand,description,image,url,type:post?'article':'website',jsonld:indexable?{'@context':'https://schema.org','@graph':graph}:null};
+}

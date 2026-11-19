@@ -38,7 +38,8 @@ export async function handle(req:Request){
   const user=await auth.json();if(!user.id)return response({error:'Inicia sesión para continuar.'},401);
   if(!await rpc('confort4_actor_role',{p_user:user.id}))return response({error:'Tu cuenta no tiene acceso a Confort4.'},403);
   if(!await rate(body.action==='upload'?'uploads':'editor',user.id,body.action==='upload'?10:60))return slowDown();
-  if(body.action==='catalog')return response(await rpc('confort4_catalog_picker',{p_user:user.id}));
+  if(body.action==='catalog')return response(await rpc('confort4_advisor_cards',{p_user:user.id,p_items:await rpc('confort4_catalog_picker',{p_user:user.id})}));
+  if(body.action==='inventory')return response(await rpc('confort4_advisor_cards',{p_user:user.id,p_items:await rpc('confort4_inventory',{p_query:body.args?.query||'',p_public:false})}));
   if(body.action==='property_media')return response({images:await ensurePropertyMedia(rpc,user.id,body.args?.id,body.args?.refresh===true)});
   if(body.action==='select_property'){
    if(typeof body.args?.selected!=='boolean'||!/^[a-f0-9-]{36}$/i.test(body.args?.id||''))return response({error:'Selecciona una propiedad válida.'},400);
@@ -50,7 +51,7 @@ export async function handle(req:Request){
    if(String(body.args?.url).length>2048||!['https:','http:'].includes(url.protocol)||!(url.hostname==='kw.com'||url.hostname.endsWith('.kw.com'))||url.username||url.password||url.port||!reference)return response({error:'Usa un enlace de propiedad de kw.com o de un sitio de KW.'},400);
    const rows=await rpc('confort4_catalog_picker',{p_user:user.id,p_reference:reference});
    for(const row of rows)row.imagenes=await ensurePropertyMedia(rpc,user.id,row.id);
-   return response(rows);
+   return response(await rpc('confort4_advisor_cards',{p_user:user.id,p_items:rows}));
   }
   if(body.action==='history'){
    if(body.args?.id&&('status' in body.args||'visible' in body.args)){

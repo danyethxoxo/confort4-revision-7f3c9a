@@ -1,5 +1,5 @@
 import {savePhotoData} from './photo-policy.mjs?v=20261117budget';
-import {motionTiming as timing, clampProgress, intervalProgress, expansionState, lineGradientPosition} from './motion-rules.mjs?v=20261117gallery';
+import {motionTiming as timing, clampProgress, intervalProgress, expansionState, lineGradientPosition} from './motion-rules.mjs?v=20261118brand';
 import {initializeMotionNavigation} from './motion-navigation.mjs?v=20261114catalog';
 
 const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -234,13 +234,15 @@ function prepareEntranceObserver(root) {
 function prepareFooter() {
   const footer = document.querySelector('.footer-wordmark');
   if (footer && !footer.querySelector('.footer-letter')) {
-    const letters = [...footer.textContent.trim()];
+    const by=footer.querySelector('.footer-by');
+    const letters = [...(footer.dataset.brandText||footer.textContent.trim())];
     footer.replaceChildren(...letters.map(character => {
       const letter = document.createElement('span');
       letter.className = 'footer-letter';
       letter.textContent = character;
       return letter;
-    }));
+    }),...(by?[by]:[]));
+    if(by)by.classList.add('footer-letter');
   }
   return footer;
 }
@@ -268,7 +270,7 @@ function updateScrollScene() {
  gradientBlocks.forEach(block=>measure(block.element));
  const visible=rect=>rect&&rect.top<height+160&&rect.bottom>-160;
  const set=(element,property,value)=>{if(element&&element.style[property]!==value)element.style[property]=value;};
- const overHero=Boolean(hero&&window.scrollY<24);
+ const overHero=Boolean(sceneElements.headerHero&&window.scrollY<24);
  if(header&&header.classList.contains('over-hero')!==overHero)header.classList.toggle('over-hero',overHero);
  if(hero&&visible(bounds.get(hero))){
   const rect=bounds.get(hero),progress=reduced?0:clampProgress(-rect.top/Math.max(1,rect.height));
@@ -526,7 +528,7 @@ export function initializeReferenceMotion(root) {
   prepareAccordions(root);
   const hero = root.querySelector('.hero');
   sceneElements = {
-    hero,
+    hero,headerHero:root.querySelector('.hero,.team-hero'),
     header: document.querySelector('.header'),
     heroParallax: hero?.querySelector('.hero-parallax'),
     expanding: [...root.querySelectorAll('.expanding-scene')].map(element=>({element,frame:element.querySelector('.expanding-frame'),image:element.querySelector('.expanding-frame img'),scrim:element.querySelector('.expanding-scrim'),copy:element.querySelector('.expanding-copy'),metrics:[...element.querySelectorAll('.expanding-metric')]})),
