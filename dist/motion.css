@@ -370,3 +370,6 @@ html.lenis,html.lenis body { scroll-behavior: auto; }
 .header-network-icon.icon-filled{fill:currentColor;stroke:none}
 
 .header #navigation .nav-interest,.header #navigation .nav-interest-links,.header #navigation .nav-interest-links a{color:#fff}
+
+/* Uniform solid social glyphs on desktop, mobile and contact controls. */
+.header #navigation .header-network-icon{width:20px;height:20px;flex:0 0 20px;fill:currentColor;stroke:none;stroke-width:0}
