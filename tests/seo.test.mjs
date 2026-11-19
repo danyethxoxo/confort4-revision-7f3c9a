@@ -11,7 +11,8 @@ assert.equal(svg('confort4-vector.svg').querySelector('svg>circle').getAttribute
 const titles=new Set();let indexed=0;
 for(const file of pages){
  const doc=new JSDOM(fs.readFileSync(new URL(file,base),'utf8')).window.document;
- assert(doc.title.includes('Confort4'),'Brand must be in every page title');
+ if(file==='index.html')assert.equal(doc.title,'Confort 4');
+ else assert(doc.title.includes('Confort4'),'Brand must be in every page title');
  const robots=doc.querySelector('meta[name=robots]')?.content;
  if(!robots?.includes('noindex')){
   indexed++;assert(!titles.has(doc.title),'Indexable page titles must be unique: '+file);titles.add(doc.title);
