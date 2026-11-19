@@ -373,3 +373,18 @@ html.lenis,html.lenis body { scroll-behavior: auto; }
 
 /* Uniform solid social glyphs on desktop, mobile and contact controls. */
 .header #navigation .header-network-icon{width:20px;height:20px;flex:0 0 20px;fill:currentColor;stroke:none;stroke-width:0}
+
+/* Equal solid badges, with optical sizing for each brand mark. */
+.header #navigation .header-social{gap:10px}
+.header.header #navigation .header-social>a[data-social-icon]{width:26px;height:26px;flex:0 0 26px;padding:0;border-radius:50%;background:#fff;color:#b40101;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
+.header.header #navigation .header-social>a[data-social-icon]:is(:hover,:focus-visible){background:#e8e8e8;color:#8f0000}
+.header #navigation .header-social .header-network-icon{width:15px;height:15px;flex:0 0 15px}
+.header #navigation .header-social [data-social-icon=facebook] .header-network-icon{width:14px;height:14px;flex-basis:14px;transform:translateX(-1px)}
+.header #navigation .header-social [data-social-icon=youtube] .header-network-icon{width:16px;height:16px;flex-basis:16px}
+.header #navigation .header-social [data-social-icon=tiktok] .header-network-icon{width:14px;height:14px;flex-basis:14px}
+@media(min-width:1001px) and (max-width:1250px){.header #navigation .header-social{gap:5px}}
+
+.header.header #navigation .header-social>a[data-social-icon]{min-width:26px;min-height:26px;position:relative}.header.header #navigation .header-social>a[data-social-icon]::before{content:'';position:absolute;inset:-7px;border-radius:50%}
+
+
+.header #navigation .header-social>a::after{display:none}
