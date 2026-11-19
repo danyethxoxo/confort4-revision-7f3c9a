@@ -353,6 +353,9 @@ html.lenis,html.lenis body { scroll-behavior: auto; }
 
 /* Supplied vector artwork: isolate the white logo from inherited SVG/filter states. */
 .header .brand-logo,.header.over-hero .brand-logo,.header:not(.over-hero) .brand-logo,.header:has(nav.open) .brand-logo{filter:none!important;opacity:1;visibility:visible;mix-blend-mode:normal}
-.header .brand-logo>.header-brand-image{display:block;width:100%;height:100%;object-fit:contain;filter:none!important;opacity:1;visibility:visible;mix-blend-mode:normal}
+.header .brand-logo>.header-brand-image{display:block;width:88%;height:88%;object-fit:contain;filter:none!important;opacity:1;visibility:visible;mix-blend-mode:normal}
 .footer-logo-round{background:#252726;overflow:hidden}
 .footer-logo-round>svg{display:block;width:100%;height:100%;fill:initial;stroke:initial}
+
+/* Give the supplied header logo breathing room without changing bar height. */
+.header .brand-logo{display:flex;align-items:center;justify-content:center}
