@@ -25,7 +25,7 @@ for(const file of pages){
  assert.equal(doc.querySelectorAll('.brand-logo svg image').length,0,'The vector logo must not embed a bitmap');
  assert(doc.querySelector('.brand-logo img[src="assets/confort4-header-white.svg"]'));assert(!fs.readFileSync(new URL('assets/confort4-header-white.svg',base),'utf8').includes('<image'));assert(doc.querySelector('.footer-logo-round svg path'));
  assert(doc.querySelector('.nav-project'));assert(doc.querySelector('.header-contact-button .whatsapp-icon'));
- assert.equal(doc.querySelector('.footer-by').textContent,'by kW');
+ assert.equal(doc.querySelector('.footer-by').textContent,'by KW');
 }
 const sitemap=fs.readFileSync(new URL('sitemap.xml',base),'utf8');assert(!sitemap.includes('admin.html'));assert.equal((sitemap.match(/<url>/g)||[]).length,indexed);assert(!sitemap.includes('inmueble-b487a75d-10e5-4b14-86b5-9539984df359'));
 assert.equal(new JSDOM(fs.readFileSync(new URL('quienes-somos.html',base),'utf8')).window.document.querySelector('.header').classList.contains('over-hero'),true);
