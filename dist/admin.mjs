@@ -1,8 +1,8 @@
-import {editorialContent,homeModuleLabels} from './editorial-model.mjs?v=20261118brand';
-import {openImageCropper} from './image-cropper.mjs?v=20261118brand';
-import {editorialEditor,imageEditor} from './admin-editors.mjs?v=20261118brand';
-import {e,safeURL,safeImage,money,imageOf} from './ui.mjs?v=20261118brand';
-import {validateContent,moduleTypes} from './content-validation.mjs?v=20261118brand';
+import {editorialContent,homeModuleLabels} from './editorial-model.mjs?v=20261118logo';
+import {openImageCropper} from './image-cropper.mjs?v=20261118logo';
+import {editorialEditor,imageEditor} from './admin-editors.mjs?v=20261118logo';
+import {e,safeURL,safeImage,money,imageOf} from './ui.mjs?v=20261118logo';
+import {validateContent,moduleTypes} from './content-validation.mjs?v=20261118logo';
 const config=window.CONFORT4_FORMS,base=config.endpoint.split('/functions/')[0],endpoint=config.endpoint.replace('confort4-forms','confort4-site');
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 let session=null,state=null,draft=null,tab='home',offset=0,unsaved=false,pending=false;
