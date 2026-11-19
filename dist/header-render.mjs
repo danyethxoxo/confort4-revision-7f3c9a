@@ -1,0 +1,20 @@
+import {headerConfig,headerDestination,SOCIAL_ICONS} from './header-model.mjs?v=20261118header';
+const e=value=>String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+const paths={
+ facebook:'M14 21v-8h3l.5-4H14V7c0-1.1.4-2 2-2h2V1.5A25 25 0 0 0 15 1c-3 0-5 1.8-5 5v3H7v4h3v8Z',
+ instagram:'M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Zm9 9a4 4 0 1 1-8 0 4 4 0 0 1 8 0M17.5 6.5h.01',
+ youtube:'M7 5h10a5 5 0 0 1 5 5v4a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5v-4a5 5 0 0 1 5-5Zm3 4 5 3-5 3Z',
+ tiktok:'M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z',
+ linkedin:'M4 9v12M4 4v.1M10 21V9h5v2c1-3 6-3 6 2v8M15 21v-7',
+ x:'m4 3 16 18M20 3 4 21',
+ whatsapp:'M20.5 11.7a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.3-4.8a8.5 8.5 0 1 1 16.2-4ZM8.3 7.5c.4-.3.8-.1 1 .4l.7 1.5c.1.4-.3.7-.6 1 .7 1.5 1.6 2.4 3.2 3.1.3-.3.6-1 1-.9l1.7.8c.4.2.5.5.3.9-.5 1.2-1.5 1.5-2.8 1.1-3.5-1-6.4-4.1-5.5-6.8.2-.5.5-.9 1-1.1Z'
+};
+export function headerIcon(name){if(!Object.hasOwn(paths,name))return '';return `<svg class="header-network-icon ${['facebook','tiktok'].includes(name)?'icon-filled':''} ${name==='whatsapp'?'whatsapp-icon':''}" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name]}"/></svg>`;}
+export function renderHeaderNavigation(content,current=''){
+ const h=headerConfig(content),attrs=value=>{const href=headerDestination(value)||'#';return `href="${e(href)}"${href.startsWith('https://')?' target="_blank" rel="noopener noreferrer"':''}${href.split(/[?#]/)[0]===current?' aria-current="page"':''}`;};
+ const link=(item,id,cls='')=>item.visible===false?'':`<a class="header-link ${item.bold?'is-bold':''} ${cls}" data-header-link="${id}" ${attrs(item.href)}>${e(item.label)}</a>`;
+ const interest=h.interest.visible===false?'':`<div class="nav-interest"><button class="nav-interest-toggle header-link ${h.interest.bold?'is-bold':''}" type="button" aria-expanded="false" aria-controls="interest-links">${e(h.interest.label)} <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button><div class="nav-interest-links" id="interest-links" hidden>${h.interest.items.map((item,i)=>link(item,'interest-'+i)).join('')}</div></div>`;
+ const socials=h.socials.filter(s=>s.visible!==false&&Object.hasOwn(SOCIAL_ICONS,s.icon)).map(s=>`<a ${attrs(s.href)} aria-label="${e(s.label)}" data-social-icon="${s.icon}">${headerIcon(s.icon)}</a>`).join('');
+ const contact=h.contact.visible===false?'':`<a class="header-contact-button header-link ${h.contact.bold?'is-bold':''}" data-header-link="contact" ${attrs(h.contact.href)}>${headerIcon(h.contact.icon)}<span>${e(h.contact.label)}</span></a>`;
+ return link(h.links.team,'team')+interest+link(h.links.project,'project','nav-project')+link(h.links.properties,'properties')+link(h.links.reviews,'reviews')+link(h.links.blog,'blog')+(socials?`<div class="header-social" aria-label="Redes sociales">${socials}</div>`:'')+contact;
+}

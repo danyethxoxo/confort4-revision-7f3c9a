@@ -1,3 +1,4 @@
+import {headerConfig} from '../dist/header-model.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {JSDOM} from 'jsdom';
@@ -24,7 +25,7 @@ for(const file of pages){
  }
  assert.equal(doc.querySelectorAll('.brand-logo svg image').length,0,'The vector logo must not embed a bitmap');
  assert(doc.querySelector('.brand-logo img[src="assets/confort4-header-white-bold.svg"]'));assert(!fs.readFileSync(new URL('assets/confort4-header-white-bold.svg',base),'utf8').includes('<image'));assert(doc.querySelector('.footer-logo-round svg path'));
- assert(doc.querySelector('.nav-project'));assert(doc.querySelector('.header-contact-button .whatsapp-icon'));
+ const header=headerConfig(JSON.parse(doc.querySelector('#site-data').textContent).content);assert.equal(!!doc.querySelector('.nav-project'),header.links.project.visible);assert.equal(!!doc.querySelector('.header-contact-button'),header.contact.visible);
  assert.equal(doc.querySelector('.footer-by').textContent,'by KW');
 }
 const sitemap=fs.readFileSync(new URL('sitemap.xml',base),'utf8');assert(!sitemap.includes('admin.html'));assert.equal((sitemap.match(/<url>/g)||[]).length,indexed);assert(!sitemap.includes('inmueble-b487a75d-10e5-4b14-86b5-9539984df359'));
