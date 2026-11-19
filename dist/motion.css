@@ -350,3 +350,9 @@ html.lenis,html.lenis body { scroll-behavior: auto; }
 .footer .footer-main .footer-wordmark{align-items:baseline;white-space:nowrap;overflow:visible}
 .footer-wordmark .footer-by{font-size:.5em;letter-spacing:-.035em;margin-left:.28em;white-space:nowrap}
 @media(max-width:1000px){.header .nav-inner{min-height:74px;padding-block:1px}.header .brand-logo{width:122px;height:72px}.header #navigation.open,.header.over-hero #navigation.open,.header:not(.over-hero) #navigation.open{background:#b40101;backdrop-filter:none;-webkit-backdrop-filter:none}.header #navigation.open>a.header-contact-button:is(:hover,:focus-visible){background:#8f0000}.footer-logo-round{width:78px;height:78px}}
+
+/* Supplied vector artwork: isolate the white logo from inherited SVG/filter states. */
+.header .brand-logo,.header.over-hero .brand-logo,.header:not(.over-hero) .brand-logo,.header:has(nav.open) .brand-logo{filter:none!important;opacity:1;visibility:visible;mix-blend-mode:normal}
+.header .brand-logo>.header-brand-image{display:block;width:100%;height:100%;object-fit:contain;filter:none!important;opacity:1;visibility:visible;mix-blend-mode:normal}
+.footer-logo-round{background:#252726;overflow:hidden}
+.footer-logo-round>svg{display:block;width:100%;height:100%;fill:initial;stroke:initial}

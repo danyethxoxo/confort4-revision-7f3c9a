@@ -2,6 +2,11 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {JSDOM} from 'jsdom';
 const base=new URL('../dist/',import.meta.url),pages=fs.readdirSync(base).filter(p=>p.endsWith('.html'));
+const svg=file=>new JSDOM(fs.readFileSync(new URL('assets/'+file,base),'utf8'),{contentType:'image/svg+xml'}).window.document;
+const original=svg('confort4-original.svg'),white=svg('confort4-header-white.svg');
+assert.deepEqual([...white.querySelectorAll('path')].map(p=>p.getAttribute('d')),[...original.querySelectorAll('path')].map(p=>p.getAttribute('d')),'Preserve the supplied logo geometry');
+for(const node of white.querySelectorAll('[fill],[stroke]'))for(const attr of ['fill','stroke']){const paint=node.getAttribute(attr);if(paint&&paint!=='none')assert(['#fff','#ffffff'].includes(paint.toLowerCase()),'Header artwork must be entirely white');}
+assert.equal(svg('confort4-vector.svg').querySelector('svg>circle').getAttribute('fill'),'#252726','Use the gray from the supplied PDF');
 const titles=new Set();let indexed=0;
 for(const file of pages){
  const doc=new JSDOM(fs.readFileSync(new URL(file,base),'utf8')).window.document;
@@ -18,7 +23,7 @@ for(const file of pages){
   if(file.startsWith('inmueble-'))assert(graph.some(n=>n['@type']==='RealEstateListing'));
  }
  assert.equal(doc.querySelectorAll('.brand-logo svg image').length,0,'The vector logo must not embed a bitmap');
- assert(doc.querySelector('.brand-logo svg path'));assert(doc.querySelector('.footer-logo-round svg path'));
+ assert(doc.querySelector('.brand-logo img[src="assets/confort4-header-white.svg"]'));assert(!fs.readFileSync(new URL('assets/confort4-header-white.svg',base),'utf8').includes('<image'));assert(doc.querySelector('.footer-logo-round svg path'));
  assert(doc.querySelector('.nav-project'));assert(doc.querySelector('.header-contact-button .whatsapp-icon'));
  assert.equal(doc.querySelector('.footer-by').textContent,'by kW');
 }

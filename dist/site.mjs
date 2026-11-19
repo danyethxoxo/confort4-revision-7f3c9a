@@ -1,13 +1,13 @@
-import {applyGalleryImage} from './photo-policy.mjs?v=20261118brand';
-import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261118brand';
-import {bindSwipe} from './swipe.mjs?v=20261118brand';
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261118brand';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261118brand';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261118brand';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261118brand';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261118brand';
-import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261118brand';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261118brand';
+import {applyGalleryImage} from './photo-policy.mjs?v=20261118logo';
+import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261118logo';
+import {bindSwipe} from './swipe.mjs?v=20261118logo';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261118logo';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261118logo';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261118logo';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261118logo';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261118logo';
+import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261118logo';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261118logo';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
