@@ -1,17 +1,17 @@
-import {PRIVACY_VERSION} from './privacy-policy.mjs?v=20261119privacy';
-import {clearVisitorPreferences} from './visitor-storage.mjs?v=20261119privacy';
-import {headerConfig} from './header-model.mjs?v=20261119privacy';
-import {renderHeaderNavigation} from './header-render.mjs?v=20261119privacy';
-import {applyGalleryImage} from './photo-policy.mjs?v=20261119privacy';
-import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261119privacy';
-import {bindSwipe} from './swipe.mjs?v=20261119privacy';
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261119privacy';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261119privacy';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261119privacy';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261119privacy';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261119privacy';
-import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261119privacy';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261119privacy';
+import {privacyVersion} from './privacy-policy.mjs?v=20261119privacyeditor';
+import {clearVisitorPreferences} from './visitor-storage.mjs?v=20261119privacyeditor';
+import {headerConfig} from './header-model.mjs?v=20261119privacyeditor';
+import {renderHeaderNavigation} from './header-render.mjs?v=20261119privacyeditor';
+import {applyGalleryImage} from './photo-policy.mjs?v=20261119privacyeditor';
+import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261119privacyeditor';
+import {bindSwipe} from './swipe.mjs?v=20261119privacyeditor';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261119privacyeditor';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261119privacyeditor';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261119privacyeditor';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261119privacyeditor';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261119privacyeditor';
+import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261119privacyeditor';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261119privacyeditor';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -101,6 +101,7 @@ function initReviews(){
 }
 function init(){
  syncHeader(bundle.content);
+ $$('form.site-form').forEach(form=>{if(!form.__privacyContent)form.__privacyContent=structuredClone(bundle.content);});
  const sameGallery=propertySlideshow&&propertySlideshowStage===main.querySelector('.property-photo-stage');
  if(!sameGallery){propertySlideshow?.destroy();propertySlideshow=null;propertySlideshowStage=null;}
  initializeReferenceMotion(main);
@@ -179,7 +180,7 @@ main.addEventListener('submit',async ev=>{
  const data=new FormData(form),get=n=>String(data.get(n)||'').trim();
  const project={zone:get('zone'),property_type:get('property_type'),budget:get('budget'),timeframe:get('timeframe'),contact_preference:get('contact_preference')||'email',property_id:params.propiedad||'',page:location.pathname.split('/').pop()};
  const summary=[get('interest'),project.zone,project.property_type,project.budget,project.timeframe].filter(Boolean).join(' · ');
- const payload={privacyVersion:PRIVACY_VERSION,sourcePage:location.pathname.split('/').pop()||'index.html',kind:form.dataset.kind,name:get('name'),email:get('email'),phone:get('phone'),interest:get('interest'),message:get('message')||(form.dataset.kind==='contact'?'Proyecto inmobiliario: '+summary:''),rating:Number(get('rating')||0),consent:data.get('consent')==='on',publishConsent:data.get('publishConsent')==='on',website:get('website'),...(form.dataset.kind==='contact'?{project}:{})};
+ const payload={privacyVersion:await privacyVersion(form.__privacyContent||bundle.content),sourcePage:location.pathname.split('/').pop()||'index.html',kind:form.dataset.kind,name:get('name'),email:get('email'),phone:get('phone'),interest:get('interest'),message:get('message')||(form.dataset.kind==='contact'?'Proyecto inmobiliario: '+summary:''),rating:Number(get('rating')||0),consent:data.get('consent')==='on',publishConsent:data.get('publishConsent')==='on',website:get('website'),...(form.dataset.kind==='contact'?{project}:{})};
  if(form.matches('.project-form'))setStep(form,2);
  const key=JSON.stringify(payload);let request=requests.get(form);if(!request||request.key!==key){request={key,id:crypto.randomUUID()};requests.set(form,request);}
  const status=$('.form-status',form),button=$('button[type=submit]',form),label=button.innerHTML;
@@ -234,7 +235,7 @@ async function refreshLatestReviews(){
   bundle = live;syncHeader(live.content);lastReviewRefresh=Date.now();
   if(page==='team'&&live.content.team)storage.set('team-public',live.content.team);
   if(page==='review'&&dirty){releaseHeroIntro();syncReviews(live);return;}
-  if ((dirty&&page!=='home') || page==='privacy') return;
+  if (dirty&&page!=='home') return;
   const previousHero = main.querySelector('.hero');
   const signature = heroSignature(previousHero);
   const template = document.createElement('template');
@@ -276,4 +277,4 @@ async function refreshLatestReviews(){
 
 if(!preview&&['home','review'].includes(page)){window.setInterval(refreshLatestReviews,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshLatestReviews();});}
 
-$('[data-clear-preferences]')?.addEventListener('click',()=>{try{clearVisitorPreferences(localStorage);clearVisitorPreferences(sessionStorage);favorites.clear();markFavorites();$('[data-privacy-status]').textContent='Preferencias borradas de este navegador. No se ha borrado ninguna solicitud enviada al equipo.';}catch{$('[data-privacy-status]').textContent='No pudimos acceder al almacenamiento. Puedes borrarlo desde la configuraci?n del navegador.';}});
+main.addEventListener('click',event=>{if(!event.target.closest('[data-clear-preferences]'))return;try{clearVisitorPreferences(localStorage);clearVisitorPreferences(sessionStorage);favorites.clear();markFavorites();$('[data-privacy-status]').textContent='Preferencias borradas de este navegador. No se ha borrado ninguna solicitud enviada al equipo.';}catch{$('[data-privacy-status]').textContent='No pudimos acceder al almacenamiento. Puedes borrarlo desde la configuración del navegador.';}});

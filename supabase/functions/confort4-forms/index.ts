@@ -1,4 +1,4 @@
-import {PRIVACY_VERSION} from './privacy-policy.mjs';
+import {PRIVACY_VERSION,privacyVersion} from './privacy-policy.mjs';
 // Public anonymous form via the project's anon JWT; no client can read stored data.
 const allowedOrigin='https://danyethxoxo.github.io';
 const headers={'Access-Control-Allow-Origin':allowedOrigin,'Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin','Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'};
@@ -17,7 +17,7 @@ async function rpc(name:string,args:unknown={}){
  return data;
 }
 function text(value:unknown,max:number){return typeof value==='string'?value.trim().slice(0,max):'';}
-export function validate(body:Record<string,unknown>){
+export function validate(body:Record<string,unknown>,expectedVersion=PRIVACY_VERSION){
  const kind=body.kind;
  if(kind!=='contact'&&kind!=='review')throw new Error('Selecciona el tipo de solicitud.');
  const name=text(body.name,100),email=text(body.email,254).toLowerCase(),message=text(body.message,3000),phone=text(body.phone,30);
@@ -30,7 +30,7 @@ export function validate(body:Record<string,unknown>){
  if(kind==='contact'&&preference!=='email'&&(!phone||phone.replace(/\D/g,'').length<7))throw new Error('Escribe un teléfono de contacto.');
  if(message.length<10)throw new Error('Cuéntanos un poco más: escribe al menos 10 caracteres.');
  if(phone&&(!/^[+\d\s().-]{7,30}$/.test(phone)||phone.replace(/\D/g,'').length<7))throw new Error('Revisa tu teléfono.');
- if(body.privacyVersion!==PRIVACY_VERSION)throw new Error('El aviso de privacidad se actualiz?. Recarga la p?gina, rev?salo y vuelve a autorizar el env?o.');
+ if(body.privacyVersion!==expectedVersion)throw new Error('El aviso de privacidad se actualizó. Recarga la página, revísalo y vuelve a autorizar el envío.');
  if(body.consent!==true)throw new Error('Necesitamos tu autorización para recibir la información.');
  if(!['vender','comprar','rentar-arrendador','rentar-inquilino','general'].includes(interest))throw new Error('Selecciona el motivo de contacto.');
  const rating=Number(body.rating);
@@ -38,7 +38,7 @@ export function validate(body:Record<string,unknown>){
  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(body.requestId)))throw new Error('Recarga la página e intenta de nuevo.');
  const project={contact_preference:preference,zone:text(rawProject.zone,120),property_type:text(rawProject.property_type,60),budget:text(rawProject.budget,80),timeframe:text(rawProject.timeframe,80),property_id:/^[0-9a-f-]{36}$/i.test(String(rawProject.property_id))?String(rawProject.property_id):'',page:['index.html','propiedades.html'].includes(String(rawProject.page))?String(rawProject.page):'index.html'};
  const sourcePage=typeof body.sourcePage==='string'&&/^(?:[a-z0-9-]+)\.html$/.test(body.sourcePage)&&body.sourcePage.length<100?body.sourcePage:kind==='review'?'resena.html':'contacto.html';
- return {kind,requestId:String(body.requestId),payload:{name,email,phone,interest,message,privacy:{noticeVersion:PRIVACY_VERSION,processingConsent:true,sourcePage},...(kind==='review'?{rating,publishConsent:body.publishConsent===true}:Object.keys(rawProject).length?{project}:{}),consent:true,consentVersion:PRIVACY_VERSION,source:sourcePage}};
+ return {kind,requestId:String(body.requestId),payload:{name,email,phone,interest,message,privacy:{noticeVersion:expectedVersion,processingConsent:true,sourcePage},...(kind==='review'?{rating,publishConsent:body.publishConsent===true}:Object.keys(rawProject).length?{project}:{}),consent:true,consentVersion:expectedVersion,source:sourcePage}};
 }
 Deno.serve(async(req:Request)=>{
  if(req.headers.get('origin')!==allowedOrigin)return respond({error:'Origen no permitido.'},403);
@@ -56,7 +56,8 @@ Deno.serve(async(req:Request)=>{
   let body;try{body=JSON.parse(content);}catch{return respond({error:'No pudimos leer la solicitud.'},400);}
   if(!body||typeof body!=='object'||Array.isArray(body))return respond({error:'Solicitud inválida.'},400);
   if(body.website)return respond({error:'No pudimos validar el envío. Contáctanos por WhatsApp.'},400);
-  let input;try{input=validate(body);}catch(error){return respond({error:(error as Error).message},400);}
+  const published=await rpc('confort4_public_site'),expectedVersion=await privacyVersion(published?.content);
+  let input;try{input=validate(body,expectedVersion);}catch(error){return respond({error:(error as Error).message},400);}
   const ip=req.headers.get('cf-connecting-ip')||req.headers.get('x-real-ip')||req.headers.get('x-forwarded-for')?.split(',').at(-1)?.trim()||'unknown';
   const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(serviceKey+':confort4:'+ip));
   const subject=Array.from(new Uint8Array(digest)).map(value=>value.toString(16).padStart(2,'0')).join('');

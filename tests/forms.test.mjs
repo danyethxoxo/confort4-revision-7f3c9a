@@ -1,3 +1,4 @@
+import {privacyConfig,privacyVersion} from '../dist/privacy-model.mjs';
 import {PRIVACY_VERSION} from '../dist/privacy-policy.mjs';
 import assert from 'node:assert/strict';
 let handler;const calls=[];let mode='success';
@@ -5,6 +6,7 @@ globalThis.Deno={env:{get:name=>({SUPABASE_URL:'https://example.invalid',SUPABAS
 globalThis.fetch=async(url,options)=>{
  const body=JSON.parse(options.body);calls.push({url,body});
  const name=url.split('/').at(-1);
+ if(name==='confort4_public_site')return Response.json({content:mode==='privacy-changed'?{privacy:{...privacyConfig(),title:'Aviso cambiado'}}:{}});
  if(name==='confort4_submit')return Response.json(mode==='rate'?{message:'rate_limit'}:{id:'local-test-id',email_status:mode==='duplicate'?'sent':'pending'},{status:mode==='rate'?400:200});
  if(name==='confort4_email_config')return Response.json({to:'owner@example.invalid'});
  if(name==='confort4_claim_notification')return Response.json(true);
@@ -38,3 +40,5 @@ mode='rate';assert.equal((await handler(req())).status,429);
 console.log('PASS: edge origin/method validation, consent, ratings, honeypot, size limit, fixed recipient, reply-to, branding, deduplication, mail failure and rate limiting. No real network or email.');
 
 assert.throws(()=>validate({...data,privacyVersion:'outdated'}),/privacidad/);assert.equal(validate(data).payload.privacy.noticeVersion,PRIVACY_VERSION);assert.equal(validate(data).payload.privacy.processingConsent,true);assert.equal(validate(data).payload.privacy.sourcePage,'contacto.html');
+
+mode='privacy-changed';calls.length=0;assert.equal((await handler(req(data))).status,400);assert(!calls.some(c=>c.url.endsWith('confort4_submit')));const changed=await privacyVersion({privacy:{...privacyConfig(),title:'Aviso cambiado'}});assert.equal((await handler(req({...data,privacyVersion:changed}))).status,200);assert.equal(calls.findLast(c=>c.url.endsWith('confort4_submit')).body.p_payload.privacy.noticeVersion,changed);

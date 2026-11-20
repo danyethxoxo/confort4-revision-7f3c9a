@@ -1,8 +1,9 @@
-import {privacySummary} from './privacy-policy.mjs?v=20261119privacy';
-import {propertyImageSource} from './property-image-sources.mjs?v=20261119privacy';
-import {reviewForm} from './review-form.mjs?v=20261119privacy';
-import {livingScene,metricsScene} from './living-scene.mjs?v=20261119privacy';
-import {editorialContent} from './editorial-model.mjs?v=20261119privacy';
+import {renderPrivacyNotice} from './privacy-render.mjs';
+import {privacySummary} from './privacy-policy.mjs?v=20261119privacyeditor';
+import {propertyImageSource} from './property-image-sources.mjs?v=20261119privacyeditor';
+import {reviewForm,reviewFormFor} from './review-form.mjs?v=20261119privacyeditor';
+import {livingScene,metricsScene} from './living-scene.mjs?v=20261119privacyeditor';
+import {editorialContent} from './editorial-model.mjs?v=20261119privacyeditor';
 function storyCarousel(id,title,intro,items,cards) {
  if (!items.length) return '';
  return `<section class="story-module wrap" id="${id}" data-story-carousel ${['nuestros-clientes','operaciones-cerradas'].includes(id)?'data-story-autoplay':''} data-story-signature="${e(JSON.stringify([title,intro,items]))}" aria-labelledby="${id}-title"><div class="module-heading"><div><h2 id="${id}-title">${e(title)}</h2><p>${e(intro)}</p></div></div><div class="story-track" data-story-track tabindex="0" role="region" aria-label="${e(title)}">${cards}</div><div class="story-controls">${['nuestros-clientes','operaciones-cerradas'].includes(id)?'<button class="story-toggle" type="button" data-story-toggle aria-pressed="false">Pausar</button>':''}<span data-story-count aria-live="polite">1 / ${items.length}</span><button type="button" data-story-direction="-1" aria-label="Anterior">${icon('arrow')}</button><button type="button" data-story-direction="1" aria-label="Siguiente">${icon('arrow')}</button></div></section>`;
@@ -105,7 +106,7 @@ export function contactForm(data={},primary=false) {
     ${field('phone','Teléfono','tel','autocomplete="tel" maxlength="30"')}
    </div>
    <label class="message-field">¿Qué te gustaría lograr?<textarea name="message" rows="3" maxlength="2000" placeholder="Cuéntanos lo que más te importa · opcional"></textarea></label>
-   ${privacySummary('contact')}<label class="consent"><input type="checkbox" name="consent" required><span>Autorizo el uso de mis datos para atender mi solicitud conforme al <a href="privacidad.html">aviso de privacidad</a>.</span></label>
+   ${privacySummary('contact',data)}<label class="consent"><input type="checkbox" name="consent" required><span>Autorizo el uso de mis datos para atender mi solicitud conforme al <a href="privacidad.html">aviso de privacidad</a>.</span></label>
    <button class="button" type="submit">${e(data.projectConfig?.buttonLabel||'Contactar al equipo')} ${icon('arrow')}</button>
    <div class="form-trap" aria-hidden="true"><input name="website" tabindex="-1" autocomplete="off"></div>
    <p class="form-status" role="status" tabindex="-1"></p>
@@ -145,9 +146,10 @@ export function googleReviewModule(data,siteReviews=[]){const g=data.googleRevie
 export function renderPage(bundle,page,params={}){
  bundle={...bundle,content:editorialContent(bundle.content)};
  const d=bundle.content,properties=bundle.properties||[];
+ if(page==='privacy')return renderPrivacyNotice(d);
  if(page==='review'){
   const c=d.reviewPage,labels={'Cuéntanos tu experiencia':'formTitle','Nombre para mostrar':'nameLabel','Correo electrónico':'emailLabel','¿En qué te acompañamos?':'interestLabel','¿Cómo fue tu experiencia?':'ratingLabel','Tu experiencia':'messageLabel','Comparte cómo fue trabajar con Confort4. Evita incluir datos privados de otras personas.':'messagePlaceholder','Enviar mi reseña':'buttonLabel'};
-  const form=reviewForm.replace(/Cuéntanos tu experiencia|Nombre para mostrar|Correo electrónico|¿En qué te acompañamos\?|¿Cómo fue tu experiencia\?|Tu experiencia|Comparte cómo fue trabajar con Confort4\. Evita incluir datos privados de otras personas\.|Enviar mi reseña/g,label=>e(c[labels[label]]??label));
+  const form=reviewFormFor(d).replace(/Cuéntanos tu experiencia|Nombre para mostrar|Correo electrónico|¿En qué te acompañamos\?|¿Cómo fue tu experiencia\?|Tu experiencia|Comparte cómo fue trabajar con Confort4\. Evita incluir datos privados de otras personas\.|Enviar mi reseña/g,label=>e(c[labels[label]]??label));
   return `<section class="review-form-layout review-page wrap"><div class="review-page-intro">${link('index.html','Inicio','breadcrumb')}<h1>${e(c.title).replaceAll('\n','<br>')}</h1><p>${e(c.intro)}</p></div>${form}</section>${googleReviewModule(d,bundle.reviews)}${clientsModule(d)}`;
  }
  if(page==='home'){

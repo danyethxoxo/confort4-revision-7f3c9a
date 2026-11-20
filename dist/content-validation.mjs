@@ -1,3 +1,4 @@
+import {validatePrivacy} from './privacy-model.mjs';
 import {validateHeader} from './header-model.mjs';
 export const moduleTypes=['statement','properties','reviews','clients','process','metrics','living','faq','transactions','journal'];
 export function validateContent(data){
@@ -16,6 +17,7 @@ export function validateContent(data){
  }
  walk(data);
  validateHeader(data.header);
+ validatePrivacy(data.privacy);
  const string=(value,label)=>{if(typeof value!=='string'||!value.trim())throw Error('Completa '+label+'.');};
  const list=(value,label)=>{if(!Array.isArray(value))throw Error('Revisa '+label+'.');};
  string(data.home.title,'el título de inicio');string(data.home.intro,'la presentación');string(data.home.photo,'la imagen principal');
