@@ -15,3 +15,5 @@ h.links.project.label='<img src=x onerror=alert(1)>';assert(!renderHeaderNavigat
 const d=editorialContent(JSON.parse(fs.readFileSync(new URL('../content/site.json',import.meta.url))));assert.equal(validateContent(d),d);assert.equal(headerConfig({home:{}}).socials.length,4);
 const editor=editorialEditor('header',d,{input:(path)=>`<input data-bind="${path}">`,block:(title,body)=>`<section><h2>${title}</h2>${body}</section>`});const form=new JSDOM(editor).window.document;for(const path of ['header.links.project.bold','header.interest.items.0.href','header.contact.icon','header.socials.3.href'])assert(form.querySelector(`[data-bind="${path}"]`));assert(form.querySelector('[data-add-header-social]'));assert(form.querySelector('[data-remove-header-social="3"]'));
 console.log('PASS: editable header defaults, TikTok, independent visibility/bold/links/icons, editor bindings and unsafe input rejection.');
+
+const ig=new JSDOM(renderHeaderNavigation(defaultHeader())).window.document.querySelector("[data-social-icon=instagram] svg");assert(ig.classList.contains("icon-filled"));assert.equal(ig.getAttribute("fill-rule"),"evenodd");
