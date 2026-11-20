@@ -1,15 +1,17 @@
-import {headerConfig} from './header-model.mjs?v=20261119igsolid';
-import {renderHeaderNavigation} from './header-render.mjs?v=20261119igsolid';
-import {applyGalleryImage} from './photo-policy.mjs?v=20261119igsolid';
-import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261119igsolid';
-import {bindSwipe} from './swipe.mjs?v=20261119igsolid';
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261119igsolid';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261119igsolid';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261119igsolid';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261119igsolid';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261119igsolid';
-import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261119igsolid';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261119igsolid';
+import {PRIVACY_VERSION} from './privacy-policy.mjs?v=20261119privacy';
+import {clearVisitorPreferences} from './visitor-storage.mjs?v=20261119privacy';
+import {headerConfig} from './header-model.mjs?v=20261119privacy';
+import {renderHeaderNavigation} from './header-render.mjs?v=20261119privacy';
+import {applyGalleryImage} from './photo-policy.mjs?v=20261119privacy';
+import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261119privacy';
+import {bindSwipe} from './swipe.mjs?v=20261119privacy';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261119privacy';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261119privacy';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261119privacy';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261119privacy';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261119privacy';
+import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261119privacy';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261119privacy';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -56,7 +58,7 @@ function normalize(t){return String(t||'').normalize('NFD').replace(/[\u0300-\u0
 function markFavorites(){
  $$('[data-favorite]').forEach(b=>{const saved=favorites.has(b.dataset.favorite);b.setAttribute('aria-pressed',String(saved));b.setAttribute('aria-label',saved?'Quitar de guardadas':'Guardar propiedad');});
 }
-function updateChecklist(section){const inputs=$$('input[type=checkbox]',section),done=inputs.filter(c=>c.checked).length;$('progress',section).value=done;$('.checklist-status',section).textContent=done+' de '+inputs.length+' revisados';storage.set('checklist-'+section.dataset.checklist,inputs.map(c=>c.checked));}
+function updateChecklist(section,persist=true){const inputs=$$('input[type=checkbox]',section),done=inputs.filter(c=>c.checked).length;$('progress',section).value=done;$('.checklist-status',section).textContent=done+' de '+inputs.length+' revisados';if(persist)storage.set('checklist-'+section.dataset.checklist,inputs.map(c=>c.checked));}
 function searchText(selector,query,empty){const q=normalize(query);let count=0;$$(selector).forEach(el=>{el.hidden=!normalize(el.textContent).includes(q);if(!el.hidden)count++;});if($(empty))$(empty).hidden=count>0;}
 function blogFilter(){
  const query=$('#blog-search').value.trim(), terms=normalize(query).split(/\s+/).filter(t=>t.length>2&&!['que','como','para','una','los','las','del','por','con'].includes(t));let count=0;
@@ -107,7 +109,7 @@ function init(){
  $$('.property-gallery-thumbs').forEach(track=>{track.addEventListener('scroll',()=>updateThumbArrows(track),{passive:true});updateThumbArrows(track);});
 
  if(preview){$$('a[href]',main).forEach(a=>{const url=new URL(a.getAttribute('href'),location.href);if(url.origin===location.origin&&url.pathname.endsWith('.html')&&!/\/(admin|privacidad|resena)\.html$/.test(url.pathname)){url.searchParams.set('preview','1');a.href=url.href;}});$$('button[type=submit]',main).forEach(b=>{b.disabled=true;b.textContent='Formulario en vista previa';});}
- $$('[data-checklist]').forEach(s=>{const saved=storage.get('checklist-'+s.dataset.checklist,[]);$$('[data-check]',s).forEach((c,i)=>c.checked=!!saved[i]);updateChecklist(s);});
+ $$('[data-checklist]').forEach(s=>{const saved=storage.get('checklist-'+s.dataset.checklist,[]);$$('[data-check]',s).forEach((c,i)=>c.checked=!!saved[i]);updateChecklist(s,false);});
  $$('form[data-kind=contact]').forEach(form=>{form.noValidate=true;const requested=params.interes;if([...form.elements.interest.options].some(o=>o.value===requested))form.elements.interest.value=requested;preference(form);zoneLabel(form);if(params.duda){form.elements.message.value='Consulta desde el blog: '+params.duda.slice(0,200); }if(form.matches('.project-form'))setStep(form,0);});
  initSelects();
  markFavorites();
@@ -177,7 +179,7 @@ main.addEventListener('submit',async ev=>{
  const data=new FormData(form),get=n=>String(data.get(n)||'').trim();
  const project={zone:get('zone'),property_type:get('property_type'),budget:get('budget'),timeframe:get('timeframe'),contact_preference:get('contact_preference')||'email',property_id:params.propiedad||'',page:location.pathname.split('/').pop()};
  const summary=[get('interest'),project.zone,project.property_type,project.budget,project.timeframe].filter(Boolean).join(' · ');
- const payload={kind:form.dataset.kind,name:get('name'),email:get('email'),phone:get('phone'),interest:get('interest'),message:get('message')||(form.dataset.kind==='contact'?'Proyecto inmobiliario: '+summary:''),rating:Number(get('rating')||0),consent:data.get('consent')==='on',publishConsent:data.get('publishConsent')==='on',website:get('website'),...(form.dataset.kind==='contact'?{project}:{})};
+ const payload={privacyVersion:PRIVACY_VERSION,sourcePage:location.pathname.split('/').pop()||'index.html',kind:form.dataset.kind,name:get('name'),email:get('email'),phone:get('phone'),interest:get('interest'),message:get('message')||(form.dataset.kind==='contact'?'Proyecto inmobiliario: '+summary:''),rating:Number(get('rating')||0),consent:data.get('consent')==='on',publishConsent:data.get('publishConsent')==='on',website:get('website'),...(form.dataset.kind==='contact'?{project}:{})};
  if(form.matches('.project-form'))setStep(form,2);
  const key=JSON.stringify(payload);let request=requests.get(form);if(!request||request.key!==key){request={key,id:crypto.randomUUID()};requests.set(form,request);}
  const status=$('.form-status',form),button=$('button[type=submit]',form),label=button.innerHTML;
@@ -273,3 +275,5 @@ async function refreshLatestReviews(){
 
 
 if(!preview&&['home','review'].includes(page)){window.setInterval(refreshLatestReviews,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshLatestReviews();});}
+
+$('[data-clear-preferences]')?.addEventListener('click',()=>{try{clearVisitorPreferences(localStorage);clearVisitorPreferences(sessionStorage);favorites.clear();markFavorites();$('[data-privacy-status]').textContent='Preferencias borradas de este navegador. No se ha borrado ninguna solicitud enviada al equipo.';}catch{$('[data-privacy-status]').textContent='No pudimos acceder al almacenamiento. Puedes borrarlo desde la configuraci?n del navegador.';}});

@@ -1,3 +1,4 @@
+import {PRIVACY_VERSION} from '../dist/privacy-policy.mjs';
 import assert from 'node:assert/strict';
 let handler;const calls=[];let mode='success';
 globalThis.Deno={env:{get:name=>({SUPABASE_URL:'https://example.invalid',SUPABASE_SERVICE_ROLE_KEY:'test-service-key',RESEND_API_KEY:'test-resend-key',EMAIL_FROM:'KW Premier <avisos@example.invalid>'}[name]||'')},serve:fn=>handler=fn};
@@ -12,7 +13,7 @@ globalThis.fetch=async(url,options)=>{
  throw Error('Unexpected URL '+url);
 };
 const {validate}=await import('../supabase/functions/confort4-forms/index.ts');
-const data={kind:'contact',name:'Prueba técnica',email:'visitor@example.invalid',phone:'5534347566',interest:'comprar',message:'Mensaje sintético de prueba, sin envío real.',consent:true,requestId:crypto.randomUUID()};
+const data={privacyVersion:PRIVACY_VERSION,sourcePage:'contacto.html',kind:'contact',name:'Prueba técnica',email:'visitor@example.invalid',phone:'5534347566',interest:'comprar',message:'Mensaje sintético de prueba, sin envío real.',consent:true,requestId:crypto.randomUUID()};
 const req=(body=data,origin='https://danyethxoxo.github.io')=>new Request('https://example.invalid',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify(body)});
 assert.equal((await handler(req(data,'https://invalid.example'))).status,403);
 assert.equal((await handler(req({...data,consent:false}))).status,400);
@@ -35,3 +36,5 @@ mode='duplicate';calls.length=0;await handler(req());assert(!calls.some(call=>ca
 mode='mail-failure';result=await handler(req());json=await result.json();assert(json.ok);assert.equal(json.emailStatus,'failed');
 mode='rate';assert.equal((await handler(req())).status,429);
 console.log('PASS: edge origin/method validation, consent, ratings, honeypot, size limit, fixed recipient, reply-to, branding, deduplication, mail failure and rate limiting. No real network or email.');
+
+assert.throws(()=>validate({...data,privacyVersion:'outdated'}),/privacidad/);assert.equal(validate(data).payload.privacy.noticeVersion,PRIVACY_VERSION);assert.equal(validate(data).payload.privacy.processingConsent,true);assert.equal(validate(data).payload.privacy.sourcePage,'contacto.html');

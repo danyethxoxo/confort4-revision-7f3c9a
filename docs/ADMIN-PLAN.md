@@ -1,6 +1,6 @@
 # Panel Confort4: operación y límites
 
-Implementado en `admin.html`; no es una maqueta. Usa las cuentas existentes de Supabase Auth, membresía independiente en `confort4.members` y validación de identidad en el servidor para cada acción. La sesión se conserva en sessionStorage de esa pestaña y se puede cerrar; no guarda contraseñas. Si existe un factor TOTP verificado, solicita el código nativo antes de habilitar el panel.
+Implementado en `admin.html`; no es una maqueta. Usa las cuentas existentes de Supabase Auth, membresía independiente en `confort4.members` y validación de identidad en el servidor para cada acción. La sesión se conserva en sessionStorage de esa pestaña y se puede cerrar; no guarda contraseñas. El acceso actual usa usuario y contrasena, sin el paso de QR/TOTP retirado por instruccion del propietario. La pestana cierra la sesion tras 20 minutos de inactividad.
 
 ## Flujo de edición
 
@@ -43,3 +43,7 @@ El destinatario actual es **dani.guerrero@kwmexico.mx**, exclusivamente para pru
 Pruebas DOM del guardado y seguimiento, pruebas de API de identidad/membresía/MFA, pruebas SQL con rollback de guardar/publicar/restaurar y validación de permisos. No se ingresó con la contraseña real de un asesor y no se pudo hacer revisión visual en navegador por indisponibilidad de la conexión de Chrome.
 
 Casos de éxito, operaciones pasadas, estadísticas, credenciales específicas, zonas especializadas y nuevas cuentas requieren información real del equipo. No se rellenaron con datos inventados.
+
+## Revision de privacidad de noviembre de 2026
+
+Los nuevos formularios guardan la version del aviso y autorizacion de tratamiento en `payload.privacy`, junto con la fecha del registro. Los envios anteriores no se completan retroactivamente con evidencia inventada. Ver [revision de privacidad y seguridad](PRIVACY-SECURITY-REVIEW.md) para alcance, controles comprobados y pendientes operativos.

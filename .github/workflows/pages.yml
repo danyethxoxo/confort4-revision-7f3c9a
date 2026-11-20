@@ -40,6 +40,7 @@ jobs:
           node tests/reviews.test.mjs
           node tests/ui.test.mjs
           node tests/header.test.mjs
+          node tests/privacy.test.mjs
           node tests/home-modules.test.mjs
           node tests/property-sdr.test.mjs
           node --experimental-strip-types tests/photo-gateway.test.mjs
