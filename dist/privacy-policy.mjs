@@ -1,5 +1,5 @@
-import {privacyConfig} from './privacy-model.mjs';
-export {PRIVACY_VERSION,privacyVersion} from './privacy-model.mjs';
+import {privacyConfig} from './privacy-model.mjs?v=20261119kwprivacy';
+export {PRIVACY_VERSION,privacyVersion} from './privacy-model.mjs?v=20261119kwprivacy';
 export const KW_PRIVACY_URL='https://kwpremiermx.kw.com/es-es/aviso-de-privacidad';
 export function privacySummary(kind='contact',content){
  const p=privacyConfig(content),e=v=>String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');

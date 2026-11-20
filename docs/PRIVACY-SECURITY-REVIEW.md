@@ -33,6 +33,8 @@ Fecha: 19 de noviembre de 2026. Alcance: sitio público y editor Confort4, sus f
 
 ## Fuentes y límites
 
+Actualización posterior: el propietario confirmó permiso de fotos/testimonios sin documento, seguimiento en Command y ausencia de recepción de expedientes por esta web. Indicó también que aún no hay plazo fijo para contactos sin contratación. Véase [procedimiento de operación](PRIVACY-OPERATIONS.md). Se enlazaron KW México y la política de Keller Williams aplicable a Command, manteniendo el aviso propio de Confort4.
+
 - [LFPDPPP vigente, Cámara de Diputados](https://www.diputados.gob.mx/LeyesBiblio/pdf/LFPDPPP.pdf): responsable, finalidades, aviso, derechos y seguridad. Los plazos ARCO del aviso se contrastaron con el texto vigente.
 - [Aviso proporcionado de KW Premier](https://kwpremiermx.kw.com/es-es/aviso-de-privacidad): devolvió HTTP 403/protección automática al intentar leerlo. Se añadió como enlace relacionado, sin copiar contenido ni afirmar equivalencia de responsables.
 - [Privacidad de GitHub](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement), [Supabase](https://supabase.com/privacy) y [Resend](https://resend.com/legal/privacy-policy).

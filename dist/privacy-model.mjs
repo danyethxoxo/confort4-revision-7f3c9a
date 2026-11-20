@@ -1,5 +1,5 @@
-import {DEFAULT_PRIVACY} from './privacy-defaults.mjs';
-export const PRIVACY_VERSION='confort4-2026-11-19.1';
+import {DEFAULT_PRIVACY} from './privacy-defaults.mjs?v=20261119kwprivacy';
+export const PRIVACY_VERSION='confort4-2026-11-19.2';
 export function privacyConfig(content){
  const value=content?.privacy??content??{};
  const source=value?.sections?value:{};

@@ -24,3 +24,5 @@ const editor=editorialEditor('privacy',original,{input:path=>`<input data-bind="
 for(const path of ['privacy.title','privacy.email','privacy.contactPurpose','privacy.sections.0.body','privacy.sections.3.links.0.href'])assert(editor.includes(`data-bind="${path}"`));
 assert(editor.includes('data-add-privacy-link'));
 console.log('PASS: editable notice fields, escaped rendering, safe links, form summary synchronization and stable content-specific consent versions.');
+
+const baseline=privacyConfig();const providers=baseline.sections.find(s=>s.id==='providers');assert(providers.links.some(l=>l.href==='https://www.kwmexico.mx/aviso-privacidad'));assert(providers.links.some(l=>l.href==='https://legal.kw.com/privacy-policy'));assert(providers.body.includes('Command'));assert(baseline.sections.find(s=>s.id==='data').body.includes('no tiene un formulario para recibir'));const archive=JSON.parse(fs.readFileSync(new URL('../docs/privacy-notice-versions/confort4-2026-11-19.1.json',import.meta.url)));assert(!archive.sections.find(s=>s.id==='providers').links.some(l=>l.href==='https://www.kwmexico.mx/aviso-privacidad'));assert.equal(PRIVACY_VERSION,'confort4-2026-11-19.2');

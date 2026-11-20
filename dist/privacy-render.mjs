@@ -1,5 +1,5 @@
-import {privacyConfig,privacyDestination} from './privacy-model.mjs';
-import {DEFAULT_PRIVACY} from './privacy-defaults.mjs';
+import {privacyConfig,privacyDestination} from './privacy-model.mjs?v=20261119kwprivacy';
+import {DEFAULT_PRIVACY} from './privacy-defaults.mjs?v=20261119kwprivacy';
 const e=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 export function renderPrivacyNotice(content){
  const p=privacyConfig(content),copy=value=>String(value).replaceAll(DEFAULT_PRIVACY.email,p.email);
