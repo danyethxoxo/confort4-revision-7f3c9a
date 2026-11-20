@@ -371,23 +371,6 @@ html.lenis,html.lenis body { scroll-behavior: auto; }
 
 .header #navigation .nav-interest,.header #navigation .nav-interest-links,.header #navigation .nav-interest-links a{color:#fff}
 
-/* Uniform solid social glyphs on desktop, mobile and contact controls. */
-.header #navigation .header-network-icon{width:20px;height:20px;flex:0 0 20px;fill:currentColor;stroke:none;stroke-width:0}
-
-/* Equal solid badges, with optical sizing for each brand mark. */
-.header #navigation .header-social{gap:10px}
-.header.header #navigation .header-social>a[data-social-icon]{width:26px;height:26px;flex:0 0 26px;padding:0;border-radius:50%;background:#fff;color:#b40101;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
-.header.header #navigation .header-social>a[data-social-icon]:is(:hover,:focus-visible){background:#e8e8e8;color:#8f0000}
-.header #navigation .header-social .header-network-icon{width:15px;height:15px;flex:0 0 15px}
-.header #navigation .header-social [data-social-icon=facebook] .header-network-icon{width:14px;height:14px;flex-basis:14px;transform:translateX(-1px)}
-.header #navigation .header-social [data-social-icon=youtube] .header-network-icon{width:16px;height:16px;flex-basis:16px}
-.header #navigation .header-social [data-social-icon=tiktok] .header-network-icon{width:14px;height:14px;flex-basis:14px}
-@media(min-width:1001px) and (max-width:1250px){.header #navigation .header-social{gap:5px}}
-
-.header.header #navigation .header-social>a[data-social-icon]{min-width:26px;min-height:26px;position:relative}.header.header #navigation .header-social>a[data-social-icon]::before{content:'';position:absolute;inset:-7px;border-radius:50%}
-
-
-.header #navigation .header-social>a::after{display:none}
 /* Reference: sliding label, rising WhatsApp mark and restrained edge sparks. */
 .header.header #navigation>a.header-contact-button{position:relative;isolation:isolate;overflow:visible;gap:0;padding-inline:34px;transition:background .25s,color .25s,box-shadow .25s}
 .header.header #navigation>a.header-contact-button>.header-network-icon{position:absolute;left:15px;top:50%;width:20px;height:20px;transform:translateY(-20%);opacity:0;transition:transform .25s ease,opacity .2s ease;pointer-events:none}
@@ -414,3 +397,13 @@ html.lenis,html.lenis body { scroll-behavior: auto; }
 @media(hover:hover) and (pointer:fine){.header-contact-button:is(:hover,:focus-visible) .contact-sparks i{animation:contact-spark .85s var(--delay) ease-out infinite}}
 @media(hover:none){.header.header #navigation>a.header-contact-button>.header-network-icon{opacity:1;transform:translateY(-50%)}.header.header #navigation>a.header-contact-button:has(>.header-network-icon)>.contact-label{transform:translateX(10px)}}
 @media(prefers-reduced-motion:reduce){.header.header #navigation>a.header-contact-button,.header.header #navigation>a.header-contact-button>.header-network-icon,.header.header #navigation>a.header-contact-button>.contact-label{transition:none}.header-contact-button .contact-sparks{display:none}}
+
+/* Reference lock: white outline marks, transparent surfaces, uniform stroke. */
+.header #navigation .header-network-icon{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.header.header #navigation .header-social{gap:7px}
+.header.header #navigation .header-social>a[data-social-icon]{position:relative;width:34px;height:36px;min-width:34px;min-height:36px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;padding:0;background:transparent;color:#fff;border:0;border-radius:0;transition:opacity .18s}
+.header.header #navigation .header-social>a[data-social-icon]:is(:hover,:focus-visible){background:transparent;color:#fff;opacity:.75}
+.header.header #navigation .header-social>a::before,.header.header #navigation .header-social>a::after{display:none}
+.header #navigation .header-social .header-network-icon{width:26px;height:26px;flex:0 0 26px;transform:none}
+@media(min-width:1001px) and (max-width:1250px){.header.header #navigation .header-social{gap:1px}.header.header #navigation .header-social>a[data-social-icon]{width:28px;min-width:28px;flex-basis:28px}}
+html.header-preparing .header,html.confort4-motion-loading .header{visibility:hidden;opacity:0;pointer-events:none}
