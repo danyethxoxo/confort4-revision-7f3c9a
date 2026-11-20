@@ -1,3 +1,4 @@
+import {PRIVACY_VERSION} from './privacy-policy.mjs';
 // Public anonymous form via the project's anon JWT; no client can read stored data.
 const allowedOrigin='https://danyethxoxo.github.io';
 const headers={'Access-Control-Allow-Origin':allowedOrigin,'Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin','Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'};
@@ -29,13 +30,15 @@ export function validate(body:Record<string,unknown>){
  if(kind==='contact'&&preference!=='email'&&(!phone||phone.replace(/\D/g,'').length<7))throw new Error('Escribe un teléfono de contacto.');
  if(message.length<10)throw new Error('Cuéntanos un poco más: escribe al menos 10 caracteres.');
  if(phone&&(!/^[+\d\s().-]{7,30}$/.test(phone)||phone.replace(/\D/g,'').length<7))throw new Error('Revisa tu teléfono.');
+ if(body.privacyVersion!==PRIVACY_VERSION)throw new Error('El aviso de privacidad se actualiz?. Recarga la p?gina, rev?salo y vuelve a autorizar el env?o.');
  if(body.consent!==true)throw new Error('Necesitamos tu autorización para recibir la información.');
  if(!['vender','comprar','rentar-arrendador','rentar-inquilino','general'].includes(interest))throw new Error('Selecciona el motivo de contacto.');
  const rating=Number(body.rating);
  if(kind==='review'&&(!Number.isInteger(rating)||rating<1||rating>5))throw new Error('Selecciona una calificación de 1 a 5.');
  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(body.requestId)))throw new Error('Recarga la página e intenta de nuevo.');
  const project={contact_preference:preference,zone:text(rawProject.zone,120),property_type:text(rawProject.property_type,60),budget:text(rawProject.budget,80),timeframe:text(rawProject.timeframe,80),property_id:/^[0-9a-f-]{36}$/i.test(String(rawProject.property_id))?String(rawProject.property_id):'',page:['index.html','propiedades.html'].includes(String(rawProject.page))?String(rawProject.page):'index.html'};
- return {kind,requestId:String(body.requestId),payload:{name,email,phone,interest,message,...(kind==='review'?{rating,publishConsent:body.publishConsent===true}:Object.keys(rawProject).length?{project}:{}),consent:true,consentVersion:'confort4-2026-11-05',source:kind==='review'?'resena.html':'index.html#contacto'}};
+ const sourcePage=typeof body.sourcePage==='string'&&/^(?:[a-z0-9-]+)\.html$/.test(body.sourcePage)&&body.sourcePage.length<100?body.sourcePage:kind==='review'?'resena.html':'contacto.html';
+ return {kind,requestId:String(body.requestId),payload:{name,email,phone,interest,message,privacy:{noticeVersion:PRIVACY_VERSION,processingConsent:true,sourcePage},...(kind==='review'?{rating,publishConsent:body.publishConsent===true}:Object.keys(rawProject).length?{project}:{}),consent:true,consentVersion:PRIVACY_VERSION,source:sourcePage}};
 }
 Deno.serve(async(req:Request)=>{
  if(req.headers.get('origin')!==allowedOrigin)return respond({error:'Origen no permitido.'},403);

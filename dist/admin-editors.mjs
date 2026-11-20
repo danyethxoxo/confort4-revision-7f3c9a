@@ -1,7 +1,7 @@
-import {headerEditor} from './header-editor.mjs?v=20261118header';
-import {e,safeURL} from './ui.mjs?v=20261118header';
-import {homeModuleLabels} from './editorial-model.mjs?v=20261118header';
-import {serviceEditor,postsEditor,reviewsEditor,teamEditor} from './section-editors.mjs?v=20261118header';
+import {headerEditor} from './header-editor.mjs?v=20261119privacy';
+import {e,safeURL} from './ui.mjs?v=20261119privacy';
+import {homeModuleLabels} from './editorial-model.mjs?v=20261119privacy';
+import {serviceEditor,postsEditor,reviewsEditor,teamEditor} from './section-editors.mjs?v=20261119privacy';
 export function imageEditor(path,label,value,input){return `<div class="editor-image">${value?`<img src="${safeURL(value)}" alt="Vista previa de ${e(label)}" loading="lazy">`:''}<div><strong>${e(label)}</strong><div class="editor-image-actions">${value?`<button type="button" class="button button-outline" data-crop-path="${e(path)}">Ajustar encuadre</button>`:''}<label class="editor-upload">Subir foto<input type="file" data-upload-path="${e(path)}" accept="image/jpeg,image/png,image/webp"></label></div></div></div>`;}
 export function editorialEditor(tab,d,{input,block}){
  if(tab==='header')return headerEditor(d,{input,block});

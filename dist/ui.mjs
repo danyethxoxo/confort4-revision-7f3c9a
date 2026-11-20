@@ -1,7 +1,8 @@
-import {propertyImageSource} from './property-image-sources.mjs?v=20261118header';
-import {reviewForm} from './review-form.mjs?v=20261118header';
-import {livingScene,metricsScene} from './living-scene.mjs?v=20261118header';
-import {editorialContent} from './editorial-model.mjs?v=20261118header';
+import {privacySummary} from './privacy-policy.mjs?v=20261119privacy';
+import {propertyImageSource} from './property-image-sources.mjs?v=20261119privacy';
+import {reviewForm} from './review-form.mjs?v=20261119privacy';
+import {livingScene,metricsScene} from './living-scene.mjs?v=20261119privacy';
+import {editorialContent} from './editorial-model.mjs?v=20261119privacy';
 function storyCarousel(id,title,intro,items,cards) {
  if (!items.length) return '';
  return `<section class="story-module wrap" id="${id}" data-story-carousel ${['nuestros-clientes','operaciones-cerradas'].includes(id)?'data-story-autoplay':''} data-story-signature="${e(JSON.stringify([title,intro,items]))}" aria-labelledby="${id}-title"><div class="module-heading"><div><h2 id="${id}-title">${e(title)}</h2><p>${e(intro)}</p></div></div><div class="story-track" data-story-track tabindex="0" role="region" aria-label="${e(title)}">${cards}</div><div class="story-controls">${['nuestros-clientes','operaciones-cerradas'].includes(id)?'<button class="story-toggle" type="button" data-story-toggle aria-pressed="false">Pausar</button>':''}<span data-story-count aria-live="polite">1 / ${items.length}</span><button type="button" data-story-direction="-1" aria-label="Anterior">${icon('arrow')}</button><button type="button" data-story-direction="1" aria-label="Siguiente">${icon('arrow')}</button></div></section>`;
@@ -104,7 +105,7 @@ export function contactForm(data={},primary=false) {
     ${field('phone','Teléfono','tel','autocomplete="tel" maxlength="30"')}
    </div>
    <label class="message-field">¿Qué te gustaría lograr?<textarea name="message" rows="3" maxlength="2000" placeholder="Cuéntanos lo que más te importa · opcional"></textarea></label>
-   <label class="consent"><input type="checkbox" name="consent" required><span>Autorizo el uso de mis datos para atender mi solicitud conforme al <a href="privacidad.html">aviso de privacidad</a>.</span></label>
+   ${privacySummary('contact')}<label class="consent"><input type="checkbox" name="consent" required><span>Autorizo el uso de mis datos para atender mi solicitud conforme al <a href="privacidad.html">aviso de privacidad</a>.</span></label>
    <button class="button" type="submit">${e(data.projectConfig?.buttonLabel||'Contactar al equipo')} ${icon('arrow')}</button>
    <div class="form-trap" aria-hidden="true"><input name="website" tabindex="-1" autocomplete="off"></div>
    <p class="form-status" role="status" tabindex="-1"></p>
