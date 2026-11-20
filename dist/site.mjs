@@ -1,15 +1,15 @@
-import {headerConfig} from './header-model.mjs?v=20261119contact';
-import {renderHeaderNavigation} from './header-render.mjs?v=20261119contact';
-import {applyGalleryImage} from './photo-policy.mjs?v=20261119contact';
-import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261119contact';
-import {bindSwipe} from './swipe.mjs?v=20261119contact';
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261119contact';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261119contact';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261119contact';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261119contact';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261119contact';
-import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261119contact';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261119contact';
+import {headerConfig} from './header-model.mjs?v=20261119outline';
+import {renderHeaderNavigation} from './header-render.mjs?v=20261119outline';
+import {applyGalleryImage} from './photo-policy.mjs?v=20261119outline';
+import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261119outline';
+import {bindSwipe} from './swipe.mjs?v=20261119outline';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261119outline';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261119outline';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261119outline';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261119outline';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261119outline';
+import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261119outline';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261119outline';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
