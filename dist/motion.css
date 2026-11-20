@@ -399,3 +399,8 @@ html.lenis,html.lenis body { scroll-behavior: auto; }
 @media(prefers-reduced-motion:reduce){.header.header #navigation>a.header-contact-button,.header.header #navigation>a.header-contact-button>.header-network-icon,.header.header #navigation>a.header-contact-button>.contact-label{transition:none}.header-contact-button .contact-sparks{display:none}}
 
 html.header-preparing .header,html.confort4-motion-loading .header{visibility:hidden;opacity:0;pointer-events:none}
+
+/* Small optical adjustment; keep the original social artwork. */
+.header #navigation .header-social [data-social-icon=youtube] svg{width:20px;height:20px}
+@media(max-width:1000px){.header #navigation .header-social [data-social-icon=youtube] svg{width:22px;height:22px}}
+.header.header #navigation .header-network-icon.whatsapp-icon{fill:currentColor;stroke:none;stroke-width:0}
