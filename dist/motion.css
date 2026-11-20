@@ -398,12 +398,4 @@ html.lenis,html.lenis body { scroll-behavior: auto; }
 @media(hover:none){.header.header #navigation>a.header-contact-button>.header-network-icon{opacity:1;transform:translateY(-50%)}.header.header #navigation>a.header-contact-button:has(>.header-network-icon)>.contact-label{transform:translateX(10px)}}
 @media(prefers-reduced-motion:reduce){.header.header #navigation>a.header-contact-button,.header.header #navigation>a.header-contact-button>.header-network-icon,.header.header #navigation>a.header-contact-button>.contact-label{transition:none}.header-contact-button .contact-sparks{display:none}}
 
-/* Reference lock: white outline marks, transparent surfaces, uniform stroke. */
-.header #navigation .header-network-icon{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.header.header #navigation .header-social{gap:7px}
-.header.header #navigation .header-social>a[data-social-icon]{position:relative;width:34px;height:36px;min-width:34px;min-height:36px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;padding:0;background:transparent;color:#fff;border:0;border-radius:0;transition:opacity .18s}
-.header.header #navigation .header-social>a[data-social-icon]:is(:hover,:focus-visible){background:transparent;color:#fff;opacity:.75}
-.header.header #navigation .header-social>a::before,.header.header #navigation .header-social>a::after{display:none}
-.header #navigation .header-social .header-network-icon{width:26px;height:26px;flex:0 0 26px;transform:none}
-@media(min-width:1001px) and (max-width:1250px){.header.header #navigation .header-social{gap:1px}.header.header #navigation .header-social>a[data-social-icon]{width:28px;min-width:28px;flex-basis:28px}}
 html.header-preparing .header,html.confort4-motion-loading .header{visibility:hidden;opacity:0;pointer-events:none}
