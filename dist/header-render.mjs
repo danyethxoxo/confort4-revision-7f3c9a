@@ -1,16 +1,15 @@
 import {headerConfig,headerDestination,SOCIAL_ICONS} from './header-model.mjs?v=20261118header';
 const e=value=>String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
-// Shared 24px outline grid; one stroke weight for every brand.
-const glyphs={
- "facebook": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M13 22v-8h3l.5-3H13V8.5c0-.9.5-1.5 1.5-1.5H17V4h-2.5C11.5 4 10 5.8 10 8.5V11H8v3h2v8\"/>",
- "instagram": "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" rx=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"4.5\"/><circle cx=\"18\" cy=\"6\" r=\".6\" fill=\"currentColor\" stroke=\"none\"/>",
- "youtube": "<rect x=\"1.5\" y=\"2\" width=\"21\" height=\"20\" rx=\"5\"/><path d=\"m10 8 6 4-6 4Z\"/>",
- "tiktok": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M13 6v9a3 3 0 1 1-3-3M13 6c0 2.5 1.5 4 4 4\"/>",
- "whatsapp": "<path d=\"M21.5 11.8a9.5 9.5 0 0 1-14.1 8.3L2 21.5l1.5-5.2A9.5 9.5 0 1 1 21.5 11.8Z\"/><path d=\"m8 7 1.5 3-1 1c1 2 2 3 4 4l1-1 3 1.5c0 1.5-1 2-2.5 1.5-4.5-1.5-7.5-4.5-8-7C5.5 8.5 6.5 7 8 7Z\"/>",
- "linkedin": "<rect x=\"2\" y=\"2\" width=\"20\" height=\"20\" rx=\"4\"/><path d=\"M7 10v7M7 7h.01M11 17v-7h3v1c2-2 4-1 4 2v4M14 17v-4\"/>",
- "x": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m7 7 10 10M17 7 7 17\"/>"
+const paths={
+ facebook:'M14 21v-8h3l.5-4H14V7c0-1.1.4-2 2-2h2V1.5A25 25 0 0 0 15 1c-3 0-5 1.8-5 5v3H7v4h3v8Z',
+ instagram:'M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Zm9 9a4 4 0 1 1-8 0 4 4 0 0 1 8 0M17.5 6.5h.01',
+ youtube:'M7 5h10a5 5 0 0 1 5 5v4a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5v-4a5 5 0 0 1 5-5Zm3 4 5 3-5 3Z',
+ tiktok:'M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z',
+ linkedin:'M4 9v12M4 4v.1M10 21V9h5v2c1-3 6-3 6 2v8M15 21v-7',
+ x:'m4 3 16 18M20 3 4 21',
+ whatsapp:'M20.5 11.7a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.3-4.8a8.5 8.5 0 1 1 16.2-4ZM8.3 7.5c.4-.3.8-.1 1 .4l.7 1.5c.1.4-.3.7-.6 1 .7 1.5 1.6 2.4 3.2 3.1.3-.3.6-1 1-.9l1.7.8c.4.2.5.5.3.9-.5 1.2-1.5 1.5-2.8 1.1-3.5-1-6.4-4.1-5.5-6.8.2-.5.5-.9 1-1.1Z'
 };
-export function headerIcon(name){if(!Object.hasOwn(glyphs,name))return '';return `<svg class="header-network-icon ${name==='whatsapp'?'whatsapp-icon':''}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${glyphs[name]}</svg>`;}
+export function headerIcon(name){if(!Object.hasOwn(paths,name))return '';return `<svg class="header-network-icon ${['facebook','tiktok'].includes(name)?'icon-filled':''} ${name==='whatsapp'?'whatsapp-icon':''}" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name]}"/></svg>`;}
 export function renderHeaderNavigation(content,current=''){
  const h=headerConfig(content),attrs=value=>{const href=headerDestination(value)||'#';return `href="${e(href)}"${href.startsWith('https://')?' target="_blank" rel="noopener noreferrer"':''}${href.split(/[?#]/)[0]===current?' aria-current="page"':''}`;};
  const link=(item,id,cls='')=>item.visible===false?'':`<a class="header-link ${item.bold?'is-bold':''} ${cls}" data-header-link="${id}" ${attrs(item.href)}>${e(item.label)}</a>`;
