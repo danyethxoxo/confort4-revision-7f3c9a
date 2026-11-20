@@ -1,15 +1,15 @@
-import {headerConfig} from './header-model.mjs?v=20261119original';
-import {renderHeaderNavigation} from './header-render.mjs?v=20261119original';
-import {applyGalleryImage} from './photo-policy.mjs?v=20261119original';
-import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261119original';
-import {bindSwipe} from './swipe.mjs?v=20261119original';
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261119original';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261119original';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261119original';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261119original';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261119original';
-import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261119original';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261119original';
+import {headerConfig} from './header-model.mjs?v=20261119whatsapp';
+import {renderHeaderNavigation} from './header-render.mjs?v=20261119whatsapp';
+import {applyGalleryImage} from './photo-policy.mjs?v=20261119whatsapp';
+import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261119whatsapp';
+import {bindSwipe} from './swipe.mjs?v=20261119whatsapp';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261119whatsapp';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261119whatsapp';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261119whatsapp';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261119whatsapp';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261119whatsapp';
+import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261119whatsapp';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261119whatsapp';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
