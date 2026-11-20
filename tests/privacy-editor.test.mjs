@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {JSDOM} from 'jsdom';
+import {privacyConfig,privacyVersion,PRIVACY_VERSION,validatePrivacy} from '../dist/privacy-model.mjs';
+import {privacySummary} from '../dist/privacy-policy.mjs';
+import {renderPrivacyNotice} from '../dist/privacy-render.mjs';
+import {editorialContent} from '../dist/editorial-model.mjs';
+import {editorialEditor} from '../dist/admin-editors.mjs';
+const content=JSON.parse(fs.readFileSync(new URL('../content/site.json',import.meta.url)));
+const d=editorialContent(content);validatePrivacy(d.privacy);
+assert.equal(await privacyVersion(content),PRIVACY_VERSION);
+assert.equal(await privacyVersion(d),PRIVACY_VERSION,'Normalizing other editor sections preserves the existing notice version');
+d.home.title='Another home title';assert.equal(await privacyVersion(d),PRIVACY_VERSION);
+d.privacy.title='Aviso actualizado';d.privacy.email='privacy@example.invalid';d.privacy.contactPurpose='gestionar esta solicitud';
+const version=await privacyVersion(d);assert.match(version,/^confort4-privacy-[a-f0-9]{64}$/);assert.equal(await privacyVersion(structuredClone(d)),version);
+const reordered={privacy:Object.fromEntries(Object.entries(d.privacy).reverse())};assert.equal(await privacyVersion(reordered),version);
+const doc=new JSDOM(renderPrivacyNotice(d)).window.document;
+assert.equal(doc.querySelector('h1').textContent,'Aviso actualizado');assert(doc.querySelector('a[href="mailto:privacy@example.invalid"]'));
+assert(privacySummary('contact',d).includes('gestionar esta solicitud'));
+const original=structuredClone(d);d.privacy.sections[0].body='<img src=x onerror=alert(1)>';
+assert(!renderPrivacyNotice(d).includes('<img'));assert.notEqual(await privacyVersion(d),version);
+for(const mutate of [p=>p.email='invalid',p=>p.sections.pop(),p=>p.sections[0].links=[{label:'Bad',href:'javascript:alert(1)'}],p=>p.updated='2026-02-30']){const bad=structuredClone(original.privacy);mutate(bad);assert.throws(()=>validatePrivacy(bad));}
+const editor=editorialEditor('privacy',original,{input:path=>`<input data-bind="${path}">`,block:(title,body)=>`<section><h2>${title}</h2>${body}</section>`});
+for(const path of ['privacy.title','privacy.email','privacy.contactPurpose','privacy.sections.0.body','privacy.sections.3.links.0.href'])assert(editor.includes(`data-bind="${path}"`));
+assert(editor.includes('data-add-privacy-link'));
+console.log('PASS: editable notice fields, escaped rendering, safe links, form summary synchronization and stable content-specific consent versions.');

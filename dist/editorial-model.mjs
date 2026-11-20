@@ -1,9 +1,11 @@
+import {privacyConfig} from './privacy-model.mjs';
 import {headerConfig} from './header-model.mjs?v=20261118header';
 export const homeModuleLabels={statement:'Presentación del equipo',properties:'Propiedades · widget',reviews:'Nuestras reseñas · widget',clients:'Nuestros clientes',process:'Tu proyecto · información de valor',metrics:'Un equipo que conecta · cifras',living:'Un espacio para vivir',faq:'Preguntas frecuentes',transactions:'Vendidas y rentadas · widget',journal:'Blog · widget'};
 export const homeModuleTypes=Object.keys(homeModuleLabels);
 export function editorialContent(content){
  const d=structuredClone(content);
  d.header=headerConfig(d.header);
+ d.privacy=privacyConfig(d.privacy);
  if(d.home.layoutVersion!==2){
   d.home.modules=['statement',...d.home.modules.filter(m=>m!=='tool').flatMap(m=>m==='properties'?['properties','reviews','clients']:m==='process'?['process','metrics','living']:[m]),'transactions'];
   d.home.modules=[...new Set(d.home.modules)];d.home.layoutVersion=2;

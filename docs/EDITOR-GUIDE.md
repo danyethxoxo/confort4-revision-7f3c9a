@@ -48,3 +48,12 @@ Cada selector ofrece Ajustar encuadre para la imagen actual. Al subir un archivo
 Se pueden seleccionar JPG, PNG o WebP de hasta 25 MB y 60 megapíxeles. La salida conserva transparencia cuando existe, se limita a 1800 píxeles de lado mayor, no amplía fuentes pequeñas y se reduce si hace falta para cumplir el límite de subida de 3 MB. El recorte se hace en el navegador; no hay proxy de imágenes remotas. Si el servidor de una URL externa impide el recorte por CORS, debe subirse el archivo original. Cada ajuste parte de la imagen que se está editando; para recuperar partes ya recortadas en una versión anterior, vuelve a elegir el original.
 
 Los nombres neutros Galería de fotos 1 y Galería de fotos 2 corresponden a las galerías de ocho y dos fotografías del panel. Sus títulos y contenidos públicos no se sustituyen automáticamente.
+# Aviso de privacidad
+
+En **Administración → Aviso de privacidad** se editan el título, fecha, responsable, domicilio, correo ARCO, apartados y enlaces del aviso. El mismo responsable y correo se usan en el resumen junto a los formularios; sus finalidades y texto adicional también son editables.
+
+Los textos son campos seguros, sin HTML ejecutable. Se pueden separar párrafos con una línea vacía y escribir listas con `-`. Los enlaces se gestionan aparte y admiten HTTPS o `mailto:`.
+
+**Guardar borrador** conserva cambios privados. **Vista previa** abre `privacidad.html?preview=1`. **Publicar** aplica el aviso y sus resúmenes a la página pública. Los cambios del aviso generan una versión automática; cambiar otras secciones del sitio no cambia esa versión. Las autorizaciones ya guardadas conservan su versión. Si un visitante tiene un formulario con un aviso anterior abierto, el servidor le pedirá recargar y autorizar el aviso vigente.
+
+El texto inicial se conserva como base en `dist/privacy-defaults.mjs`; la fuente publicada posterior es el contenido del CMS. La plantilla HTML anterior ya no es la fuente activa. No hace falta desplegar código para editar el aviso desde el panel.

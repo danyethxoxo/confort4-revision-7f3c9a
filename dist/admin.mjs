@@ -1,13 +1,13 @@
-import {editorialContent,homeModuleLabels} from './editorial-model.mjs?v=20261119privacy';
-import {openImageCropper} from './image-cropper.mjs?v=20261119privacy';
-import {editorialEditor,imageEditor} from './admin-editors.mjs?v=20261119privacy';
-import {e,safeURL,safeImage,money,imageOf} from './ui.mjs?v=20261119privacy';
-import {validateContent,moduleTypes} from './content-validation.mjs?v=20261119privacy';
+import {editorialContent,homeModuleLabels} from './editorial-model.mjs?v=20261119privacyeditor';
+import {openImageCropper} from './image-cropper.mjs?v=20261119privacyeditor';
+import {editorialEditor,imageEditor} from './admin-editors.mjs?v=20261119privacyeditor';
+import {e,safeURL,safeImage,money,imageOf} from './ui.mjs?v=20261119privacyeditor';
+import {validateContent,moduleTypes} from './content-validation.mjs?v=20261119privacyeditor';
 const config=window.CONFORT4_FORMS,base=config.endpoint.split('/functions/')[0],endpoint=config.endpoint.replace('confort4-forms','confort4-site');
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 let session=null,state=null,draft=null,tab='home',offset=0,unsaved=false,pending=false;
 try{session=JSON.parse(sessionStorage.getItem('confort4-session'));}catch{}
-const labels={header:'Header',vender:'Vender',rentar:'Rentar',comprar:'Comprar',home:'Pantalla principal',team:'Quiénes somos',services:'Servicios',process:'Proceso',faq:'Preguntas frecuentes',posts:'Blog',checklists:'Checklists',leads:'Contactos',reviews:'Reseñas',inventory:'Propiedades',media:'Imágenes',settings:'Configuración',versions:'Versiones'};
+const labels={privacy:'Aviso de privacidad',header:'Header',vender:'Vender',rentar:'Rentar',comprar:'Comprar',home:'Pantalla principal',team:'Quiénes somos',services:'Servicios',process:'Proceso',faq:'Preguntas frecuentes',posts:'Blog',checklists:'Checklists',leads:'Contactos',reviews:'Reseñas',inventory:'Propiedades',media:'Imágenes',settings:'Configuración',versions:'Versiones'};
 const moduleLabels=homeModuleLabels;
 function normalizedSession(data){return {...data,editor_username:data.editor_username||session?.editor_username,expires_at:data.expires_at||Math.floor(Date.now()/1000)+(data.expires_in||3600)};}
 function persist(){if(session)sessionStorage.setItem('confort4-session',JSON.stringify(session));else sessionStorage.removeItem('confort4-session');}
@@ -32,7 +32,7 @@ function editor(){
 }
 function editorNavigation(){
  const buttons=keys=>keys.map(key=>`<button data-tab="${key}" ${tab===key?'aria-current="page"':''}>${e(labels[key])}</button>`).join('');
- return buttons(['header','home','team'])+'<div class="admin-nav-group"><span>Me interesa</span>'+buttons(['vender','rentar','comprar'])+'</div>'+buttons(['inventory','reviews','posts'])+'<div class="admin-nav-group"><span>Administración</span>'+buttons(['leads','media','settings','versions'])+'</div>';
+ return buttons(['header','home','team'])+'<div class="admin-nav-group"><span>Me interesa</span>'+buttons(['vender','rentar','comprar'])+'</div>'+buttons(['inventory','reviews','posts'])+'<div class="admin-nav-group"><span>Administración</span>'+buttons(['privacy','leads','media','settings','versions'])+'</div>';
 }
 function shell(){
  const opened=new Set($$('details[open]',$('#admin-panel')).map(element=>$('summary',element)?.textContent));
@@ -74,6 +74,8 @@ $('#admin-panel').addEventListener('click',ev=>{const b=ev.target.closest('butto
  if(b.id==='logout'){withPending(async()=>{await fetch(base+'/auth/v1/logout?scope=local',{method:'POST',headers:{apikey:config.publishableKey,Authorization:'Bearer '+session.access_token}}).catch(()=>{});session=null;persist();localStorage.removeItem('confort4-preview');location.reload();});return;}
  if(b.hasAttribute('data-add-header-social')){collect();if(draft.header.socials.length>=8)return;draft.header.socials.push({icon:'tiktok',label:'Nueva red social',href:'https://www.tiktok.com/',visible:true});unsaved=true;shell();return;}
  if(b.dataset.removeHeaderSocial!==undefined){collect();const i=Number(b.dataset.removeHeaderSocial);if(Number.isInteger(i)&&i>=0&&i<draft.header.socials.length){draft.header.socials.splice(i,1);unsaved=true;shell();}return;}
+ if(b.dataset.addPrivacyLink!==undefined){collect();const i=Number(b.dataset.addPrivacyLink),links=draft.privacy.sections[i]?.links;if(!links||links.length>=10)return;links.push({label:'Nuevo enlace',href:'https://'});unsaved=true;shell();return;}
+ if(b.dataset.removePrivacyLink!==undefined){collect();const [i,j]=b.dataset.removePrivacyLink.split(',').map(Number),links=draft.privacy.sections[i]?.links;if(!links||!Number.isInteger(j)||j<0||j>=links.length)return;links.splice(j,1);unsaved=true;shell();return;}
  if(b.id==='save')withPending(save);
  if(b.dataset.loadMedia)withPending(async()=>{status('Cargando la galería completa desde KW…');const result=await api('property_media',{id:b.dataset.loadMedia,refresh:true}),container=b.closest('details');container.querySelector('.admin-property-photos')?.remove();const track=document.createElement('div');track.className='admin-property-photos';track.innerHTML=result.images.map(url=>`<img src="${safeImage(url,'thumb')}" alt="" loading="lazy">`).join('');container.insertBefore(track,b);container.querySelector('summary').textContent='Fotos de la propiedad · '+result.images.length;status(result.images.length+' fotos cargadas.');});
  if(b.id==='add-properties'){$('#extra-picker').open=true;$('#kw-property-link input').focus();}
@@ -83,7 +85,7 @@ $('#admin-panel').addEventListener('click',ev=>{const b=ev.target.closest('butto
   ['addRow','deleteRow',/^services\.\d+\.comparison\.rows$/,['Nuevo tema','','']],
   ['addReading','deleteReading',/^services\.\d+\.sections$/,{title:'Nuevo punto',text:'',visible:true}]
  ]){const path=b.dataset[add]||b.dataset[remove];if(path&&pattern.test(path)){collect();const rows=at(path);if(b.dataset[add]){if(rows.length>=20){status('Puedes agregar hasta 20 elementos en este módulo.',true);return;}rows.push(structuredClone(value));}else rows.splice(Number(b.dataset.index),1);unsaved=true;shell();return;}}
- if(b.id==='preview'){collect();try{validateContent(draft);localStorage.setItem('confort4-preview',JSON.stringify(draft));const route={team:'quienes-somos',vender:'vender',rentar:'rentar',comprar:'comprar',inventory:'propiedades',reviews:'resena',services:'vender',posts:'blog',checklists:'recursos',faq:'preguntas'}[tab]||'index';window.open(route+'.html?preview=1','_blank','noopener');status('Vista previa abierta. No se ha publicado.');}catch(error){status(error.message,true);}}
+ if(b.id==='preview'){collect();try{validateContent(draft);localStorage.setItem('confort4-preview',JSON.stringify(draft));const route={privacy:'privacidad',team:'quienes-somos',vender:'vender',rentar:'rentar',comprar:'comprar',inventory:'propiedades',reviews:'resena',services:'vender',posts:'blog',checklists:'recursos',faq:'preguntas'}[tab]||'index';window.open(route+'.html?preview=1','_blank','noopener');status('Vista previa abierta. No se ha publicado.');}catch(error){status(error.message,true);}}
  if(b.id==='publish')withPending(async()=>{await save();if(!window.confirm('¿Publicar este borrador de Confort4? Los visitantes verán los cambios al recargar.'))return;const result=await api('publish',{revision:state.revision});state.revision=result.revision;const latest=await api('bootstrap');state.versions=latest.versions;$('#revision').textContent='Publicado · versión '+state.revision;status('Publicado. La página pública ya puede leer esta versión.');});
  if(b.dataset.move!==undefined){collect();const id=b.dataset.move,i=draft.home.modules.indexOf(id),direction=Number(b.dataset.dir),j=i+direction;if(i<0||![-1,1].includes(direction)||j<0||j>=draft.home.modules.length)return;[draft.home.modules[i],draft.home.modules[j]]=[draft.home.modules[j],draft.home.modules[i]];unsaved=true;shell();const row=$('[data-home-sort="'+id+'"]');row?.querySelector('[data-dir="'+direction+'"]:not([disabled])')?.focus({preventScroll:true});status('Módulo movido a la posición '+(j+1)+'. Pulsa Publicar para mostrar este orden en el inicio.');return;}
  if(b.dataset.removeModule){collect();draft.home.modules=draft.home.modules.filter(m=>m!==b.dataset.removeModule);unsaved=true;shell();}

@@ -1,5 +1,5 @@
-import {e} from './ui.mjs?v=20261119privacy';
-import {HEADER_LINKS,SOCIAL_ICONS} from './header-model.mjs?v=20261119privacy';
+import {e} from './ui.mjs?v=20261119privacyeditor';
+import {HEADER_LINKS,SOCIAL_ICONS} from './header-model.mjs?v=20261119privacyeditor';
 export function headerEditor(d,{input,block}){
  const link=(path,label)=>`<details class="editor-item"><summary>${e(label)}</summary>${input(path+'.label','Texto')+input(path+'.href','Enlace · página interna o HTTPS')+input(path+'.bold','Texto en negritas',{check:true})+input(path+'.visible','Mostrar',{check:true})}</details>`;
  return block('Header · navegación de todas las páginas','<p>Edita el menú y las redes del encabezado. Usa Vista previa para revisarlo y Publicar para aplicar los cambios.</p>'+input('header.menuLabel','Texto del botón de menú en celular')+input('header.closeLabel','Texto del botón para cerrar el menú'))+
