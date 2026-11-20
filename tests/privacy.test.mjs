@@ -27,3 +27,5 @@ assert(notice.querySelector('[data-clear-preferences]'));
 assert(notice.querySelector('a[href="https://kwpremiermx.kw.com/es-es/aviso-de-privacidad"]'));
 assert(!notice.body.textContent.includes('propiedades guardadas y comparadas'));
 console.log('PASS: purpose/identity notices, independent unticked consents, CSP restrictions and scoped visitor preference clearing.');
+
+for(const link of notice.querySelectorAll(".privacy-index a")){assert(notice.querySelector(link.getAttribute("href")));}assert.equal(notice.querySelectorAll(".privacy-index a").length,8);

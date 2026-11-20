@@ -1,17 +1,17 @@
-import {privacyVersion} from './privacy-policy.mjs?v=20261119kwprivacy';
-import {clearVisitorPreferences} from './visitor-storage.mjs?v=20261119kwprivacy';
-import {headerConfig} from './header-model.mjs?v=20261119kwprivacy';
-import {renderHeaderNavigation} from './header-render.mjs?v=20261119kwprivacy';
-import {applyGalleryImage} from './photo-policy.mjs?v=20261119kwprivacy';
-import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261119kwprivacy';
-import {bindSwipe} from './swipe.mjs?v=20261119kwprivacy';
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261119kwprivacy';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261119kwprivacy';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261119kwprivacy';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261119kwprivacy';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261119kwprivacy';
-import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261119kwprivacy';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261119kwprivacy';
+import {privacyVersion} from './privacy-policy.mjs?v=20261119privacyindex';
+import {clearVisitorPreferences} from './visitor-storage.mjs?v=20261119privacyindex';
+import {headerConfig} from './header-model.mjs?v=20261119privacyindex';
+import {renderHeaderNavigation} from './header-render.mjs?v=20261119privacyindex';
+import {applyGalleryImage} from './photo-policy.mjs?v=20261119privacyindex';
+import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261119privacyindex';
+import {bindSwipe} from './swipe.mjs?v=20261119privacyindex';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261119privacyindex';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261119privacyindex';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261119privacyindex';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261119privacyindex';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261119privacyindex';
+import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261119privacyindex';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261119privacyindex';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -265,7 +265,7 @@ async function refreshLatestReviews(){
    main.replaceChildren(template.content);
   }
   init();
-  if (location.hash&&!window.CONFORT4_TEAM_RELOAD) $(location.hash)?.scrollIntoView({block:'start'});
+  if (location.hash&&!window.CONFORT4_TEAM_RELOAD){if(page==='privacy')navigatePrivacySection(location.hash,false);else $(location.hash)?.scrollIntoView({block:'start'});}
  }).catch(() => {
   releaseHeroIntro();
   $$('.catalog-status').forEach(element => {
@@ -277,4 +277,13 @@ async function refreshLatestReviews(){
 
 if(!preview&&['home','review'].includes(page)){window.setInterval(refreshLatestReviews,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshLatestReviews();});}
 
+function navigatePrivacySection(hash,updateHistory=true){
+ if(!/^#aviso-[a-z]+$/.test(hash))return;
+ const target=document.getElementById(hash.slice(1));if(!target)return;
+ if(updateHistory&&location.hash!==hash)history.pushState(null,'',hash);
+ target.focus({preventScroll:true});
+ const top=window.scrollY+target.getBoundingClientRect().top-($('.header')?.getBoundingClientRect().height||82)-24;
+ window.scrollTo({top,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+}
+main.addEventListener('click',event=>{const link=event.target.closest('.privacy-index a');if(!link||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;event.preventDefault();event.stopPropagation();navigatePrivacySection(link.getAttribute('href'));});
 main.addEventListener('click',event=>{if(!event.target.closest('[data-clear-preferences]'))return;try{clearVisitorPreferences(localStorage);clearVisitorPreferences(sessionStorage);favorites.clear();markFavorites();$('[data-privacy-status]').textContent='Preferencias borradas de este navegador. No se ha borrado ninguna solicitud enviada al equipo.';}catch{$('[data-privacy-status]').textContent='No pudimos acceder al almacenamiento. Puedes borrarlo desde la configuración del navegador.';}});
