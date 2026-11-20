@@ -1,4 +1,4 @@
-import {privacyConfig} from './privacy-model.mjs';
+import {privacyConfig} from './privacy-model.mjs?v=20261119kwprivacy';
 import {headerConfig} from './header-model.mjs?v=20261118header';
 export const homeModuleLabels={statement:'Presentación del equipo',properties:'Propiedades · widget',reviews:'Nuestras reseñas · widget',clients:'Nuestros clientes',process:'Tu proyecto · información de valor',metrics:'Un equipo que conecta · cifras',living:'Un espacio para vivir',faq:'Preguntas frecuentes',transactions:'Vendidas y rentadas · widget',journal:'Blog · widget'};
 export const homeModuleTypes=Object.keys(homeModuleLabels);
