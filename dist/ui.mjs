@@ -1,4 +1,4 @@
-import {renderPrivacyNotice} from './privacy-render.mjs';
+import {renderPrivacyNotice} from './privacy-render.mjs?v=20261119privacyindex';
 import {privacySummary} from './privacy-policy.mjs?v=20261119kwprivacy';
 import {propertyImageSource} from './property-image-sources.mjs?v=20261119kwprivacy';
 import {reviewForm,reviewFormFor} from './review-form.mjs?v=20261119kwprivacy';

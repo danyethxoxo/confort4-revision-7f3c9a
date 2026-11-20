@@ -1,4 +1,4 @@
-import {e} from './ui.mjs?v=20261119kwprivacy';
+import {e} from './ui.mjs?v=20261119privacyindex';
 export function privacyEditor(d,{input,block}){
  return block('Aviso de privacidad','<p>Edita el aviso completo y los datos que se muestran junto a los formularios. Guarda y usa Vista previa antes de Publicar. Los cambios publicados tendrán su propia versión para registrar las autorizaciones.</p>'+input('privacy.title','Título')+input('privacy.eyebrow','Texto superior')+input('privacy.updated','Fecha de actualización',{type:'date'}))+
  block('Permisos de fotos y testimonios','<p>Conserva la confirmación de las personas en un expediente privado. El permiso para promocionar un inmueble no se presume equivalente al uso de fotos personales o testimonios.</p><a class="text-link" href="assets/confirmacion-imagen-testimonio.txt" target="_blank" rel="noopener" download>Descargar modelo de confirmación</a>')+

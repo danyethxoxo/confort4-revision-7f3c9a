@@ -1,11 +1,25 @@
 body[data-page="privacy"] .privacy {
-  display: block;
-  width: min(100%, 850px);
-  max-width: 850px;
+  display: grid;
+  grid-template-columns: 235px minmax(0, 800px);
+  gap: clamp(36px, 5vw, 76px);
+  align-items: start;
+  width: min(100%, 1200px);
+  max-width: 1200px;
   margin: 0 auto;
   padding: 68px 32px 88px;
   text-align: left;
 }
+.privacy-content { min-width: 0; }
+.privacy-index { position: sticky; top: 115px; max-height: calc(100dvh - 145px); overflow-y: auto; }
+.privacy-index-title { margin: 0 0 18px; color: #666; font-size: 13px; text-transform: uppercase; letter-spacing: .09em; }
+.privacy-index ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--line, #dededb); }
+.privacy-index li { margin: 0; }
+.privacy-index a { display: flex; align-items: baseline; gap: 12px; padding: 11px 14px; margin-left: -1px; border-left: 2px solid transparent; color: #474747; font-size: 14px; line-height: 1.4; text-decoration: none; }
+.privacy-index a span { flex: 0 0 18px; white-space: nowrap; color: #888; font-size: 11px; font-variant-numeric: tabular-nums; }
+.privacy-index a:hover,.privacy-index a:focus-visible { color: #b40101; border-left-color: #b40101; background: #b4010107; }
+.privacy-section { scroll-margin-top: 24px; }
+.privacy-section:focus { outline: none; }
+.privacy-section:focus-visible { outline: 2px solid #b40101; outline-offset: 6px; }
 .privacy .privacy-heading { padding-bottom: 32px; border-bottom: 1px solid var(--line, #dededb); }
 .privacy .privacy-eyebrow { margin: 0 0 16px; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: #666; }
 .privacy .privacy-heading h1 { margin: 0; font-size: clamp(38px, 5vw, 60px); line-height: 1.08; }
@@ -21,6 +35,12 @@ body[data-page="privacy"] .privacy {
 .privacy .privacy-contact { margin-top: 32px; padding: 24px; background: #f4f4f2; border-radius: 8px; }
 .privacy .privacy-contact p { margin: 0 0 12px; font-size: 16px; line-height: 1.6; }
 .privacy .privacy-contact .text-link { display: inline-block; font-size: 16px; }
+@media (max-width: 800px) {
+  body[data-page="privacy"] .privacy { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .privacy-index { position: static; max-height: none; overflow: visible; }
+  .privacy-index ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .privacy-index a { height: 100%; padding: 10px 12px; font-size: 13px; }
+}
 @media (max-width: 600px) {
   body[data-page="privacy"] .privacy { padding: 36px 22px 56px; }
   .privacy .privacy-section { padding: 26px 0; }
