@@ -404,3 +404,5 @@ html.header-preparing .header,html.confort4-motion-loading .header{visibility:hi
 .header #navigation .header-social [data-social-icon=youtube] svg{width:20px;height:20px}
 @media(max-width:1000px){.header #navigation .header-social [data-social-icon=youtube] svg{width:22px;height:22px}}
 .header.header #navigation .header-network-icon.whatsapp-icon{fill:currentColor;stroke:none;stroke-width:0}
+
+.header #navigation .header-social [data-social-icon=youtube] svg{fill:currentColor;stroke:none;stroke-width:0}
