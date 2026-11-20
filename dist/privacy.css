@@ -1,0 +1,28 @@
+body[data-page="privacy"] .privacy {
+  display: block;
+  width: min(100%, 850px);
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 68px 32px 88px;
+  text-align: left;
+}
+.privacy .privacy-heading { padding-bottom: 32px; border-bottom: 1px solid var(--line, #dededb); }
+.privacy .privacy-eyebrow { margin: 0 0 16px; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: #666; }
+.privacy .privacy-heading h1 { margin: 0; font-size: clamp(38px, 5vw, 60px); line-height: 1.08; }
+.privacy .privacy-updated { margin: 20px 0 0; font-size: 14px; color: #666; }
+.privacy .privacy-section { display: block; margin: 0; padding: 32px 0; border-bottom: 1px solid var(--line, #dededb); }
+.privacy .privacy-section h2 { margin: 0 0 18px; font-size: clamp(24px, 3vw, 29px); line-height: 1.2; }
+.privacy .privacy-section p, .privacy .privacy-section li { font-size: 16px; line-height: 1.8; color: #474747; }
+.privacy .privacy-section p { margin: 0 0 16px; }
+.privacy .privacy-section > :last-child { margin-bottom: 0; }
+.privacy .privacy-section ul { margin: 0 0 20px; padding-left: 22px; }
+.privacy .privacy-section li { padding-left: 4px; margin: 0 0 12px; }
+.privacy a { overflow-wrap: anywhere; text-decoration-thickness: 1px; }
+.privacy .privacy-contact { margin-top: 32px; padding: 24px; background: #f4f4f2; border-radius: 8px; }
+.privacy .privacy-contact p { margin: 0 0 12px; font-size: 16px; line-height: 1.6; }
+.privacy .privacy-contact .text-link { display: inline-block; font-size: 16px; }
+@media (max-width: 600px) {
+  body[data-page="privacy"] .privacy { padding: 36px 22px 56px; }
+  .privacy .privacy-section { padding: 26px 0; }
+  .privacy .privacy-contact { padding: 20px; }
+}
