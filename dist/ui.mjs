@@ -1,5 +1,6 @@
 import {renderPrivacyNotice} from './privacy-render.mjs?v=20261121review';
 import {privacySummary} from './privacy-policy.mjs?v=20261119kwprivacy';
+import {privacyConfig} from './privacy-model.mjs?v=20261119kwprivacy';
 import {propertyImageSource} from './property-image-sources.mjs?v=20261121review';
 import {reviewForm,reviewFormFor} from './review-form.mjs?v=20261121review';
 import {livingScene,metricsScene} from './living-scene.mjs?v=20261119kwprivacy';
@@ -91,6 +92,8 @@ export function contactDetails(data,compact=false) {
  return `<div class="team-contact-links${compact?' compact':''}">${members.map(p=>`<div><span>${e(p.name.split(' ')[0])}</span><a class="button button-outline contact-direct" href="${safeURL(p.contact)}" target="_blank" rel="noopener" aria-label="WhatsApp de ${e(p.name)}">Contáctame ${icon('arrow')}</a></div>`).join('')}${email?`<a class="team-email" href="mailto:${e(encodeURIComponent(email))}">${e(email)}</a>`:''}${office?`<a class="team-office" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(office)}" target="_blank" rel="noopener"><span>Oficina</span><address>${e(office)}</address></a>`:''}</div>`;
 }
 export function contactForm(data={},primary=false) {
+ const privacy=privacyConfig(data);
+ const compactPrivacy=`<details class="contact-privacy"><summary><strong>${e(privacy.responsibleName)} (${e(privacy.brand)})</strong> usará tus datos para ${e(privacy.contactPurpose)}. ${e(privacy.summaryEnding)} <span class="contact-privacy-more">Ver detalles</span></summary>${privacySummary('contact',data)}</details>`;
  return `<section class="contact-form-section wrap" id="contacto">
   <div class="contact-form-intro">
    <${primary?'h1':'h2'}>${e(data.projectConfig?.title||'¿Tienes algo en mente?')}</${primary?'h1':'h2'}>
@@ -106,7 +109,7 @@ export function contactForm(data={},primary=false) {
     ${field('phone','Teléfono','tel','autocomplete="tel" maxlength="30"')}
    </div>
    <label class="message-field">¿Qué te gustaría lograr?<textarea name="message" rows="3" maxlength="2000" placeholder="Cuéntanos lo que más te importa · opcional"></textarea></label>
-   ${privacySummary('contact',data)}<label class="consent"><input type="checkbox" name="consent" required><span>Autorizo el uso de mis datos para atender mi solicitud conforme al <a href="privacidad.html">aviso de privacidad</a>.</span></label>
+   ${compactPrivacy}<label class="consent"><input type="checkbox" name="consent" required><span>Autorizo el uso de mis datos para atender mi solicitud conforme al <a href="privacidad.html">aviso de privacidad</a>.</span></label>
    <button class="button" type="submit">${e(data.projectConfig?.buttonLabel||'Contactar al equipo')} ${icon('arrow')}</button>
    <div class="form-trap" aria-hidden="true"><input name="website" tabindex="-1" autocomplete="off"></div>
    <p class="form-status" role="status" tabindex="-1"></p>
