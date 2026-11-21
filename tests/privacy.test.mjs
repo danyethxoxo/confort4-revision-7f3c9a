@@ -14,6 +14,11 @@ for(const file of ['contacto.html','resena.html','vender.html','rentar.html','co
  const doc=new JSDOM(fs.readFileSync(new URL(file,root),'utf8')).window.document;
  for(const form of doc.querySelectorAll('form.site-form')){
   assert(form.querySelector('.privacy-summary a[href="privacidad.html"]'));
+  if(form.dataset.kind==='contact'){
+   const disclosure=form.querySelector('details.contact-privacy');
+   assert(disclosure&&!disclosure.open);
+   assert(disclosure.querySelector('summary').textContent.includes('Ver detalles'));
+  }
   assert(!form.querySelector('input[name=consent]').checked);
   assert(form.querySelector('input[name=consent]').required);
   const publication=form.querySelector('input[name=publishConsent]');if(publication){assert(!publication.required);assert(!publication.checked);}
