@@ -1,5 +1,5 @@
-import {sources} from './property-image-manifest.mjs?v=20261117sharp';
-import {photoGatewayURL,PHOTO_PROFILES} from './photo-policy.mjs?v=20261117sharp';
+import {sources} from './property-image-manifest.mjs?v=20261120photos';
+import {photoGatewayURL,PHOTO_PROFILES} from './photo-policy.mjs?v=20261120photos';
 const aliases=new Map(Object.values(sources).flatMap(variants=>Object.values(variants).map(asset=>[asset,variants])));
 export function propertyImageSource(value,size='card'){
  const profile=Object.hasOwn(PHOTO_PROFILES,size)?size:'card';
