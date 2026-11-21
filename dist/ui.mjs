@@ -107,7 +107,7 @@ export function contactForm(data={},primary=false) {
     ${field('phone','Teléfono','tel','autocomplete="tel" maxlength="30"')}
    </div>
    <label class="message-field">¿Qué te gustaría lograr?<textarea name="message" rows="3" maxlength="2000" placeholder="Cuéntanos lo que más te importa · opcional"></textarea></label>
-   ${compactPrivacy}<label class="consent"><input type="checkbox" name="consent" required><span>Autorizo el uso de mis datos para atender mi solicitud conforme al <a href="privacidad.html">aviso de privacidad</a>.</span></label>
+   <div class="contact-consent-row"><label class="consent"><input type="checkbox" name="consent" required><span>Autorizo el uso de mis datos para atender mi solicitud conforme al <a href="privacidad.html">aviso de privacidad</a>.</span></label>${compactPrivacy}</div>
    <button class="button" type="submit">${e(data.projectConfig?.buttonLabel||'Contactar al equipo')} ${icon('arrow')}</button>
    <div class="form-trap" aria-hidden="true"><input name="website" tabindex="-1" autocomplete="off"></div>
    <p class="form-status" role="status" tabindex="-1"></p>
