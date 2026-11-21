@@ -1,5 +1,5 @@
 import {savePhotoData} from './photo-policy.mjs?v=20261117budget';
-import {motionTiming as timing, clampProgress, intervalProgress, expansionState, lineGradientPosition} from './motion-rules.mjs?v=20261118brand';
+import {motionTiming as timing, clampProgress, intervalProgress, expansionState, lineGradientPosition} from './motion-rules.mjs?v=20261121fast';
 import {initializeMotionNavigation} from './motion-navigation.mjs?v=20261114catalog';
 
 const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -125,21 +125,21 @@ function prepareHero(hero) {
   }
   hero.classList.add('hero-awaiting-image');
   const loaded = image.complete && image.naturalWidth ? Promise.resolve() : image.decode?.().catch(() => {});
-  const timeout = new Promise(resolve => window.setTimeout(resolve, 2500));
+  const timeout = new Promise(resolve => window.setTimeout(resolve, 200));
   Promise.race([loaded || timeout, timeout]).then(() => {
     if (!hero.isConnected) return;
     hero.classList.remove('hero-awaiting-image');
     document.documentElement.classList.remove('confort4-motion-loading');
-    if (heroPlayed || motionPreference.matches) return;
+    if (heroPlayed || motionPreference.matches || window.CONFORT4_HERO_INTRO_EXPIRED) return;
     heroPlayed = true;
     hero.classList.add('hero-intro-playing');
     title.lines.forEach((line, index) => {
       play(line, [{transform: 'translateY(105%)'}, {transform: 'translateY(0%)'}], timing.heroLine, timing.heroFirstDelay + index * timing.heroLineStagger);
     });
     const description = hero.querySelector('.hero-aside');
-    play(description, [{opacity: 0, transform: 'translateY(12px)'}, {opacity: 1, transform: 'translateY(0px)'}], 900, timing.heroDescriptionDelay);
+    play(description, [{opacity: 0, transform: 'translateY(12px)'}, {opacity: 1, transform: 'translateY(0px)'}], 600, timing.heroDescriptionDelay);
     const navigation = document.querySelector('.nav-inner');
-    play(navigation, [{clipPath: 'inset(0% 0% 100%)'}, {clipPath: 'inset(0%)'}], 900, 450);
+    play(navigation, [{clipPath: 'inset(0% 0% 100%)'}, {clipPath: 'inset(0%)'}], 600, 100);
   });
 }
 
@@ -538,7 +538,7 @@ export function initializeReferenceMotion(root) {
     footerLetters: []
   };
 
-  Promise.resolve(document.fonts?.ready).then(() => {
+  Promise.race([Promise.resolve(document.fonts?.ready),new Promise(resolve=>setTimeout(resolve,150))]).then(() => {
     if (currentGeneration !== generation || !root.isConnected) return;
     prepareHero(hero);
     sceneElements.heroParallax=hero?.querySelector('.hero-parallax');

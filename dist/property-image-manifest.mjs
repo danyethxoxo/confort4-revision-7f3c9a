@@ -839,5 +839,11 @@ export const sources={
     "mobile": "assets/property-sdr/fe60bd655265c42cb0ae-sdr3-mobile.webp",
     "card": "assets/property-sdr/fe60bd655265c42cb0ae-sdr3-card.webp",
     "large": "assets/property-sdr/fe60bd655265c42cb0ae-sdr3.webp"
+  },
+  "https://iloetojomzqtadkithtv.supabase.co/storage/v1/object/public/confort4-media/ad88e7a3-a5db-4b95-a992-193e8d7c842f.webp": {
+    "thumb": "assets/property-sdr/6a74f4236c4ce98ebdec-sdr3-thumb.webp",
+    "mobile": "assets/property-sdr/6a74f4236c4ce98ebdec-sdr3-mobile.webp",
+    "card": "assets/property-sdr/6a74f4236c4ce98ebdec-sdr3-card.webp",
+    "large": "assets/property-sdr/6a74f4236c4ce98ebdec-sdr3.webp"
   }
 };
