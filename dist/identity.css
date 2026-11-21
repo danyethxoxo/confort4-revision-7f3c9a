@@ -696,3 +696,4 @@ body[data-page=contact] .contact-form-section { min-height:calc(100svh - 48px);p
 .property-photo img,.featured-image img,.property-gallery img,.property-viewer img{dynamic-range-limit:standard}
 
 .privacy-summary{margin:18px 0 12px;font-size:12px;line-height:1.55;color:#666}.privacy-summary p{margin:0}.privacy-summary a{text-decoration:underline;text-underline-offset:2px}.privacy [data-clear-preferences]{margin:14px 0;white-space:normal;text-align:left}
+.review-privacy{font-size:12px;line-height:1.55;color:#666;margin:8px 0}.review-privacy summary{cursor:pointer;width:fit-content;text-decoration:underline;text-underline-offset:3px}.review-privacy summary:focus-visible{outline:2px solid #a60000;outline-offset:4px}.review-privacy .privacy-summary{margin:10px 0 4px}
