@@ -1,10 +1,10 @@
 // Measured against Nivara's public motion definitions and rendered page.
 export const motionTiming = Object.freeze({
-  frame: 2100,
-  heroLine: 1300,
-  heroFirstDelay: 1850,
-  heroLineStagger: 100,
-  heroDescriptionDelay: 2100,
+  frame: 900,
+  heroLine: 650,
+  heroFirstDelay: 180,
+  heroLineStagger: 70,
+  heroDescriptionDelay: 380,
   line: 1000,
   lineStagger: 80,
   imageWipe: 850,

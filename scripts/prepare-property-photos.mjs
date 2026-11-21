@@ -12,6 +12,8 @@ const sources=JSON.parse(await fs.readFile(path.join(root,'content/property-imag
 const live=process.argv.includes('--live');
 if(live){
  const snapshot=JSON.parse(await fs.readFile(path.join(root,'.cache/public-site.json'),'utf8'));
+ const homePhoto=originalPhotoURL(snapshot.content?.home?.photo);
+ if(homePhoto&&!Object.hasOwn(sources,homePhoto))sources[homePhoto]={};
  for(const property of snapshot.properties||[])for(const photo of property.imagenes||[]){
   const url=originalPhotoURL(typeof photo==='string'?photo:photo?.url);
   if(url&&!Object.hasOwn(sources,url))sources[url]={};

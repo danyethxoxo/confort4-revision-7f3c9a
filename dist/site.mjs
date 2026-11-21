@@ -1,17 +1,17 @@
-import {privacyVersion} from './privacy-policy.mjs?v=20261120photos';
-import {clearVisitorPreferences} from './visitor-storage.mjs?v=20261120photos';
-import {headerConfig} from './header-model.mjs?v=20261120photos';
-import {renderHeaderNavigation} from './header-render.mjs?v=20261120photos';
-import {applyGalleryImage} from './photo-policy.mjs?v=20261120photos';
-import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261120photos';
-import {bindSwipe} from './swipe.mjs?v=20261120photos';
-import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261120photos';
-﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261120photos';
-import {initializeReferenceMotion} from './reference-motion.mjs?v=20261120photos';
-import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261120photos';
-import {preserveTeamMotion} from './team-hydration.mjs?v=20261120photos';
-import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261120photos';
-import {initializeStoryCarousels} from './story-carousels.mjs?v=20261120photos';
+import {privacyVersion} from './privacy-policy.mjs?v=20261121fast';
+import {clearVisitorPreferences} from './visitor-storage.mjs?v=20261121fast';
+import {headerConfig} from './header-model.mjs?v=20261121fast';
+import {renderHeaderNavigation} from './header-render.mjs?v=20261121fast';
+import {applyGalleryImage} from './photo-policy.mjs?v=20261121fast';
+import {preserveHomeModules,withPreviewWidgets} from './home-hydration.mjs?v=20261121fast';
+import {bindSwipe} from './swipe.mjs?v=20261121fast';
+import {heroSignature,updateHeroContent} from './hero-hydration.mjs?v=20261121fast';
+﻿import {renderPage,googleReviewModule,clientsModule} from './ui.mjs?v=20261121fast';
+import {initializeReferenceMotion} from './reference-motion.mjs?v=20261121fast';
+import {preserveCatalogPhotos} from './catalog-hydration.mjs?v=20261121fast';
+import {preserveTeamMotion} from './team-hydration.mjs?v=20261121fast';
+import {initializePropertySlideshow} from './property-slideshow.mjs?v=20261121fast';
+import {initializeStoryCarousels} from './story-carousels.mjs?v=20261121fast';
 const config=window.CONFORT4_FORMS,main=document.querySelector('main'),page=document.body.dataset.page,params=Object.fromEntries(new URLSearchParams(location.search));
 if(page==='home'&&location.hash==='#contacto'){const destination=new URL('contacto.html',location.href);destination.search=location.search;location.replace(destination.href);}
 params.id=params.id||document.body.dataset.routeId;params.slug=params.slug||document.body.dataset.routeSlug;
@@ -199,7 +199,6 @@ let heroIntroPending=false,heroIntroTimer=null;
 function releaseHeroIntro(initialize=true){if(!heroIntroPending)return;heroIntroPending=false;window.clearTimeout(heroIntroTimer);main.querySelector('.hero,.team-hero')?.removeAttribute('data-motion-pending');if(initialize)initializeReferenceMotion(main);}
 let preview=false;
 if(params.preview==='1'){const content=storage.get('preview',null);if(content){bundle={...bundle,content};main.innerHTML=renderPage(bundle,page,params)||main.innerHTML;const banner=document.createElement('div');banner.className='preview-banner';banner.textContent='Vista previa del borrador · estos cambios todavía no son públicos.';main.before(banner);preview=true;}}
-if(page==='home'&&!preview&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){heroIntroPending=true;main.querySelector('.hero')?.setAttribute('data-motion-pending','true');heroIntroTimer=window.setTimeout(()=>releaseHeroIntro(),2000);}
 init();
 
 let reviewSignature=JSON.stringify([bundle.content.googleReviews,bundle.content.widgets?.reviews,bundle.reviews||[]]),lastReviewRefresh=0,reviewRefreshPending=false;
