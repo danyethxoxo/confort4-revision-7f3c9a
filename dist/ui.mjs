@@ -1,7 +1,7 @@
-import {renderPrivacyNotice} from './privacy-render.mjs?v=20261121fast';
+import {renderPrivacyNotice} from './privacy-render.mjs?v=20261121review';
 import {privacySummary} from './privacy-policy.mjs?v=20261119kwprivacy';
-import {propertyImageSource} from './property-image-sources.mjs?v=20261121fast';
-import {reviewForm,reviewFormFor} from './review-form.mjs?v=20261119kwprivacy';
+import {propertyImageSource} from './property-image-sources.mjs?v=20261121review';
+import {reviewForm,reviewFormFor} from './review-form.mjs?v=20261121review';
 import {livingScene,metricsScene} from './living-scene.mjs?v=20261119kwprivacy';
 import {editorialContent} from './editorial-model.mjs?v=20261119kwprivacy';
 function storyCarousel(id,title,intro,items,cards) {
