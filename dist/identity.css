@@ -697,11 +697,12 @@ body[data-page=contact] .contact-form-section { min-height:calc(100svh - 48px);p
 
 .privacy-summary{margin:18px 0 12px;font-size:12px;line-height:1.55;color:#666}.privacy-summary p{margin:0}.privacy-summary a{text-decoration:underline;text-underline-offset:2px}.privacy [data-clear-preferences]{margin:14px 0;white-space:normal;text-align:left}
 .review-privacy{font-size:12px;line-height:1.55;color:#666;margin:8px 0}.review-privacy summary{cursor:pointer;width:fit-content;text-decoration:underline;text-underline-offset:3px}.review-privacy summary:focus-visible{outline:2px solid #a60000;outline-offset:4px}.review-privacy .privacy-summary{margin:10px 0 4px}
-.contact-privacy{margin:18px 0 12px;font-size:12px;line-height:1.55;color:#666}
-.contact-privacy summary{cursor:pointer}
-.contact-privacy-more,.contact-privacy a{text-decoration:underline;text-underline-offset:2px}
+.contact-privacy{position:relative;margin:18px 0 12px;font-size:12px;line-height:1.55;color:#666}
+.contact-privacy[open]{z-index:3}
+.contact-privacy summary{cursor:pointer;width:fit-content;text-decoration:underline;text-underline-offset:2px}
+.contact-privacy a{text-decoration:underline;text-underline-offset:2px}
 .contact-privacy summary:focus-visible{outline:2px solid #a60000;outline-offset:4px}
-.contact-privacy .privacy-summary{margin:8px 0 0}
+.contact-privacy .privacy-summary{position:absolute;left:0;bottom:calc(100% + 8px);box-sizing:border-box;width:min(420px,100%);max-height:min(50svh,280px);overflow:auto;overscroll-behavior:contain;margin:0;padding:16px;background:#fff;border:1px solid #ddd;border-radius:10px;box-shadow:0 12px 32px #1d1d1d26;color:#444}
 body[data-page=contact] .contact-single{min-height:761px;display:flex;flex-direction:column}
 body[data-page=contact] .contact-single .message-field{flex:1;display:flex;flex-direction:column}
 body[data-page=contact] .contact-single textarea{flex:1 1 auto;max-height:none}

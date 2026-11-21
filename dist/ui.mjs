@@ -1,6 +1,5 @@
 import {renderPrivacyNotice} from './privacy-render.mjs?v=20261121review';
 import {privacySummary} from './privacy-policy.mjs?v=20261119kwprivacy';
-import {privacyConfig} from './privacy-model.mjs?v=20261119kwprivacy';
 import {propertyImageSource} from './property-image-sources.mjs?v=20261121review';
 import {reviewForm,reviewFormFor} from './review-form.mjs?v=20261121review';
 import {livingScene,metricsScene} from './living-scene.mjs?v=20261119kwprivacy';
@@ -92,8 +91,7 @@ export function contactDetails(data,compact=false) {
  return `<div class="team-contact-links${compact?' compact':''}">${members.map(p=>`<div><span>${e(p.name.split(' ')[0])}</span><a class="button button-outline contact-direct" href="${safeURL(p.contact)}" target="_blank" rel="noopener" aria-label="WhatsApp de ${e(p.name)}">Contáctame ${icon('arrow')}</a></div>`).join('')}${email?`<a class="team-email" href="mailto:${e(encodeURIComponent(email))}">${e(email)}</a>`:''}${office?`<a class="team-office" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(office)}" target="_blank" rel="noopener"><span>Oficina</span><address>${e(office)}</address></a>`:''}</div>`;
 }
 export function contactForm(data={},primary=false) {
- const privacy=privacyConfig(data);
- const compactPrivacy=`<details class="contact-privacy"><summary><strong>${e(privacy.responsibleName)} (${e(privacy.brand)})</strong> usará tus datos para ${e(privacy.contactPurpose)}. ${e(privacy.summaryEnding)} <span class="contact-privacy-more">Ver detalles</span></summary>${privacySummary('contact',data)}</details>`;
+ const compactPrivacy=`<details class="contact-privacy"><summary aria-label="Ver información de privacidad de Confort4">Confort4</summary>${privacySummary('contact',data)}</details>`;
  return `<section class="contact-form-section wrap" id="contacto">
   <div class="contact-form-intro">
    <${primary?'h1':'h2'}>${e(data.projectConfig?.title||'¿Tienes algo en mente?')}</${primary?'h1':'h2'}>

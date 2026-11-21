@@ -17,7 +17,7 @@ for(const file of ['contacto.html','resena.html','vender.html','rentar.html','co
   if(form.dataset.kind==='contact'){
    const disclosure=form.querySelector('details.contact-privacy');
    assert(disclosure&&!disclosure.open);
-   assert(disclosure.querySelector('summary').textContent.includes('Ver detalles'));
+   assert.equal(disclosure.querySelector('summary').textContent,'Confort4');
   }
   assert(!form.querySelector('input[name=consent]').checked);
   assert(form.querySelector('input[name=consent]').required);
