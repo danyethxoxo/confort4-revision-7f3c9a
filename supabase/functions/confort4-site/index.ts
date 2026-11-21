@@ -1,15 +1,18 @@
 import {validateContent} from './content-validation.mjs';
 import {ensurePropertyMedia} from './property-media.mjs';
+import {corsOrigin} from './site-origins.mjs';
 const env=(name:string)=>Deno.env.get(name)||'';
 const base=env('SUPABASE_URL'),key=env('SUPABASE_SERVICE_ROLE_KEY')||env('SERVICE_ROLE_KEY');
-const headers={'Access-Control-Allow-Origin':'https://danyethxoxo.github.io','Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Vary':'Origin'};
-const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers});
-const slowDown=()=>new Response(JSON.stringify({error:'Demasiadas solicitudes. Espera un momento e intenta de nuevo.'}),{status:429,headers:{...headers,'Retry-After':'60'}});
+const baseHeaders={'Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Vary':'Origin'};
 async function digest(value:string){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(key+':'+value));return [...new Uint8Array(bytes)].map(b=>b.toString(16).padStart(2,'0')).join('');}
 async function rate(scope:string,subject:string,limit:number,seconds=60){return rpc('confort4_rate_gate',{p_scope:scope,p_subject:await digest(subject),p_limit:limit,p_seconds:seconds});}
 async function rpc(name:string,args:unknown={}){const r=await fetch(base+'/rest/v1/rpc/'+name,{method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify(args),signal:AbortSignal.timeout(15000)});const data=await r.json().catch(()=>null);if(!r.ok)throw Error(data?.message||'database_unavailable');return data;}
 export async function handle(req:Request){
- if(req.headers.get('origin')!=='https://danyethxoxo.github.io')return response({error:'Origen no permitido.'},403);
+ const origin=corsOrigin(req.headers.get('origin'));
+ const headers={...baseHeaders,...(origin?{'Access-Control-Allow-Origin':origin}:{})};
+ const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers});
+ const slowDown=()=>new Response(JSON.stringify({error:'Demasiadas solicitudes. Espera un momento e intenta de nuevo.'}),{status:429,headers:{...headers,'Retry-After':'60'}});
+ if(!origin)return response({error:'Origen no permitido.'},403);
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
  if(req.method!=='POST')return response({error:'Método no permitido.'},405);
  try{

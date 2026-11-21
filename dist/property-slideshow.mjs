@@ -11,7 +11,21 @@ export function initializePropertySlideshow(root,choose,options={}){
  controls.innerHTML='<span data-photo-count></span><button type="button" data-photo-prev aria-label="Foto anterior">&#8592;</button><button type="button" data-photo-next aria-label="Foto siguiente">&#8594;</button><button type="button" data-photo-pause aria-label="Pausar fotos">Pausar</button>';
  const progress=document.createElement('div');progress.className='featured-progress property-photo-progress';progress.setAttribute('aria-hidden','true');progress.innerHTML='<span></span>';stage.append(controls,progress);
  let timer,animation,zoom,inView=!window.IntersectionObserver,paused=savePhotoData(),viewerOpen=false,destroyed=false,revision=0,changing=false,internalChoice=false,outgoingNode=null,transitions=[];
- const failed=new Set();let nextImage=null;
+ const failed=new Set();let nextImage=null,preloadTimer;
+ function preloadNext(){
+  clearTimeout(preloadTimer);
+  if(!image.complete||!image.naturalWidth||savePhotoData())return;
+  // Let the visible cover finish before spending bandwidth on the next slide.
+  preloadTimer=setTimeout(()=>{
+   if(destroyed||paused||!inView||document.hidden)return;
+   const thumb=thumbs[(current()+1)%thumbs.length],url=galleryImageURL(thumb);
+   if(nextImage?.src===url)return;
+   nextImage=new Image();nextImage.decoding='async';nextImage.fetchPriority='low';
+   if(thumb.dataset.gallerySet){nextImage.srcset=thumb.dataset.gallerySet;nextImage.sizes='100vw';}
+   nextImage.src=url;
+  },500);
+ }
+ image.addEventListener('load',preloadNext);
  const current=()=>Math.max(0,thumbs.findIndex(t=>t.getAttribute('aria-pressed')==='true'));
  function lock(value){controls.querySelectorAll('[data-photo-prev],[data-photo-next]').forEach(b=>b.disabled=value);}
  function stop(){clearTimeout(timer);animation?.cancel();if(zoom){image.style.transform=getComputedStyle(image).transform;zoom.cancel();}animation=null;zoom=null;}
@@ -23,7 +37,7 @@ export function initializePropertySlideshow(root,choose,options={}){
   if(destroyed||paused||viewerOpen||!inView||reduced.matches||document.hidden)return;
   animation=progress.firstElementChild.animate?.([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration,easing:'linear',fill:'both'});
   zoom=image.animate?.([{transform:'scale(1)'},{transform:'scale(1.04)'}],{duration,easing:'linear',fill:'both'});
-  nextImage=new Image();nextImage.decoding='async';nextImage.src=galleryImageURL(thumbs[(current()+1)%thumbs.length]);
+  preloadNext();
   timer=setTimeout(()=>advance(1),duration);
  }
  async function advance(step){
@@ -52,5 +66,5 @@ export function initializePropertySlideshow(root,choose,options={}){
  const cleanupSwipe=bindSwipe(stage,direction=>advance(direction));
  const visibility=()=>reset(),preference=()=>reset();document.addEventListener('visibilitychange',visibility);reduced.addEventListener('change',preference);
  const observer=window.IntersectionObserver?new IntersectionObserver(entries=>{inView=entries[0].isIntersecting;reset();}):null;observer?.observe(stage);reset();
- return {reset,setViewer(open){viewerOpen=open;reset();},destroy(){destroyed=true;++revision;stop();cancelTransition();cleanupSwipe();observer?.disconnect();document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener?.('change',preference);nextImage=null;controls.remove();progress.remove();image.style.transform='';zoomFrame.replaceWith(image);}};
+ return {reset,setViewer(open){viewerOpen=open;reset();},destroy(){destroyed=true;++revision;stop();clearTimeout(preloadTimer);image.removeEventListener('load',preloadNext);cancelTransition();cleanupSwipe();observer?.disconnect();document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener?.('change',preference);nextImage=null;controls.remove();progress.remove();image.style.transform='';zoomFrame.replaceWith(image);}};
 }

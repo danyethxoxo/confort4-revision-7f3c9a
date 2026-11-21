@@ -24,6 +24,17 @@ and immutable redirects have a one-year browser cache lifetime. Source URLs must
 change when replacing a photo in place, or bump `PHOTO_VERSION` to invalidate.
 No credentials, private documents or user sessions are sent to the converter.
 
+Every production build now prepares the entire active inventory, including extra
+selected listings, with `node scripts/prepare-property-photos.mjs --live` after
+fetching the public snapshot. Existing versioned derivatives are reused; only
+missing sources are downloaded and converted. All 140 currently known sources
+have four static variants. Scheduled builds incorporate future listing photos;
+the gateway continues to protect newly published photos between builds.
+
+Property detail HTML includes a responsive image preload with the exact same
+srcset/sizes as its cover. The next slide is requested at low priority only after
+the current cover has loaded. No quality or resolution budgets were reduced.
+
 Validation rejects profiles, EXIF, XMP, gain maps, animations and unknown chunks;
 only static 8-bit WebP pixels and alpha are accepted. Conversion retries at lower
 quality when necessary. On failure or unsupported input, return a small SVG

@@ -46,9 +46,12 @@ jobs:
           node tests/property-sdr.test.mjs
           node --experimental-strip-types tests/photo-gateway.test.mjs
           node scripts/fetch-public-snapshot.mjs
+          node scripts/prepare-property-photos.mjs --live
           node scripts/build-pages.mjs --live
           node scripts/check-pages.mjs
           node tests/seo.test.mjs
+          node tests/photo-loading.test.mjs
+          node tests/deployment-config.test.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

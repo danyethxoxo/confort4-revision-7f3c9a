@@ -1,7 +1,7 @@
 import {PRIVACY_VERSION,privacyVersion} from './privacy-policy.mjs';
+import {corsOrigin} from './site-origins.mjs';
 // Public anonymous form via the project's anon JWT; no client can read stored data.
-const allowedOrigin='https://danyethxoxo.github.io';
-const headers={'Access-Control-Allow-Origin':allowedOrigin,'Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin','Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'};
+const baseHeaders={'Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin','Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'};
 const env=(key:string)=>Deno.env.get(key)||'';
 const url=env('SUPABASE_URL');
 const serviceKey=env('SUPABASE_SERVICE_ROLE_KEY')||env('SERVICE_ROLE_KEY');
@@ -9,7 +9,6 @@ const resendKey=env('RESEND_API_KEY');
 const sharedSender=env('CORREO_REMITENTE')||env('EMAIL_FROM');
 const verifiedAddress=sharedSender.match(/<([^>]+)>/)?.[1]||(sharedSender.includes('@')?sharedSender:'');
 const sender=env('CONFORT4_FROM')||(verifiedAddress?`Confort4 <${verifiedAddress}>`:'');
-function respond(data:unknown,status=200){return new Response(JSON.stringify(data),{status,headers});}
 async function rpc(name:string,args:unknown={}){
  const result=await fetch(url+'/rest/v1/rpc/'+name,{method:'POST',headers:{Authorization:'Bearer '+serviceKey,apikey:serviceKey,'Content-Type':'application/json'},body:JSON.stringify(args),signal:AbortSignal.timeout(10000)});
  const data=await result.json().catch(()=>null);
@@ -41,7 +40,10 @@ export function validate(body:Record<string,unknown>,expectedVersion=PRIVACY_VER
  return {kind,requestId:String(body.requestId),payload:{name,email,phone,interest,message,privacy:{noticeVersion:expectedVersion,processingConsent:true,sourcePage},...(kind==='review'?{rating,publishConsent:body.publishConsent===true}:Object.keys(rawProject).length?{project}:{}),consent:true,consentVersion:expectedVersion,source:sourcePage}};
 }
 Deno.serve(async(req:Request)=>{
- if(req.headers.get('origin')!==allowedOrigin)return respond({error:'Origen no permitido.'},403);
+ const origin=corsOrigin(req.headers.get('origin'));
+ const headers={...baseHeaders,...(origin?{'Access-Control-Allow-Origin':origin}:{})};
+ const respond=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers});
+ if(!origin)return respond({error:'Origen no permitido.'},403);
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
  if(req.method!=='POST')return respond({error:'Método no permitido.'},405);
  if(!url||!serviceKey)return respond({error:'El servicio no está disponible. Escríbenos por WhatsApp.'},503);
