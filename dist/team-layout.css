@@ -31,6 +31,20 @@ body[data-page=team] main{padding-top:0}
 .team-profile-copy p{font-size:15px;line-height:1.65;color:var(--muted);max-width:42ch}
 .team-profile-copy .team-contact-button{margin-top:24px;min-height:44px;font-size:14px;padding:11px 18px}
 .team-approach{padding-top:0;padding-bottom:70px}
+.team-project-cta{background:var(--red);color:#fff;padding:34px 0}
+.team-project-cta-inner{display:flex;align-items:center;justify-content:space-between;gap:28px}
+.team-project-cta h2{font-size:clamp(26px,3vw,38px);font-weight:450;letter-spacing:-.025em}
+.team-project-cta .team-project-cta-button,.team-reviews-banner .team-project-cta-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:42px!important;padding:10px 16px!important;margin-left:6px!important;border:1px solid #fff!important;border-radius:7px!important;background:transparent!important;color:#fff!important;font-size:14px!important;font-weight:400!important;gap:9px!important;white-space:nowrap!important;transition:background .25s,color .25s,box-shadow .25s!important}
+.team-project-cta .team-project-cta-button:is(:hover,:focus-visible),.team-reviews-banner .team-project-cta-button:is(:hover,:focus-visible){background:#fff!important;border-color:#fff!important;color:#b40101!important;box-shadow:0 12px 18px -12px #0005!important}
+.team-project-cta .team-project-cta-button svg,.team-reviews-banner .team-project-cta-button svg{width:19px;height:19px}
+.team-reviews-module{padding:0!important;border:0!important}
+.team-reviews-banner{background:#fff;color:#111;border-bottom:1px solid #111;padding:34px 0}
+.team-reviews-banner .module-heading{margin:0 auto;align-items:center}
+.team-reviews-banner .module-heading h2{font-size:clamp(26px,3vw,38px);font-weight:450;letter-spacing:-.025em}
+.team-reviews-banner .module-heading p{font-size:14px;color:#333;margin-top:8px}
+.team-reviews-banner .team-project-cta-button{border-color:#111!important;color:#111!important}
+.team-reviews-banner .team-project-cta-button:is(:hover,:focus-visible){background:#111!important;border-color:#111!important;color:#fff!important}
+.team-reviews-content{padding-top:42px;padding-bottom:60px}
 @media(max-width:1100px){.team-story .team-profile-grid{grid-template-columns:1fr;gap:40px}.team-profile{grid-template-columns:minmax(180px,260px) minmax(0,1fr);gap:48px}.team-profile-copy p{max-width:55ch}.team-story-editorial{gap:6%;padding-block:70px}}
 @media(max-width:700px){
  .team-hero-content{padding-top:120px;padding-bottom:34px}
@@ -45,6 +59,13 @@ body[data-page=team] main{padding-top:0}
  .team-profile{grid-template-columns:minmax(100px,.75fr) minmax(0,1.25fr);gap:20px;align-items:start}
  .team-profile .portrait{height:240px}.team-profile-copy h2{font-size:24px}.team-profile-copy p{font-size:14px;line-height:1.6}.team-profile-copy .team-contact-button{padding:10px 12px;font-size:13px}
  .team-approach{padding-bottom:40px}
+ .team-project-cta{padding:27px 0}
+ .team-project-cta-inner{align-items:flex-start;flex-direction:column;gap:18px}
+ .team-project-cta h2{font-size:29px}
+ .team-project-cta .team-project-cta-button,.team-reviews-banner .team-project-cta-button{min-height:42px!important;margin-left:0!important}
+ .team-reviews-banner{padding:27px 0}
+ .team-reviews-banner .module-heading{align-items:flex-start}
+ .team-reviews-content{padding-top:28px;padding-bottom:40px}
 }
 @media(max-width:430px){.team-profile{grid-template-columns:1fr;gap:24px}.team-profile .portrait{height:300px;width:68%;max-width:230px}.team-profile-copy p{max-width:45ch}.team-story .team-profile-grid{gap:42px}}
 @media(prefers-reduced-motion:reduce){.team-hero[data-motion-pending] [data-team-text],.team-hero[data-motion-pending] .team-hero-media{visibility:visible}}
