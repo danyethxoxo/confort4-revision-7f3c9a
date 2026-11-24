@@ -712,4 +712,4 @@ body[data-page=contact] .contact-single textarea{flex:1 1 auto;max-height:none}
 @media(max-width:700px){body[data-page=contact] .contact-single{min-height:1005px}}
 
 /* Soften faces only in the client gallery. */
-#nuestros-clientes .client-story .story-photo img { filter: blur(10px); }
+#nuestros-clientes .client-story[data-blur-faces="true"] .story-photo img { filter: blur(10px); }

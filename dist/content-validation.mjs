@@ -50,6 +50,7 @@ export function validateContent(data){
   list(data.clients.items,'las fotografías de clientes');if(data.clients.items.length>20)throw Error('Nuestros clientes admite hasta 20 fotos.');
   for(const item of data.clients.items){
    string(item.photo,'la fotografía de clientes');
+   if(item.blurFaces!==undefined&&typeof item.blurFaces!=='boolean')throw Error('El desenfoque debe estar activado o desactivado.');
    if(item.quote&&item.quoteVerified!==true)throw Error('Solo publica comentarios reales verificados de clientes.');
   }
  }
