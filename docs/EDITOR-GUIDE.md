@@ -1,6 +1,6 @@
 # Editor de Confort4
 
-Acceso: https://danyethxoxo.github.io/confort4-revision-7f3c9a/admin.html
+Acceso: https://confort4.mx/admin.html
 
 Usa el nombre de usuario y contraseña de una cuenta autorizada del editor de Confort4. No hay autorregistro ni contraseña compartida incrustada en la página. Dani y Alberto conservan su membresía. Renata necesita una cuenta y confirmación del correo antes de habilitar acceso. No se enviaron invitaciones ni se cambiaron contraseñas.
 

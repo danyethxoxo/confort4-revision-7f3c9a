@@ -5,7 +5,7 @@ import {validateContent} from '../dist/content-validation.mjs';
 const root=path.resolve(import.meta.dirname,'..'),context={window:{}};
 vm.runInNewContext(await fs.readFile(path.join(root,'dist/form-config.js'),'utf8'),context);
 const config=context.window.CONFORT4_FORMS;
-const response=await fetch(config.endpoint.replace('confort4-forms','confort4-site'),{method:'POST',headers:{Origin:'https://danyethxoxo.github.io',apikey:config.publishableKey,Authorization:'Bearer '+config.anonKey,'Content-Type':'application/json'},body:JSON.stringify({action:'public'}),signal:AbortSignal.timeout(25000)});
+const response=await fetch(config.endpoint.replace('confort4-forms','confort4-site'),{method:'POST',headers:{Origin:'https://confort4.mx',apikey:config.publishableKey,Authorization:'Bearer '+config.anonKey,'Content-Type':'application/json'},body:JSON.stringify({action:'public'}),signal:AbortSignal.timeout(25000)});
 if(!response.ok)throw Error('Public snapshot unavailable: '+response.status);
 const snapshot=await response.json();validateContent(snapshot.content);
 if(!Array.isArray(snapshot.properties)||!Array.isArray(snapshot.reviews))throw Error('Invalid public snapshot');

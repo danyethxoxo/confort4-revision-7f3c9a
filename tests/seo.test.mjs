@@ -16,7 +16,7 @@ for(const file of pages){
  const robots=doc.querySelector('meta[name=robots]')?.content;
  if(!robots?.includes('noindex')){
   indexed++;assert(!titles.has(doc.title),'Indexable page titles must be unique: '+file);titles.add(doc.title);
-  const canonical=doc.querySelector('link[rel=canonical]')?.href;assert(canonical?.startsWith('https://danyethxoxo.github.io/confort4-revision-7f3c9a/'));
+  const canonical=doc.querySelector('link[rel=canonical]')?.href;assert(canonical?.startsWith('https://confort4.mx/'));
   assert(doc.querySelector('meta[name=description]')?.content.length>40);
   const image=doc.querySelector('meta[property="og:image"]').content;assert.equal(new URL(image).protocol,'https:');assert(!image.includes('confort4-revision-7f3c9a/https:'));
   assert.equal(doc.querySelector('meta[property="og:url"]').content,canonical);

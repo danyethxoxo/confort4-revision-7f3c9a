@@ -1,6 +1,6 @@
 // Shared by rendering, offline optimization and the public image gateway.
 export const PHOTO_VERSION='sdr3';
-export const PHOTO_ORIGIN='https://danyethxoxo.github.io/confort4-revision-7f3c9a/';
+export const PHOTO_ORIGIN='https://confort4.mx/';
 export const PHOTO_GATEWAY='https://iloetojomzqtadkithtv.supabase.co/functions/v1/confort4-photo';
 export const PHOTO_PROFILES=Object.freeze({
  thumb:{width:360,quality:78,maxBytes:40000},
@@ -16,7 +16,8 @@ export function originalPhotoURL(value){
   const allowed=(url.hostname==='storage.googleapis.com'&&url.pathname.startsWith('/attachment-listing-prod-5af4/'))||
    (url.hostname==='repstaticneu.azureedge.net'&&url.pathname.startsWith('/images/'))||
    (url.hostname==='iloetojomzqtadkithtv.supabase.co'&&url.pathname.startsWith('/storage/v1/object/public/confort4-media/'))||
-   (url.hostname==='danyethxoxo.github.io'&&url.pathname.startsWith('/confort4-revision-7f3c9a/assets/'));
+   (url.hostname==='danyethxoxo.github.io'&&url.pathname.startsWith('/confort4-revision-7f3c9a/assets/'))||
+   (url.hostname==='confort4.mx'&&url.pathname.startsWith('/assets/'));
   return allowed&&/\.(jpe?g|png|webp|avif|heic)(?:$)/i.test(url.pathname)?url.href:null;
  }catch{return null;}
 }

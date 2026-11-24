@@ -5,6 +5,7 @@ const previous=process.env.CONFORT4_SITE_ORIGIN;delete process.env.CONFORT4_SITE
 assert.equal(deploymentOrigin({origin:'https://example.com'}),'https://example.com/');
 for(const origin of ['http://example.com','https://user:pass@example.com','https://example.com/path','https://example.com/?q=x','https://example.com/#x','https://example.com:4433','https://localhost'])assert.throws(()=>deploymentOrigin({origin}));
 assert.equal(corsOrigin('https://danyethxoxo.github.io'),'https://danyethxoxo.github.io');
+assert.equal(corsOrigin('https://confort4.mx'),'https://confort4.mx');
 for(const origin of [null,'null','https://evil.test','https://danyethxoxo.github.io.evil.test','http://danyethxoxo.github.io'])assert.equal(corsOrigin(origin),null);
 process.env.CONFORT4_SITE_ORIGIN='https://example.org/';assert.equal(deploymentOrigin({origin:'https://example.com/'}),'https://example.org/');
 if(previous===undefined)delete process.env.CONFORT4_SITE_ORIGIN;else process.env.CONFORT4_SITE_ORIGIN=previous;

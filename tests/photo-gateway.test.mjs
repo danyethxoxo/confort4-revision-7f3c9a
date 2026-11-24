@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {originalPhotoURL} from '../dist/photo-policy.mjs';
 const sources=JSON.parse(fs.readFileSync(new URL('../content/property-image-sources.json',import.meta.url)));
 const sample=fs.readFileSync(new URL('../dist/'+Object.values(sources)[0].thumb,import.meta.url));
 let handler,mode='cached',calls=[];
@@ -14,6 +15,8 @@ globalThis.fetch=async(value,options={})=>{
 };
 await import('../supabase/functions/confort4-photo/index.ts');
 const original='https://storage.googleapis.com/attachment-listing-prod-5af4/new/photo.jpeg';
+assert.equal(originalPhotoURL('assets/example.webp'),'https://confort4.mx/assets/example.webp');
+assert.equal(originalPhotoURL('https://confort4.mx/assets/example.webp'),'https://confort4.mx/assets/example.webp');
 const request=(url=original,size='thumb',method='GET')=>new Request('https://project.invalid/functions/v1/confort4-photo?'+new URLSearchParams({url,size}),{method});
 let response=await handler(request());assert.equal(response.status,302);assert(response.headers.get('location').startsWith('https://project.invalid/storage/v1/object/public/confort4-property-sdr/sdr3/thumb/'));assert.equal(calls.length,1,'Cached images must skip conversion and rate writes');
 mode='cold';calls=[];response=await handler(request());assert.equal(response.status,302);assert(calls.some(c=>c.url.startsWith('https://wsrv.nl/')));assert(calls.some(c=>c.url.includes('/object/confort4-property-sdr/')));assert(!calls.some(c=>c.url===original),'Never fetch the HDR original into the browser or function');
