@@ -710,3 +710,6 @@ body[data-page=contact] .contact-single .message-field{flex:1;display:flex;flex-
 body[data-page=contact] .contact-single textarea{flex:1 1 auto;max-height:none}
 @media(min-width:701px) and (max-height:800px){body[data-page=contact] .contact-single{min-height:718px}}
 @media(max-width:700px){body[data-page=contact] .contact-single{min-height:1005px}}
+
+/* Soften faces only in the client gallery. */
+#nuestros-clientes .client-story .story-photo img { filter: blur(10px); }
